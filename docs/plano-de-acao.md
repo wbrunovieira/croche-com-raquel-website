@@ -4,7 +4,7 @@ Documento vivo. É atualizado a cada commit de etapa concluída.
 
 **Legenda:** ✅ concluída · 🔵 em andamento · ⬜ pendente · ⏸️ bloqueada
 
-Última atualização: 2026-08-30 — Etapa 5 concluída + cabeçalho animado
+Última atualização: 2026-08-30 — Etapa 7 concluída (feita antes da 6, a pedido do Bruno)
 
 ---
 
@@ -171,16 +171,25 @@ verdade — hub com conteúdo indexável, filtros e SEO.
 **Você vai ver:** http://localhost:3000/produtos/bolsa-serra — escolha as opções e
 clique no botão; a mensagem chega pronta no seu WhatsApp.
 
-### ⬜ Etapa 6 — Catálogo e hub de bolsas
+### ⬜ Etapa 6 — Catálogo e hub de bolsas *(próxima)*
 Grid do catálogo com filtro por categoria, subcategoria, cor e coleção.
 Página `/bolsas` como landing de verdade — conteúdo próprio, subtipos em destaque,
 texto indexável (alvo: "bolsa de crochê", "bolsa de fio de malha").
 **Você vai ver:** navegação completa do catálogo e a hub de bolsas.
 
-### ⬜ Etapa 7 — Home
-Hero com bolsa em uso · bolsas em destaque · navegar por tipo de bolsa · demais
-categorias · sobre resumido · depoimentos · Instagram · CTA de WhatsApp.
-**Você vai ver:** a home completa, que é o que você mostra pra Raquel.
+### ✅ Etapa 7 — Home *(feita antes da 6, a pedido do Bruno)*
+Hero em seção verde com a máscara em arco, título e subtítulo vindos das
+configurações, dois CTAs, linha de garantias e **as cores reais do catálogo**
+flutuando sobre a foto. Paralaxe curta de 40px na imagem, entrada escalonada.
+
+Depois: peças em destaque (curadoria da Raquel), navegar por tipo de bolsa com a
+contagem, demais categorias, o texto do "quem faz" em seção invertida e o CTA
+final de encomenda sob medida. Tudo revelado ao entrar na tela, uma vez só.
+
+*Fora por enquanto:* depoimentos (não há nenhum cadastrado) e o feed do
+Instagram. Entram quando houver conteúdo.
+
+**Você vai ver:** http://localhost:3000/
 
 ### ⬜ Etapa 8 — Páginas institucionais
 Sobre a Raquel · Encomendas sob medida (briefing que também cai no WhatsApp) ·

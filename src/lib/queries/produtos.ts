@@ -195,3 +195,28 @@ export async function listarSlugsDeProduto(): Promise<string[]> {
   });
   return linhas.map((l) => l.slug);
 }
+
+/**
+ * As cores que o catálogo publicado realmente oferece hoje. O hero mostra
+ * essas bolinhas — e elas precisam ser as de verdade: uma amostra decorativa
+ * de cores que a Raquel não tem seria uma promessa falsa logo na primeira
+ * dobra do site.
+ */
+export async function listarCoresDisponiveis(
+  limite = 8
+): Promise<{ id: string; nome: string; hex: string }[]> {
+  const linhas = await db.optionValue.findMany({
+    where: {
+      active: true,
+      hex: { not: null },
+      group: { slug: "cor", active: true },
+      products: {
+        some: { productOptionGroup: { product: { status: "PUBLISHED" } } },
+      },
+    },
+    orderBy: { position: "asc" },
+    take: limite,
+    select: { id: true, name: true, hex: true },
+  });
+  return linhas.map((l) => ({ id: l.id, nome: l.name, hex: l.hex! }));
+}
