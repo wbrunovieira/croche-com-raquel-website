@@ -4,7 +4,7 @@ Documento vivo. É atualizado a cada commit de etapa concluída.
 
 **Legenda:** ✅ concluída · 🔵 em andamento · ⬜ pendente · ⏸️ bloqueada
 
-Última atualização: 2026-08-30 — Etapa 1 concluída
+Última atualização: 2026-08-30 — Etapa 1 concluída (identidade + logotipo)
 
 ---
 
@@ -58,8 +58,20 @@ direção de arte fotográfica para a Raquel), tokens aplicados em `src/app/glob
 fontes em `src/app/fonts.ts`, layout raiz em pt-BR com metadados da marca, home
 provisória e a amostra em `/estilo`.
 
-*Mudança em relação ao planejado:* a amostra ficou mais completa que o previsto e já
-inclui card de produto e seção invertida, que eram da Etapa 4. A Etapa 4 fica menor.
+**Logotipo** (adicionado a pedido do Bruno): assinatura em duas linhas — "crochê" em
+Fraunces caixa baixa sobre "COM RAQUEL" em Karla espaçada — com o **laço** como
+símbolo isolado, em `src/components/brand/`. Favicon (`icon.svg`) e apple touch icon
+gerados a partir do mesmo traçado.
+
+*Mudanças em relação ao planejado:* a amostra ficou mais completa que o previsto e já
+inclui card de produto e seção invertida, que eram da Etapa 4 — a Etapa 4 fica menor.
+O laço foi desenhado direto em SVG e validado renderizando a 32px e 16px; as três
+primeiras tentativas liam como pingente ou letra grega e foram descartadas.
+
+*Pendência do logotipo:* a direção pede que o laço nasça do prolongamento do terminal
+do `ê` de "crochê". Isso exige lettering customizado (desenhar o contorno da letra),
+não dá para fazer com a fonte viva. Hoje o laço é um elemento do lockup, ao lado da
+palavra. Se o Bruno quiser a versão desenhada, é trabalho de vetor à parte.
 
 ### ⬜ Etapa 2 — Modelagem de dados
 Schema Prisma: `Product`, `Category`, `Subcategory`, `Collection`, `OptionGroup`,

@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
+import { Logo } from "@/components/brand/logo";
+import { Laco } from "@/components/brand/laco";
 
 export const metadata: Metadata = {
   title: "Amostra da identidade",
@@ -140,6 +143,91 @@ export default function EstiloPage() {
         </p>
         <div className="corrente mt-8" aria-hidden="true" />
       </header>
+
+      <Secao
+        titulo="Logotipo"
+        descricao="Assinatura em duas linhas alinhada à esquerda, com o laço como símbolo isolado. O contraste de escala e de eixo — serifa grande orgânica sobre grotesca pequena espaçada — já dá a hierarquia, sem ornamento e sem moldura."
+      >
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className="rounded-card border border-borda bg-superficie p-8">
+            <Etiqueta>Versão principal</Etiqueta>
+            <div className="mt-6">
+              <Logo className="text-[3.25rem] text-primaria" />
+            </div>
+          </div>
+
+          <div className="trama rounded-card bg-inv-fundo p-8">
+            <span className="font-texto text-etiqueta uppercase text-inv-suave">
+              Versão invertida
+            </span>
+            <div className="mt-6 text-inv-conteudo">
+              <Logo className="text-[3.25rem]" />
+            </div>
+          </div>
+
+          <div className="rounded-card border border-borda bg-superficie p-8">
+            <Etiqueta>Símbolo isolado · o laço</Etiqueta>
+            <p className="mt-2 text-apoio text-conteudo-suave">
+              Abaixo de 120px de largura, a assinatura completa sai e fica só ele.
+            </p>
+            <div className="mt-6 flex items-end gap-8">
+              <Laco className="size-20 text-primaria" />
+              <Laco className="size-12 text-primaria" />
+              <Laco className="size-8 text-primaria" />
+            </div>
+          </div>
+
+          <div className="rounded-card border border-borda bg-superficie p-8">
+            <Etiqueta>Teste do bordado · 1 cor a 2 cm</Etiqueta>
+            <p className="mt-2 text-apoio text-conteudo-suave">
+              O teste decisivo não é a tela, é a etiqueta costurada na peça. Se o laço
+              fecha a 2 cm em uma cor, está aprovado.
+            </p>
+            <div className="mt-6 flex items-end gap-6">
+              <div className="w-[2cm]">
+                <Laco className="w-full text-tinta" />
+              </div>
+              <div className="w-[1.2cm]">
+                <Laco className="w-full text-tinta" />
+              </div>
+              <div className="rounded-fio bg-tinta p-3">
+                <Laco className="w-[2cm] text-cru" />
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-card border border-borda bg-superficie p-8 lg:col-span-2">
+            <Etiqueta>Favicon · pixel real</Etiqueta>
+            <p className="mt-2 text-apoio text-conteudo-suave">
+              Só o laço, em Fio Cru sobre Verde Cristal — em 16px a letra viraria
+              mancha. Traço de 3,5px no 32×32, acima do mínimo de 3px.
+            </p>
+            <div className="mt-6 flex items-end gap-8">
+              <div className="text-center">
+                <Image src="/marca/favicon-32.png" alt="Favicon 32 pixels" width={32} height={32} />
+                <span className="mt-2 block text-legenda text-conteudo-suave">32px</span>
+              </div>
+              <div className="text-center">
+                <Image src="/marca/favicon-16.png" alt="Favicon 16 pixels" width={16} height={16} />
+                <span className="mt-2 block text-legenda text-conteudo-suave">16px</span>
+              </div>
+              <div className="text-center">
+                <Image
+                  src="/marca/favicon-32.png"
+                  alt="Favicon 32 pixels ampliado"
+                  width={128}
+                  height={128}
+                  className="[image-rendering:pixelated]"
+                  unoptimized
+                />
+                <span className="mt-2 block text-legenda text-conteudo-suave">
+                  32px ampliado 4×
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Secao>
 
       <Secao
         titulo="Paleta"
