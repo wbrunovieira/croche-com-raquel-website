@@ -44,7 +44,13 @@ model Category {
   id          String  @id @default(cuid())
   slug        String  @unique
   name        String
+  /// Uma linha, usada no card e abaixo do título.
   description String?
+  /// Texto longo da página da categoria — é o conteúdo indexável que faz a
+  /// página ranquear (o hub de bolsas mira "bolsa de crochê"). Fica no banco
+  /// e não no código para a Raquel poder editar no admin. Markdown simples:
+  /// parágrafos separados por linha em branco, `## ` vira subtítulo.
+  longDescription String?
   position    Int     @default(0)
 
   subcategories Subcategory[]

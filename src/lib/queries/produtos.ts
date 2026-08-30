@@ -61,20 +61,38 @@ function paraResumo(p: LinhaResumo): ProdutoResumo {
   };
 }
 
-export async function listarProdutos(opcoes?: {
+export type FiltrosDeCatalogo = {
   categoria?: string;
   subcategoria?: string;
   colecao?: string;
-}): Promise<ProdutoResumo[]> {
+  /** Slug da cor. Só entram peças que oferecem aquela cor e com ela ativa. */
+  cor?: string;
+};
+
+function condicoes(f: FiltrosDeCatalogo = {}) {
+  return {
+    status: "PUBLISHED" as const,
+    ...(f.categoria ? { category: { slug: f.categoria } } : {}),
+    ...(f.subcategoria ? { subcategory: { slug: f.subcategoria } } : {}),
+    ...(f.colecao ? { collections: { some: { slug: f.colecao, active: true } } } : {}),
+    ...(f.cor
+      ? {
+          optionGroups: {
+            some: {
+              group: { slug: "cor", active: true },
+              values: { some: { optionValue: { slug: f.cor, active: true } } },
+            },
+          },
+        }
+      : {}),
+  };
+}
+
+export async function listarProdutos(
+  opcoes?: FiltrosDeCatalogo
+): Promise<ProdutoResumo[]> {
   const linhas = await db.product.findMany({
-    where: {
-      status: "PUBLISHED",
-      ...(opcoes?.categoria ? { category: { slug: opcoes.categoria } } : {}),
-      ...(opcoes?.subcategoria ? { subcategory: { slug: opcoes.subcategoria } } : {}),
-      ...(opcoes?.colecao
-        ? { collections: { some: { slug: opcoes.colecao, active: true } } }
-        : {}),
-    },
+    where: condicoes(opcoes),
     orderBy: [{ position: "asc" }, { name: "asc" }],
     select: selecaoResumo,
   });
@@ -203,20 +221,21 @@ export async function listarSlugsDeProduto(): Promise<string[]> {
  * dobra do site.
  */
 export async function listarCoresDisponiveis(
-  limite = 8
-): Promise<{ id: string; nome: string; hex: string }[]> {
+  limite = 8,
+  escopo?: Omit<FiltrosDeCatalogo, "cor">
+): Promise<{ id: string; slug: string; nome: string; hex: string }[]> {
   const linhas = await db.optionValue.findMany({
     where: {
       active: true,
       hex: { not: null },
       group: { slug: "cor", active: true },
       products: {
-        some: { productOptionGroup: { product: { status: "PUBLISHED" } } },
+        some: { productOptionGroup: { product: condicoes(escopo) } },
       },
     },
     orderBy: { position: "asc" },
     take: limite,
-    select: { id: true, name: true, hex: true },
+    select: { id: true, slug: true, name: true, hex: true },
   });
-  return linhas.map((l) => ({ id: l.id, nome: l.name, hex: l.hex! }));
+  return linhas.map((l) => ({ id: l.id, slug: l.slug, nome: l.name, hex: l.hex! }));
 }

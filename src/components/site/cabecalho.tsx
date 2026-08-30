@@ -28,6 +28,7 @@ export async function Cabecalho() {
         }
       : { rotulo: c.nome, href: `/categorias/${c.slug}` }
   );
+  itens.push({ rotulo: "Catálogo", href: "/catalogo" });
 
   return (
     <Navegacao

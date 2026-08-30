@@ -99,6 +99,12 @@ do libpq, que não verifica o certificado. Fixar agora evita a regressão silenc
   avisar quando falta.
 - **`Product.featured` + `featuredPosition`** são a curadoria da home, não um cálculo.
   Quem escolhe a vitrine é a Raquel.
+- **`Category.longDescription`** é o texto longo indexável da página da categoria —
+  o que faz o hub de bolsas ranquear para "bolsa de crochê". Fica no banco e não no
+  código justamente para a Raquel poder editar. Markdown mínimo: parágrafo separado
+  por linha em branco, `## ` para subtítulo e `**negrito**`. Não é interpretado por
+  biblioteca de markdown, de propósito — isso abriria uma porta para HTML arbitrário
+  vindo do banco.
 - **`Subcategory`** só é usada por bolsas. As outras categorias ficam planas, e
   `subcategoryId` fica nulo.
 - **`SiteSettings`** é uma linha só, de id fixo `singleton`. Guarda o número do

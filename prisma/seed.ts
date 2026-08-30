@@ -13,8 +13,41 @@ const db = new PrismaClient({
 // Os produtos aqui são exemplos plausíveis para a gente ver as telas de pé —
 // o catálogo real entra na etapa 13, com as fotos da Raquel.
 
-const CATEGORIAS = [
-  { slug: "bolsas", name: "Bolsas", position: 0, description: "O carro-chefe. Feitas à mão em fio de malha, na cor e no tamanho que você escolher." },
+const TEXTO_LONGO_BOLSAS = `## Bolsa de crochê feita à mão, sob encomenda
+
+Cada bolsa que sai daqui é feita uma de cada vez, em fio de malha de algodão. Não existe estoque: você escolhe o tipo, a cor, o tamanho e o acabamento, e a peça começa a ser feita depois disso. É por isso que ela sai do jeito que você quer — e é por isso que tem prazo.
+
+## Que tipo de bolsa escolher
+
+A **transversal** é a do dia a dia: alça ajustável, corpo estruturado, cabe o essencial e libera as mãos. A **tote** é a de carregar tudo, com boca larga e alça reforçada. A **clutch** é a de festa. A de **praia** é larga e leve, feita em ponto vazado para a areia sair. A **necessaire** é a peça de entrada, boa para presentear.
+
+## Fio de malha, e por que ele importa
+
+O fio de malha é grosso, macio e firme. Ele segura o formato da bolsa mesmo cheia, não desfia com o uso e aceita cor viva sem desbotar rápido. Toda cor do site tem código de fio registrado, então uma peça encomendada hoje pode ser refeita igual daqui a um ano.
+
+## Personalização
+
+Além de cor e tamanho, boa parte das bolsas aceita escolha de alça (de mão, transversal ajustável, corrente ou couro), forro e tipo de fecho. Algumas aceitam nome ou monograma bordado. O que aparece na página de cada peça é o que aquela peça aceita.
+
+## Prazo e envio
+
+O prazo de produção fica escrito na página de cada bolsa — em geral de 7 a 15 dias, dependendo do tamanho e do acabamento. Depois de pronta, envio para todo o Brasil pelos Correios, ou entrega combinada em Petrópolis.`;
+
+const CATEGORIAS: {
+  slug: string;
+  name: string;
+  position: number;
+  description: string;
+  longDescription?: string;
+}[] = [
+  {
+    slug: "bolsas",
+    name: "Bolsas",
+    position: 0,
+    description:
+      "O carro-chefe. Feitas à mão em fio de malha, na cor e no tamanho que você escolher.",
+    longDescription: TEXTO_LONGO_BOLSAS,
+  },
   { slug: "mesa-posta", name: "Mesa Posta", position: 1, description: "Jogo americano, porta-copos e trilhos para deixar a mesa com cara de casa." },
   { slug: "casa-decoracao", name: "Casa & Decoração", position: 2, description: "Mantas, almofadas e cestos que dão o toque único no seu lar." },
   { slug: "macrame", name: "Macramê", position: 3, description: "Suportes de planta e painéis de parede em nós feitos um a um." },
@@ -237,7 +270,8 @@ async function main() {
   });
 
   for (const c of CATEGORIAS) {
-    await db.category.upsert({ where: { slug: c.slug }, update: c, create: c });
+    const dados = { ...c, longDescription: c.longDescription ?? null };
+    await db.category.upsert({ where: { slug: c.slug }, update: dados, create: dados });
   }
 
   const bolsas = await db.category.findUniqueOrThrow({ where: { slug: "bolsas" } });

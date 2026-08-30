@@ -67,6 +67,8 @@ export type CategoriaResumo = {
   slug: string;
   nome: string;
   descricao: string | null;
+  /** Texto longo indexável, editável no admin. Markdown simples. */
+  textoLongo: string | null;
   subcategorias: { slug: string; nome: string }[];
   totalDeProdutos: number;
 };

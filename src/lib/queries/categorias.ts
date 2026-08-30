@@ -10,6 +10,7 @@ export async function listarCategorias(): Promise<CategoriaResumo[]> {
       slug: true,
       name: true,
       description: true,
+      longDescription: true,
       subcategories: {
         orderBy: { position: "asc" },
         select: { slug: true, name: true },
@@ -25,6 +26,7 @@ export async function listarCategorias(): Promise<CategoriaResumo[]> {
       slug: c.slug,
       nome: c.name,
       descricao: c.description,
+      textoLongo: c.longDescription,
       subcategorias: c.subcategories.map((s) => ({ slug: s.slug, nome: s.name })),
       totalDeProdutos: c._count.products,
     }));

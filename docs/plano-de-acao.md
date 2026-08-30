@@ -4,7 +4,7 @@ Documento vivo. É atualizado a cada commit de etapa concluída.
 
 **Legenda:** ✅ concluída · 🔵 em andamento · ⬜ pendente · ⏸️ bloqueada
 
-Última atualização: 2026-08-30 — Etapa 7 concluída (feita antes da 6, a pedido do Bruno)
+Última atualização: 2026-08-30 — Etapa 6 concluída
 
 ---
 
@@ -171,11 +171,22 @@ verdade — hub com conteúdo indexável, filtros e SEO.
 **Você vai ver:** http://localhost:3000/produtos/bolsa-serra — escolha as opções e
 clique no botão; a mensagem chega pronta no seu WhatsApp.
 
-### ⬜ Etapa 6 — Catálogo e hub de bolsas *(próxima)*
-Grid do catálogo com filtro por categoria, subcategoria, cor e coleção.
-Página `/bolsas` como landing de verdade — conteúdo próprio, subtipos em destaque,
-texto indexável (alvo: "bolsa de crochê", "bolsa de fio de malha").
-**Você vai ver:** navegação completa do catálogo e a hub de bolsas.
+### ✅ Etapa 6 — Catálogo e hub de bolsas
+`/bolsas` virou landing de verdade: cabeçalho em seção verde, os tipos como cards,
+a grade filtrável e o texto longo indexável no fim. `/catalogo` reúne todas as
+peças com filtro por categoria e cor. `/bolsas/[tipo]` e `/categorias/[slug]`
+ganharam trilha, contagem e o mesmo filtro.
+
+**O filtro mora na URL, não em estado de componente** — sobrevive ao recarregar,
+volta certo no botão de voltar, e a Raquel consegue mandar para a cliente um link
+já filtrado ("olha as bolsas em terracota").
+
+`Category.longDescription` foi ao banco para a Raquel poder editar o texto do hub
+no admin, em vez de ele ficar preso no código. Renderizado por um markdown mínimo
+próprio (parágrafo, `## `, `**negrito**`) — biblioteca de markdown abriria porta
+para HTML arbitrário vindo do banco.
+
+**Você vai ver:** http://localhost:3000/bolsas e http://localhost:3000/catalogo
 
 ### ✅ Etapa 7 — Home *(feita antes da 6, a pedido do Bruno)*
 Hero em seção verde com a máscara em arco, título e subtítulo vindos das
