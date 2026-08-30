@@ -4,7 +4,7 @@ Documento vivo. É atualizado a cada commit de etapa concluída.
 
 **Legenda:** ✅ concluída · 🔵 em andamento · ⬜ pendente · ⏸️ bloqueada
 
-Última atualização: 2026-08-30 — Etapa 1 concluída (identidade + logotipo)
+Última atualização: 2026-08-30 — Etapa 1 concluída (identidade, logotipo e espaçamento)
 
 ---
 
@@ -67,6 +67,20 @@ gerados a partir do mesmo traçado.
 inclui card de produto e seção invertida, que eram da Etapa 4 — a Etapa 4 fica menor.
 O laço foi desenhado direto em SVG e validado renderizando a 32px e 16px; as três
 primeiras tentativas liam como pingente ou letra grega e foram descartadas.
+
+**Sistema de espaçamento e hierarquia** (adicionado depois da crítica do Bruno, que
+apontou falta de padrão de espaços e de hierarquia): `docs/sistema-de-espacamento.md`.
+Unidade base 4px com grade de trabalho 8px, escala de 15 degraus, a **escada de quatro
+patamares** (Contato / Agrupamento / Bloco / Respiro) que diz qual patamar usar antes
+de escolher o degrau, a **regra do 2:1** no ritmo vertical, e **onze níveis de
+hierarquia** com família, tamanho, cor, espaço acima e abaixo. Tokens integrados no
+`globals.css` (espaçamento fluido com `clamp()`, classes `.container-site`, `.secao`,
+`.grade-catalogo`, `.pilha`) e escala tipográfica agora responsiva.
+
+A regra é executável: `pnpm check:espaco` reprova degrau fora da escala e valor
+arbitrário de espaçamento. O `/estilo` foi refatorado pela auditoria do documento —
+21 valores distintos viraram 11 degraus + 9 tokens, e caíram a zero os arbitrários, os
+degraus fracionários e as violações da regra tipográfica.
 
 *Pendência do logotipo:* a direção pede que o laço nasça do prolongamento do terminal
 do `ê` de "crochê". Isso exige lettering customizado (desenhar o contorno da letra),

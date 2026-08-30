@@ -68,23 +68,23 @@
   --text-leitura: 1.125rem;
   --text-leitura--line-height: 1.7;
 
-  --text-lead: 1.375rem;
+  --text-lead: clamp(1.25rem, 0.5vw + 1.125rem, 1.375rem);
   --text-lead--line-height: 1.45;
   --text-lead--letter-spacing: -0.005em;
 
-  --text-t3: 1.75rem;
+  --text-t3: clamp(1.5rem, 1vw + 1.125rem, 1.75rem);
   --text-t3--line-height: 1.25;
   --text-t3--letter-spacing: -0.01em;
 
-  --text-t2: 2.25rem;
+  --text-t2: clamp(1.75rem, 1.5vw + 1.25rem, 2.25rem);
   --text-t2--line-height: 1.15;
   --text-t2--letter-spacing: -0.015em;
 
-  --text-t1: 3rem;
+  --text-t1: clamp(2.125rem, 2.5vw + 1.5rem, 3rem);
   --text-t1--line-height: 1.08;
   --text-t1--letter-spacing: -0.02em;
 
-  --text-display: 4.25rem;
+  --text-display: clamp(2.5rem, 8vw, 4.25rem);
   --text-display--line-height: 1;
   --text-display--letter-spacing: -0.025em;
 
@@ -105,6 +105,53 @@
   /* namespace --container-* => utilitários max-w-medida / max-w-texto no v4 */
   --container-medida: 72rem;   /* largura máx. do container do site */
   --container-texto:  38rem;   /* ~62ch em text-leitura */
+}
+
+@theme {
+  /* ==================== ESPAÇAMENTO ====================
+     --spacing continua 0.25rem (padrão do v4). p-4 = 16px.
+     Ver §8.2 para a decisão e a consequência. */
+
+  /* ---- Layout: fluidos (clamp) ---- */
+  --spacing-borda-pagina:  clamp(1.25rem, 4vw, 2rem);            /*  20 →  32 */
+  --spacing-pagina-topo:   clamp(3rem, 4vw + 1rem, 5rem);        /*  48 →  80 */
+  --spacing-secao:         clamp(3.5rem, 4vw + 2rem, 6rem);      /*  56 →  96 */
+  --spacing-secao-densa:   clamp(2.5rem, 3vw + 1.25rem, 4rem);   /*  40 →  64 */
+  --spacing-secao-ampla:   clamp(4.5rem, 6vw + 1.5rem, 7.5rem);  /*  72 → 120 */
+  --spacing-painel:        clamp(1.25rem, 2vw + 0.5rem, 2rem);   /*  20 →  32 */
+  --spacing-grade-col:     clamp(1rem, 1.5vw + 0.25rem, 1.5rem); /*  16 →  24 */
+  --spacing-grade-linha:   clamp(2rem, 2vw + 1rem, 2.5rem);      /*  32 →  40 */
+
+  /* ---- Ritmo vertical: fixos ---- */
+  --spacing-bloco:    2rem;   /* 32 — título → conteúdo do bloco   */
+  --spacing-titulo:   3rem;   /* 48 — acima de um h2 não-primeiro   */
+  --spacing-respiro:  4rem;   /* 64 — acima de um h1 não-primeiro   */
+  --spacing-coluna:   3rem;   /* 48 — gap-x entre colunas grandes   */
+
+  /* ---- Componentes: fixos ---- */
+  --spacing-card:       0.75rem;   /* 12 — padding do card de produto */
+  --spacing-btn-y:      0.875rem;  /* 14 — identidade 7.3 */
+  --spacing-btn-x:      1.75rem;   /* 28 — identidade 7.3 */
+  --spacing-btn-icone:  0.625rem;  /* 10 — identidade 7.3 */
+  --spacing-btn-sm-y:   0.5rem;    /*  8 */
+  --spacing-btn-sm-x:   1rem;      /* 16 */
+  --spacing-btn-lg-y:   1.125rem;  /* 18 */
+  --spacing-btn-lg-x:   2.25rem;   /* 36 */
+  --spacing-campo-y:    0.875rem;  /* 14 */
+  --spacing-campo-x:    1rem;      /* 16 */
+  --spacing-chip-y:     0.5rem;    /*  8 */
+  --spacing-chip-x:     0.75rem;   /* 12 */
+
+  /* ---- Alturas de controle e de cromo ---- */
+  --spacing-controle:     3.375rem; /* 54 — botão md e campo, alinhados */
+  --spacing-controle-sm:  2.25rem;  /* 36 — botão sm, seletor de cor */
+  --spacing-cabecalho:    4rem;     /* 64 — cabeçalho mobile, barra sticky */
+  --spacing-cabecalho-lg: 5rem;     /* 80 — cabeçalho desktop */
+  --spacing-zap-flutua:   3.5rem;   /* 56 — botão flutuante (identidade 7.3) */
+
+  /* ==================== GRADE E PROPORÇÃO ==================== */
+  --aspect-peca: 4 / 5;             /* foto de produto — identidade 5.4 */
+  --container-produto: 60rem;       /* 960 — coluna dupla da página de produto */
 }
 
 /* ---------- Base ---------- */
@@ -162,6 +209,36 @@
       repeating-linear-gradient( 45deg, rgba(244,238,226,.05) 0 1px, transparent 1px 6px),
       repeating-linear-gradient(-45deg, rgba(244,238,226,.05) 0 1px, transparent 1px 6px);
   }
+}
+
+@layer components {
+  /* Container do site — o gutter mora aqui, nunca na seção */
+  .container-site {
+    width: 100%;
+    margin-inline: auto;
+    max-width: var(--container-medida);
+    padding-inline: var(--spacing-borda-pagina);
+  }
+  .container-site--texto   { max-width: var(--container-texto); }
+  .container-site--produto { max-width: var(--container-produto); }
+
+  /* Seções. Modificadores DEPOIS da base: mesma especificidade, vence a ordem. */
+  .secao         { padding-block: var(--spacing-secao); }
+  .secao--densa  { padding-block: var(--spacing-secao-densa); }
+  .secao--ampla  { padding-block: var(--spacing-secao-ampla); }
+
+  /* Grade do catálogo — 2 / 3 / 4, row-gap sempre maior que column-gap */
+  .grade-catalogo {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--spacing-grade-col);
+    row-gap: var(--spacing-grade-linha);
+  }
+  @media (width >= 48rem) { .grade-catalogo { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (width >= 64rem) { .grade-catalogo { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+  /* Pilha de blocos dentro de uma seção */
+  .pilha > * + * { margin-block-start: var(--spacing-bloco); }
 }
 
 /* grão de papel global */
