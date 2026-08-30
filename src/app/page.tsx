@@ -13,10 +13,18 @@ export default function Home() {
           encomenda.
         </p>
         <div className="corrente mt-10" aria-hidden="true" />
-        <p className="mt-10 text-apoio text-conteudo-suave">
-          Site em construção.{" "}
+        <p className="mt-respiro">
+          <Link
+            href="/bolsas"
+            className="inline-flex items-center justify-center rounded-fio bg-primaria px-btn-x py-btn-y font-medium text-sobre-primaria transition-colors hover:bg-primaria-hover"
+          >
+            Ver as bolsas
+          </Link>
+        </p>
+        <p className="mt-bloco text-apoio text-conteudo-suave">
+          Home completa na etapa 7.{" "}
           <Link href="/estilo" className="text-destaque-texto underline underline-offset-4">
-            Ver a amostra da identidade visual
+            Ver a amostra da identidade
           </Link>
         </p>
       </div>

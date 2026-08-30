@@ -11,7 +11,9 @@ export async function Rodape() {
 
   return (
     <footer className="trama mt-auto bg-verde-musgo text-inv-conteudo">
-      <div className="container-site secao">
+      {/* pb extra no mobile: a página de produto tem barra fixa de WhatsApp no
+          rodapé da viewport, e sem esta folga ela cobre a linha de copyright. */}
+      <div className="container-site secao pb-barra-fixa sm:pb-0">
         <div className="flex flex-wrap justify-between gap-y-10 gap-x-coluna">
           <div className="max-w-texto">
             <Logo className="text-t3" />

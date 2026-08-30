@@ -148,6 +148,11 @@
   --spacing-cabecalho:    4rem;     /* 64 — cabeçalho mobile, barra sticky */
   --spacing-cabecalho-lg: 5rem;     /* 80 — cabeçalho desktop */
   --spacing-zap-flutua:   3.5rem;   /* 56 — botão flutuante (identidade 7.3) */
+  /* 112 — folga no fim da página no mobile, para a barra fixa de WhatsApp da
+     página de produto não cobrir o rodapé. A barra mede 87px (botão de 54 +
+     p-4 nos dois lados + borda); a 96 sobravam 9px, apertado demais para
+     aguentar variação de fonte entre aparelhos. */
+  --spacing-barra-fixa:   7rem;
 
   /* ==================== GRADE E PROPORÇÃO ==================== */
   --aspect-peca: 4 / 5;             /* foto de produto — identidade 5.4 */

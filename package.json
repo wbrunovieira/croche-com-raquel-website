@@ -13,7 +13,8 @@
     "db:studio": "prisma studio",
     "db:seed": "prisma db seed",
     "db:resumo": "tsx scripts/db-resumo.ts",
-    "check:whatsapp": "tsx scripts/verifica-whatsapp.ts"
+    "check:whatsapp": "tsx scripts/verifica-whatsapp.ts",
+    "check:produto": "node scripts/verifica-pagina-produto.mjs"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.10.0",
@@ -33,6 +34,7 @@
     "dotenv-cli": "11.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.3",
+    "playwright": "1.62.1",
     "prisma": "7.10.0",
     "tailwindcss": "^4",
     "tsx": "4.23.12",

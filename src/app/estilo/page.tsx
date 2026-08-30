@@ -11,8 +11,6 @@ import { GradeDeProdutos } from "@/components/produto/card-de-produto";
 import { buscarProdutoPorSlug, listarDestaques } from "@/lib/queries/produtos";
 import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
 import { DemoCadastroDeCor, DemoInterativa } from "./demo-interativa";
-import { Cabecalho } from "@/components/site/cabecalho";
-import { Rodape } from "@/components/site/rodape";
 
 export const metadata: Metadata = {
   title: "Amostra da identidade",
@@ -453,15 +451,6 @@ export default async function EstiloPage() {
         <DemoCadastroDeCor />
       </Secao>
 
-      <Secao
-        titulo="Cabeçalho e rodapé"
-        descricao="Prontos, mas ainda fora do layout do site: os links apontam para /bolsas e /categorias, que só existem na etapa 6. Ligar agora daria 404."
-      >
-        <div className="overflow-hidden rounded-card border border-borda">
-          <Cabecalho />
-          <Rodape />
-        </div>
-      </Secao>
     </main>
   );
 }

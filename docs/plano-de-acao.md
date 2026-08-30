@@ -4,7 +4,7 @@ Documento vivo. É atualizado a cada commit de etapa concluída.
 
 **Legenda:** ✅ concluída · 🔵 em andamento · ⬜ pendente · ⏸️ bloqueada
 
-Última atualização: 2026-08-30 — Etapas 3 e 4 concluídas
+Última atualização: 2026-08-30 — Etapa 5 concluída
 
 ---
 
@@ -140,13 +140,30 @@ os links apontam para `/bolsas` e `/categorias`, que só existem na etapa 6.
 
 **Você vai ver:** a rota `/estilo` com todos os componentes em seus estados.
 
-### ⬜ Etapa 5 — Página de produto ⭐ *o coração do projeto*
+### ✅ Etapa 5 — Página de produto ⭐ *o coração do projeto*
 Galeria com zoom, descrição, medidas, prazo de produção, preço (ou "sob consulta"),
 seletores de opção, quantidade, capacidade em linguagem real, cuidados,
 peças relacionadas, compartilhar, e o **botão de WhatsApp sticky no mobile** que
 monta a mensagem com todas as escolhas + link da página.
-**Você vai ver:** uma página de produto real, e você mesmo pode clicar no botão e
-conferir a mensagem que chega no WhatsApp.
+Entregue: `/produtos/[slug]` com trilha, galeria com ampliação, preço (ou "sob
+consulta"), prazo, descrição, capacidade, seletores, quantidade, personalização,
+ficha da peça, cuidados, compartilhar e "combina com". Todas as 8 peças do seed
+são geradas estaticamente, com metadados e canônica por página.
+
+O botão de WhatsApp fica desabilitado enquanto falta escolha obrigatória e diz o
+que falta. No mobile ele também vira barra fixa no rodapé da viewport.
+
+**Além do planejado:** `pnpm check:produto` abre a página num navegador de
+verdade, escolhe as opções e confere o link que sai — é a verificação do caminho
+de conversão, que é a funcionalidade central do site.
+
+*Adiantado da etapa 6:* `/bolsas`, `/bolsas/[tipo]` e `/categorias/[slug]` em
+versão mínima, e o cabeçalho e o rodapé ligados ao layout. Sem isso a navegação
+da página de produto daria 404 na revisão. A etapa 6 constrói essas páginas de
+verdade — hub com conteúdo indexável, filtros e SEO.
+
+**Você vai ver:** http://localhost:3000/produtos/bolsa-serra — escolha as opções e
+clique no botão; a mensagem chega pronta no seu WhatsApp.
 
 ### ⬜ Etapa 6 — Catálogo e hub de bolsas
 Grid do catálogo com filtro por categoria, subcategoria, cor e coleção.

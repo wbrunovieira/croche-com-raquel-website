@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { fraunces, karla } from "./fonts";
+import { Cabecalho } from "@/components/site/cabecalho";
+import { Rodape } from "@/components/site/rodape";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,7 +19,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="pt-BR"
       className={`${fraunces.variable} ${karla.variable} h-full`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <Cabecalho />
+        {children}
+        <Rodape />
+      </body>
     </html>
   );
 }
