@@ -4,7 +4,7 @@ Documento vivo. É atualizado a cada commit de etapa concluída.
 
 **Legenda:** ✅ concluída · 🔵 em andamento · ⬜ pendente · ⏸️ bloqueada
 
-Última atualização: 2026-08-30 — Etapa 5 concluída
+Última atualização: 2026-08-30 — Etapa 5 concluída + cabeçalho animado
 
 ---
 
@@ -135,8 +135,14 @@ de desabilitar.
 O `/estilo` agora puxa dados reais do banco e tem uma amostra viva dos controles da
 página de produto, com a mensagem de WhatsApp montada de verdade ao lado.
 
-*Fora do layout por enquanto:* cabeçalho e rodapé estão prontos mas não ligados —
-os links apontam para `/bolsas` e `/categorias`, que só existem na etapa 6.
+**Cabeçalho refeito** (a pedido do Bruno, depois da etapa 5): Motion 13 e Lucide.
+Barra de aviso animada e dispensável, cabeçalho fixo que encolhe ao rolar e ganha
+fundo com blur, menu suspenso de bolsas com contagem por tipo, indicador de rota
+ativa que desliza entre os itens (`layoutId`), e gaveta de tela cheia no mobile com
+entrada escalonada. Tudo respeita `prefers-reduced-motion`.
+
+Os ícones de marca saíram do Lucide, então o glifo do Instagram é desenhado à mão,
+como o do WhatsApp.
 
 **Você vai ver:** a rota `/estilo` com todos os componentes em seus estados.
 
