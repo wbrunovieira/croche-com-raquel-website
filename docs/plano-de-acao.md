@@ -4,7 +4,7 @@ Documento vivo. É atualizado a cada commit de etapa concluída.
 
 **Legenda:** ✅ concluída · 🔵 em andamento · ⬜ pendente · ⏸️ bloqueada
 
-Última atualização: 2026-08-30 — Etapa 9 concluída
+Última atualização: 2026-08-30 — Etapa 10 concluída
 
 ---
 
@@ -241,15 +241,34 @@ nunca vai na linha de comando, onde ficaria no histórico do shell.
 **Você vai ver:** http://localhost:3000/admin — e `pnpm check:login` exercita o
 fluxo inteiro num navegador, criando e apagando a própria usuária de teste.
 
-### ⬜ Etapa 10 — Painel administrativo
+### ✅ Etapa 10 — Painel administrativo
 CRUD de produtos (rascunho/publicado, ordenação), categorias e subcategorias,
 grupos de opções e valores (com hex da cor), upload e reordenação de imagens no
 Vercel Blob, depoimentos, e configurações globais (número do WhatsApp, template da
 mensagem, textos da home, banner de aviso).
 Prioridade: **usabilidade para uma pessoa não técnica** — formulário único,
 upload por arrastar, preview do resultado.
-**Você vai ver:** o painel completo — cadastre um produto de ponta a ponta e ele
-aparece no site.
+Oito telas: início (com aviso de peça sem foto), peças, cores e opções,
+categorias, textos do site, perguntas, depoimentos e configurações.
+
+Decisões que valem registro:
+- **Peça nova nasce rascunho** e **não publica sem foto** — o painel recusa e diz
+  por quê. Peça sem foto vira um espaço vazio no site.
+- **Foto sobe na hora de escolher**, não ao salvar o formulário: guardar o
+  arquivo até o submit faria ela perder o envio se o resto do formulário
+  falhasse. Apagar a peça apaga as fotos do Blob junto.
+- **Apagar um valor de opção é bloqueado quando ele está em uso** — a mensagem
+  manda desligar, que é o que ela quer em 99% dos casos.
+- **O modelo da mensagem do WhatsApp exige `{produto}` e `{link}`**: sem eles a
+  Raquel recebe as escolhas sem saber de qual peça são.
+- Toda ação chama `exigirSessao()` antes de escrever: o proxy protege a rota, mas
+  uma ação de servidor pode ser chamada direto.
+- **A revalidação foi resolvida** (pendência da etapa 3): salvar no painel
+  atualiza o site.
+
+**Você vai ver:** `pnpm admin:criar "Seu Nome" seu@email.com`, depois
+http://localhost:3000/admin. E `pnpm check:painel` cadastra uma peça de ponta a
+ponta — com foto de verdade no Blob — e limpa tudo no fim.
 
 ### ⬜ Etapa 11 — SEO e metadados
 Metadata por rota, Open Graph, `sitemap.xml`, `robots.txt`, JSON-LD

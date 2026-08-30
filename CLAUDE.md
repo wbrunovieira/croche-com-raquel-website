@@ -41,7 +41,9 @@ permissão para commitar. Push para o remoto: só quando ele pedir.
 
 Antes de fechar uma etapa: `pnpm build`, `pnpm lint`, `pnpm check:espaco`,
 `pnpm check:whatsapp`. Os dois que precisam do `pnpm dev` de pé:
-`pnpm check:produto` (caminho de conversão) e `pnpm check:login` (acesso ao painel).
+`pnpm check:produto` (caminho de conversão), `pnpm check:login` (acesso ao painel) e
+`pnpm check:painel` (cadastro de peça de ponta a ponta; aceita `FOTO_DE_TESTE=<caminho>`
+para exercitar também o envio ao Blob).
 
 Depois de `pnpm db:migrate`, **reinicie o `pnpm dev`** — ele guarda o cliente Prisma
 antigo em memória e a rota quebra com "Unknown field".
