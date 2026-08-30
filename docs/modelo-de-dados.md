@@ -107,6 +107,11 @@ do libpq, que não verifica o certificado. Fixar agora evita a regressão silenc
   vindo do banco.
 - **`Subcategory`** só é usada por bolsas. As outras categorias ficam planas, e
   `subcategoryId` fica nulo.
+- **`Page`** guarda as páginas de texto (Sobre, Cuidados, políticas). É modelo
+  próprio, e não campos soltos em `SiteSettings`, para a Raquel poder criar uma
+  página nova sem depender de migration.
+- **`FaqItem`** é par pergunta/resposta, e não texto corrido, porque é esse formato
+  que alimenta o `schema.org/FAQPage` — e é o que o buscador sabe ler.
 - **`SiteSettings`** é uma linha só, de id fixo `singleton`. Guarda o número do
   WhatsApp, o template da mensagem e os textos da home — tudo editável no admin, nada
   hard-coded no código.

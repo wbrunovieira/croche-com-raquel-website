@@ -2,7 +2,12 @@
  * Confere a montagem da mensagem de WhatsApp nos casos que importam.
  * Roda com `pnpm check:whatsapp`. Sem banco: a função é pura.
  */
-import { codigoDoProduto, montarLinkWhatsApp, montarMensagem } from "../src/lib/whatsapp";
+import {
+  codigoDoProduto,
+  montarLinkWhatsApp,
+  montarMensagem,
+  montarMensagemDeEncomenda,
+} from "../src/lib/whatsapp";
 
 const TEMPLATE =
   "Oi Raquel! Vi no site e me interessei 💛\n\n*{produto}* ({codigo})\n{opcoes}\nQuantidade: {quantidade}\n\n{link}";
@@ -70,6 +75,18 @@ conferir(
   "o texto escapado volta ao original",
   decodeURIComponent(new URL(link).searchParams.get("text") ?? ""),
   "Oi Raquel! 💛 & tal"
+);
+
+conferir(
+  "encomenda: só entra o que foi preenchido",
+  montarMensagemDeEncomenda({
+    tipoDePeca: "Bolsa transversal",
+    cores: "Terracota",
+    medidas: "",
+    prazo: "Até o Natal",
+    detalhes: "   ",
+  }),
+  "Oi Raquel! Queria encomendar uma peça sob medida 💛\n\nPeça: Bolsa transversal\nCores: Terracota\nPara quando: Até o Natal"
 );
 
 console.log(falhas === 0 ? "\n✓ mensagem de WhatsApp ok" : `\n✗ ${falhas} falha(s)`);

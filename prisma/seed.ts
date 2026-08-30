@@ -2,6 +2,7 @@ import { config as carregarEnv } from "dotenv";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { urlComSslVerificado } from "../src/lib/db-url";
+import { PAGINAS, PERGUNTAS } from "./conteudo";
 
 carregarEnv({ path: ".env.local", quiet: true });
 
@@ -373,13 +374,41 @@ async function main() {
     }
   }
 
+  for (const pagina of PAGINAS) {
+    const dados = {
+      title: pagina.title,
+      lead: pagina.lead,
+      content: pagina.content,
+      seoDescription: pagina.seoDescription,
+      published: true,
+    };
+    await db.page.upsert({
+      where: { slug: pagina.slug },
+      update: dados,
+      create: { slug: pagina.slug, ...dados },
+    });
+  }
+
+  // As perguntas não têm slug natural, então a pergunta em si é a chave: assim
+  // reordenar ou reescrever a resposta não cria duplicata.
+  for (const [i, p] of PERGUNTAS.entries()) {
+    const existente = await db.faqItem.findFirst({ where: { question: p.question } });
+    const dados = { answer: p.answer, topic: p.topic, position: i, published: true };
+    if (existente) {
+      await db.faqItem.update({ where: { id: existente.id }, data: dados });
+    } else {
+      await db.faqItem.create({ data: { question: p.question, ...dados } });
+    }
+  }
+
   const [cat, sub, prod, grp, val] = await Promise.all([
     db.category.count(), db.subcategory.count(), db.product.count(),
     db.optionGroup.count(), db.optionValue.count(),
   ]);
+  const [pag, faq] = await Promise.all([db.page.count(), db.faqItem.count()]);
   console.log(
     `Seed: ${cat} categorias, ${sub} subcategorias de bolsa, ${prod} produtos, ` +
-    `${grp} grupos de opção com ${val} valores.`
+    `${grp} grupos de opção com ${val} valores, ${pag} páginas e ${faq} perguntas.`
   );
 }
 

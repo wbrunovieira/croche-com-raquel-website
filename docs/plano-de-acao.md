@@ -4,7 +4,7 @@ Documento vivo. É atualizado a cada commit de etapa concluída.
 
 **Legenda:** ✅ concluída · 🔵 em andamento · ⬜ pendente · ⏸️ bloqueada
 
-Última atualização: 2026-08-30 — Etapa 6 concluída
+Última atualização: 2026-08-30 — Etapa 8 concluída
 
 ---
 
@@ -202,10 +202,22 @@ Instagram. Entram quando houver conteúdo.
 
 **Você vai ver:** http://localhost:3000/
 
-### ⬜ Etapa 8 — Páginas institucionais
-Sobre a Raquel · Encomendas sob medida (briefing que também cai no WhatsApp) ·
-FAQ · Cuidados com as peças · Contato · políticas.
-**Você vai ver:** o site institucional inteiro navegável.
+### ✅ Etapa 8 — Páginas institucionais
+`/sobre`, `/cuidados`, `/perguntas-frequentes`, `/encomendas`, `/contato` e
+`/politicas/[slug]` (trocas e privacidade). Rodapé refeito em quatro colunas.
+
+Dois modelos novos: **`Page`** (para ela criar página nova sem migration) e
+**`FaqItem`** (par pergunta/resposta, formato que alimenta o `FAQPage` da etapa 11).
+Todo o texto institucional está no banco, editável — o ponto de partida vive em
+`prisma/conteudo.ts`.
+
+O **briefing de encomenda não grava nada**: monta a mensagem e abre o WhatsApp.
+Nenhum campo é obrigatório, e campo em branco não vira linha vazia na mensagem.
+
+O FAQ usa `<details>`: **a resposta fica no HTML mesmo com o item fechado** — que
+é o que o buscador precisa ler — e funciona sem JavaScript.
+
+**Você vai ver:** o site institucional inteiro navegável, pelo rodapé.
 
 ### ⬜ Etapa 9 — Autenticação do admin
 Auth.js com credenciais, senha com hash, sessão em cookie, rota protegida,

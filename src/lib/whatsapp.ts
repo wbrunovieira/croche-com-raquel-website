@@ -73,3 +73,41 @@ export function montarLinkWhatsApp(numero: string, mensagem: string): string {
   const digitos = numero.replace(/\D/g, "");
   return `https://wa.me/${digitos}?text=${encodeURIComponent(mensagem)}`;
 }
+
+export type BriefingDeEncomenda = {
+  tipoDePeca: string;
+  cores: string;
+  medidas: string;
+  prazo: string;
+  detalhes: string;
+};
+
+const ROTULOS: { chave: keyof BriefingDeEncomenda; rotulo: string }[] = [
+  { chave: "tipoDePeca", rotulo: "Peça" },
+  { chave: "cores", rotulo: "Cores" },
+  { chave: "medidas", rotulo: "Medidas" },
+  { chave: "prazo", rotulo: "Para quando" },
+  { chave: "detalhes", rotulo: "Detalhes" },
+];
+
+/**
+ * Mensagem da encomenda sob medida.
+ *
+ * Só entra no texto o campo que a pessoa preencheu: um briefing cheio de
+ * "Medidas: (não informado)" é pior que um briefing curto, porque dá à Raquel
+ * a impressão de que a pessoa respondeu quando ela não respondeu.
+ */
+export function montarMensagemDeEncomenda(b: BriefingDeEncomenda): string {
+  const linhas = ROTULOS.map(({ chave, rotulo }) => {
+    const valor = b[chave].trim();
+    return valor === "" ? null : `${rotulo}: ${valor}`;
+  }).filter((l): l is string => l !== null);
+
+  return [
+    "Oi Raquel! Queria encomendar uma peça sob medida 💛",
+    "",
+    ...linhas,
+  ]
+    .join("\n")
+    .trim();
+}

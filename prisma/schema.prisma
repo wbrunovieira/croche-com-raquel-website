@@ -273,6 +273,45 @@ model Testimonial {
   @@index([published, position])
 }
 
+/// Página institucional de texto — Sobre, Cuidados, políticas.
+///
+/// Vira um modelo próprio em vez de campos soltos em SiteSettings porque a
+/// Raquel precisa poder criar uma página nova (uma política, um aviso) sem
+/// depender de migration.
+model Page {
+  id      String  @id @default(cuid())
+  slug    String  @unique
+  title   String
+  /// Frase de apoio abaixo do título.
+  lead    String?
+  /// Corpo em markdown mínimo: parágrafo, `## ` e `**negrito**`.
+  content String
+  /// Meta description. Sem ela, o começo do corpo é usado.
+  seoDescription String?
+  published Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Pergunta frequente. Modelo próprio, e não uma Page de texto corrido, porque
+/// o par pergunta/resposta é o que alimenta o schema.org FAQPage na etapa 11 —
+/// e é o formato que o buscador sabe ler.
+model FaqItem {
+  id        String  @id @default(cuid())
+  question  String
+  answer    String
+  /// Agrupa na tela: "Encomenda", "Envio", "Cuidados".
+  topic     String?
+  position  Int     @default(0)
+  published Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([published, position])
+}
+
 /// Linha única de configuração do site, editável no admin.
 model SiteSettings {
   id String @id @default("singleton")
