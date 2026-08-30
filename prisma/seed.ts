@@ -32,7 +32,16 @@ const SUBCATEGORIAS_BOLSA = [
   { slug: "necessaire", name: "Necessaire", position: 6 },
 ];
 
-type ValorOpcao = { slug: string; name: string; hex?: string };
+type ValorOpcao = {
+  slug: string;
+  name: string;
+  hex?: string;
+  /// Linha e código do fio. ATENÇÃO: os valores abaixo são ILUSTRATIVOS —
+  /// servem para a gente ver a tela de pé. A Raquel substitui pelos fios que
+  /// ela realmente compra, olhando a etiqueta.
+  yarnLine?: string;
+  yarnColorCode?: string;
+};
 type GrupoOpcao = {
   slug: string;
   name: string;
@@ -45,15 +54,15 @@ const GRUPOS: GrupoOpcao[] = [
   {
     slug: "cor", name: "Cor", type: "SINGLE", position: 0,
     values: [
-      { slug: "cru", name: "Cru", hex: "#E8DCC8" },
-      { slug: "off-white", name: "Off-white", hex: "#F2EDE4" },
-      { slug: "caramelo", name: "Caramelo", hex: "#B07A4A" },
-      { slug: "terracota", name: "Terracota", hex: "#B05A3C" },
-      { slug: "verde-musgo", name: "Verde Musgo", hex: "#5A6B4A" },
-      { slug: "rosa-antigo", name: "Rosa Antigo", hex: "#C992A0" },
-      { slug: "mostarda", name: "Mostarda", hex: "#C9A227" },
-      { slug: "azul-jeans", name: "Azul Jeans", hex: "#54708C" },
-      { slug: "preto", name: "Preto", hex: "#2B2B2B" },
+      { slug: "cru", name: "Cru", hex: "#E8DCC8", yarnLine: "Barroco Maxcolor 400g", yarnColorCode: "0020" },
+      { slug: "off-white", name: "Off-white", hex: "#F2EDE4", yarnLine: "Barroco Maxcolor 400g", yarnColorCode: "8001" },
+      { slug: "caramelo", name: "Caramelo", hex: "#B07A4A", yarnLine: "Barroco Maxcolor 400g", yarnColorCode: "7625" },
+      { slug: "terracota", name: "Terracota", hex: "#B05A3C", yarnLine: "Barroco Maxcolor 400g", yarnColorCode: "7684" },
+      { slug: "verde-musgo", name: "Verde Musgo", hex: "#5A6B4A", yarnLine: "Barroco Maxcolor 400g", yarnColorCode: "5364" },
+      { slug: "rosa-antigo", name: "Rosa Antigo", hex: "#C992A0", yarnLine: "Barroco Maxcolor 400g", yarnColorCode: "3526" },
+      { slug: "mostarda", name: "Mostarda", hex: "#C9A227", yarnLine: "Barroco Maxcolor 400g", yarnColorCode: "7334" },
+      { slug: "azul-jeans", name: "Azul Jeans", hex: "#54708C", yarnLine: "Barroco Maxcolor 400g", yarnColorCode: "2012" },
+      { slug: "preto", name: "Preto", hex: "#2B2B2B", yarnLine: "Barroco Maxcolor 400g", yarnColorCode: "8990" },
     ],
   },
   {
@@ -212,8 +221,7 @@ async function main() {
     update: {},
     create: {
       id: "singleton",
-      // TODO: trocar pelo número real da Raquel antes de publicar.
-      whatsappNumber: "5524999999999",
+      whatsappNumber: "5524992087591",
       whatsappTemplate:
         "Oi Raquel! Vi no site e me interessei 💛\n\n*{produto}* ({codigo})\n{opcoes}\nQuantidade: {quantidade}\n\n{link}",
       instagramUrl: "https://www.instagram.com/croche.comraquel/",
@@ -254,8 +262,22 @@ async function main() {
     for (const [i, v] of g.values.entries()) {
       await db.optionValue.upsert({
         where: { groupId_slug: { groupId: grupo.id, slug: v.slug } },
-        update: { name: v.name, hex: v.hex ?? null, position: i },
-        create: { groupId: grupo.id, slug: v.slug, name: v.name, hex: v.hex ?? null, position: i },
+        update: {
+          name: v.name,
+          hex: v.hex ?? null,
+          yarnLine: v.yarnLine ?? null,
+          yarnColorCode: v.yarnColorCode ?? null,
+          position: i,
+        },
+        create: {
+          groupId: grupo.id,
+          slug: v.slug,
+          name: v.name,
+          hex: v.hex ?? null,
+          yarnLine: v.yarnLine ?? null,
+          yarnColorCode: v.yarnColorCode ?? null,
+          position: i,
+        },
       });
     }
   }

@@ -39,6 +39,30 @@ O grupo tem `type`: `SINGLE` (uma opção), `MULTIPLE` (várias) ou `TEXT` (o cl
 digita — monograma, nome bordado). Grupo de tipo `TEXT` não tem valores, e é assim
 mesmo.
 
+#### A cor guarda três coisas, com papéis diferentes
+
+| Campo | Para quê | Quem usa |
+|---|---|---|
+| `hex` | desenhar a bolinha do seletor | o site |
+| `yarnLine` | "Barroco Maxcolor 400g" | a Raquel, para comprar |
+| `yarnColorCode` | "7684" | a Raquel, para comprar **igual** |
+
+Fio de crochê é vendido por código de cor, e é assim que ela recompra e garante que a
+peça nova sai igual à da foto. **O hex não serve para isso** — a mesma "terracota" muda
+de tom entre linhas. No admin ela escolhe o tom na roda de cores ou cola o código; os
+dois caminhos gravam em `hex`. Linha e código são opcionais, porque nem todo fio que
+ela usa tem etiqueta.
+
+#### Desligar, não apagar
+
+`OptionGroup.active` e `OptionValue.active` tiram do site sem apagar. É o que ela usa
+quando acaba um fio: **a cor some das páginas mas continua ligada aos produtos que já a
+usavam**, e volta inteira quando ela religar. Apagar seria destrutivo — removeria a cor
+de todos os produtos de uma vez, e ela teria que recadastrar peça por peça ao comprar
+de novo.
+
+As consultas do site filtram `active: true`. O admin mostra tudo.
+
 ### 2. Preço é nulo de propósito
 
 `Product.price` é `Decimal?`. **Nulo significa "sob consulta"**, não "preço faltando" —
@@ -83,8 +107,6 @@ do libpq, que não verifica o certificado. Fixar agora evita a regressão silenc
 
 ## Pendências
 
-- **O número de WhatsApp no seed é um placeholder** (`5524999999999`). Precisa do
-  número real da Raquel antes de publicar.
 - Os produtos do seed são exemplos plausíveis para ver as telas de pé. O catálogo real
   entra na etapa 13, junto com as fotos.
 - Ainda não há imagens: `ProductImage` está vazia, e as telas usam o placeholder.

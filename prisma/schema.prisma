@@ -173,6 +173,8 @@ model OptionGroup {
   name     String
   type     OptionType @default(SINGLE)
   position Int        @default(0)
+  /// Desligar esconde o grupo inteiro do site sem apagar nada.
+  active   Boolean    @default(true)
 
   values   OptionValue[]
   products ProductOptionGroup[]
@@ -187,9 +189,26 @@ model OptionValue {
   groupId  String
   slug     String
   name     String
-  /// Só para o grupo de cor — o seletor mostra a bolinha, não o nome.
+  /// Cor em #RRGGBB, só para o grupo de cor — é o que desenha a bolinha no
+  /// seletor. No admin a Raquel escolhe pela roda de cores ou cola o código.
+  /// ATENÇÃO: serve para a tela, NÃO para recomprar o fio — a mesma
+  /// "terracota" muda de tom entre linhas. Quem serve para comprar são os
+  /// dois campos abaixo.
   hex      String?
+
+  /// Linha do fio como vem na etiqueta: "Barroco Maxcolor 400g".
+  yarnLine      String?
+  /// Código da cor no fabricante: "7684". É por ele que a Raquel recompra e
+  /// garante que a peça nova sai igual à da foto. Opcional, porque nem todo
+  /// fio que ela usa tem etiqueta.
+  yarnColorCode String?
+
   position Int     @default(0)
+  /// Desligar tira o valor do site sem apagá-lo. É o que a Raquel usa quando
+  /// acaba um fio: a cor some das páginas, mas continua ligada aos produtos
+  /// que já a usavam e volta inteira quando ela religar. Apagar, não —
+  /// apagar removeria a cor de todos os produtos de uma vez.
+  active   Boolean @default(true)
 
   group    OptionGroup          @relation(fields: [groupId], references: [id], onDelete: Cascade)
   products ProductOptionValue[]

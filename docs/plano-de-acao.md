@@ -4,7 +4,7 @@ Documento vivo. É atualizado a cada commit de etapa concluída.
 
 **Legenda:** ✅ concluída · 🔵 em andamento · ⬜ pendente · ⏸️ bloqueada
 
-Última atualização: 2026-08-30 — Etapa 2 concluída
+Última atualização: 2026-08-30 — Etapas 3 e 4 concluídas
 
 ---
 
@@ -110,17 +110,35 @@ driver `pg` vai enfraquecer o significado de `sslmode=require` na próxima major
 **Você vai ver:** `pnpm db:studio` para navegar nos dados, ou `pnpm db:resumo` para
 o resumo no terminal.
 
-### ⬜ Etapa 3 — Camada de dados
-Cliente Prisma com inicialização segura em build, funções de consulta tipadas
-(produtos por categoria, produto por slug, destaques, configurações do site),
-e tratamento de cache/revalidação.
-**Você vai ver:** nada visual — encerra junto com a Etapa 4.
+### ✅ Etapa 3 — Camada de dados
+`src/lib/queries/` com tipos de domínio serializáveis (nada de `Decimal` ou `Date`
+atravessando para o cliente) e consultas de produto, categoria e configurações.
+Toda consulta do site filtra `status: PUBLISHED` e opção `active: true`.
 
-### ⬜ Etapa 4 — Design system
-Transformar em componentes reais o que hoje é estático em `/estilo`, e acrescentar o
-que falta: seletor de cor, seletor de opção, campo de quantidade, galeria com zoom,
-cabeçalho e rodapé do site.
-**Você vai ver:** a rota `/estilo` atualizada com todos os componentes em seus estados.
+**Além do planejado:** `src/lib/whatsapp.ts`, a montagem da mensagem — o ponto de
+conversão do site. É função pura e tem verificação própria (`pnpm check:whatsapp`),
+que já pegou um bug real: sem opções escolhidas, o marcador `{opcoes}` sumia mas a
+linha dele ficava, mandando uma linha em branco no meio da mensagem.
+
+*Pendência:* o `/estilo` está sendo pré-renderizado estático com os dados do build.
+Quando o admin existir (etapa 10) vai ser preciso revalidar as rotas ao publicar,
+senão a alteração dela não aparece. Fica para as etapas 10 e 11.
+
+### ✅ Etapa 4 — Design system
+`Botao` (5 variantes × 3 tamanhos), `Chip`, `Etiqueta`, `Preco` (que centraliza a
+regra do "sob consulta"), `Foto` (arco para bolsa, raio zero dentro de card,
+placeholder quando não há acervo), `SeletorDeCor`, `SeletorDeOpcao`,
+`CampoQuantidade`, `CampoTexto`, `CardDeProduto`/`GradeDeProdutos`, `Cabecalho` e
+`Rodape`. Mais o `CampoDeCor` do admin: roda de cores, hex, ficha do fio e o botão
+de desabilitar.
+
+O `/estilo` agora puxa dados reais do banco e tem uma amostra viva dos controles da
+página de produto, com a mensagem de WhatsApp montada de verdade ao lado.
+
+*Fora do layout por enquanto:* cabeçalho e rodapé estão prontos mas não ligados —
+os links apontam para `/bolsas` e `/categorias`, que só existem na etapa 6.
+
+**Você vai ver:** a rota `/estilo` com todos os componentes em seus estados.
 
 ### ⬜ Etapa 5 — Página de produto ⭐ *o coração do projeto*
 Galeria com zoom, descrição, medidas, prazo de produção, preço (ou "sob consulta"),

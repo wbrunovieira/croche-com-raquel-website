@@ -2,6 +2,17 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Logo } from "@/components/brand/logo";
 import { Laco } from "@/components/brand/laco";
+import { Botao } from "@/components/ui/botao";
+import { Chip } from "@/components/ui/chip";
+import { Etiqueta } from "@/components/ui/etiqueta";
+import { Foto } from "@/components/ui/foto";
+import { IconeZap } from "@/components/ui/icone-zap";
+import { GradeDeProdutos } from "@/components/produto/card-de-produto";
+import { buscarProdutoPorSlug, listarDestaques } from "@/lib/queries/produtos";
+import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
+import { DemoCadastroDeCor, DemoInterativa } from "./demo-interativa";
+import { Cabecalho } from "@/components/site/cabecalho";
+import { Rodape } from "@/components/site/rodape";
 
 export const metadata: Metadata = {
   title: "Amostra da identidade",
@@ -100,45 +111,13 @@ function Secao({
   );
 }
 
-function Etiqueta({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="font-texto text-etiqueta uppercase text-conteudo-suave">
-      {children}
-    </span>
-  );
-}
+export default async function EstiloPage() {
+  const [produto, destaques, config] = await Promise.all([
+    buscarProdutoPorSlug("bolsa-serra"),
+    listarDestaques(4),
+    buscarConfiguracoes(),
+  ]);
 
-/* Placeholder de foto: o acervo real da Raquel entra na etapa 13. */
-function Foto({
-  arco = false,
-  dentroDeCard = false,
-}: {
-  arco?: boolean;
-  dentroDeCard?: boolean;
-}) {
-  // Raio interno = raio externo − padding. Dentro do card (raio 6, padding 12)
-  // isso dá 0 e a foto fica reta. O arco é a exceção e continua.
-  const forma = arco ? "arco" : dentroDeCard ? "rounded-none" : "rounded-card";
-  return (
-    <div
-      className={`aspect-peca w-full bg-verde-fundo trama grid place-items-center ${forma}`}
-    >
-      <span className="text-inv-suave text-legenda uppercase tracking-[0.12em]">
-        foto {arco ? "de bolsa" : "do produto"}
-      </span>
-    </div>
-  );
-}
-
-function IconeZap({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={className} fill="currentColor">
-      <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm5.8 14.16c-.25.69-1.44 1.32-1.99 1.37-.53.05-1.02.24-3.44-.72-2.89-1.14-4.73-4.1-4.87-4.29-.14-.19-1.16-1.55-1.16-2.96 0-1.4.74-2.09 1-2.38.26-.29.57-.36.76-.36l.55.01c.17.01.41-.07.64.49.25.6.84 2.07.91 2.22.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.14-.3.3-.13.59.17.29.76 1.25 1.63 2.03 1.12.99 2.06 1.3 2.35 1.45.29.15.46.12.63-.07.17-.19.73-.85.92-1.15.19-.29.39-.24.65-.14.26.1 1.66.78 1.94.92.29.14.48.22.55.34.07.12.07.7-.18 1.39Z" />
-    </svg>
-  );
-}
-
-export default function EstiloPage() {
   return (
     <main className="container-site pb-secao">
       <header className="pt-pagina-topo">
@@ -365,13 +344,13 @@ export default function EstiloPage() {
           <div>
             <Etiqueta>arco · só bolsas</Etiqueta>
             <div className="mt-3">
-              <Foto arco />
+              <Foto imagem={null} arco />
             </div>
           </div>
           <div>
             <Etiqueta>card · demais categorias</Etiqueta>
             <div className="mt-3">
-              <Foto />
+              <Foto imagem={null} />
             </div>
           </div>
           <div>
@@ -392,23 +371,26 @@ export default function EstiloPage() {
         descricao="O CTA principal é o verde da marca com o glifo do WhatsApp; o ícone comunica o canal. O verde-médio Zap fica reservado ao flutuante do mobile, único lugar do site com esse tom."
       >
         <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-          <button className="rounded-fio bg-primaria px-btn-x py-btn-y text-sobre-primaria transition-colors hover:bg-primaria-hover inline-flex items-center gap-btn-icone">
+          <Botao variante="primaria">
             <IconeZap className="size-5" />
             Pedir pelo WhatsApp
-          </button>
-          <button className="rounded-fio border border-borda-forte px-btn-x py-btn-y transition-colors hover:bg-superficie-baixa">
-            Ver todas as bolsas
-          </button>
-          <button className="py-2 -my-2 text-destaque-texto underline underline-offset-4">
-            Encomenda sob medida
-          </button>
-          <span className="rounded-fio bg-goiaba-clara px-chip-x py-chip-y text-etiqueta uppercase">
-            Sob encomenda
-          </span>
-          <button className="inline-flex h-zap-flutua items-center gap-btn-icone rounded-pilula bg-zap px-6 text-white shadow-zap transition-colors hover:bg-zap-escuro">
+          </Botao>
+          <Botao variante="secundaria">Ver todas as bolsas</Botao>
+          <Botao variante="texto">Encomenda sob medida</Botao>
+          <Chip>Sob encomenda</Chip>
+          <Botao variante="zap" className="h-zap-flutua px-6">
             <IconeZap className="size-5" />
             Flutuante
-          </button>
+          </Botao>
+          <Botao variante="primaria" disabled>
+            Desabilitado
+          </Botao>
+          <Botao variante="secundaria" tamanho="sm">
+            Pequeno
+          </Botao>
+          <Botao variante="primaria" tamanho="lg">
+            Grande
+          </Botao>
         </div>
       </Secao>
 
@@ -441,32 +423,44 @@ export default function EstiloPage() {
 
       <Secao
         titulo="Card de produto"
-        descricao="Preço é opcional: quando a peça não tem valor fechado, o card mostra “sob consulta” no lugar."
+        descricao="Vindo do banco. Bolsa recebe a máscara em arco; as outras categorias, card reto. Preço nulo aparece como “sob consulta” — nunca como R$ 0,00."
       >
-        <ul className="grade-catalogo">
-          {[
-            { nome: "Bolsa Serra", cat: "Transversal", preco: "R$ 320", bolsa: true },
-            { nome: "Bolsa Cristal", cat: "Tote", preco: null, bolsa: true },
-            { nome: "Jogo Americano Trançado", cat: "Mesa posta", preco: "R$ 45", bolsa: false },
-            { nome: "Manta Petrópolis", cat: "Casa & decoração", preco: null, bolsa: false },
-          ].map((p) => (
-            <li
-              key={p.nome}
-              className="group rounded-card border border-borda bg-superficie p-card"
-            >
-              <Foto arco={p.bolsa} dentroDeCard />
-              <p className="mt-3 text-etiqueta uppercase text-conteudo-suave">{p.cat}</p>
-              <h3 className="mt-1 font-display text-lead leading-tight">{p.nome}</h3>
-              <p className="mt-1 text-apoio">
-                {p.preco ? (
-                  <span className="tabular">{p.preco}</span>
-                ) : (
-                  <span className="text-conteudo-suave">Sob consulta</span>
-                )}
-              </p>
-            </li>
-          ))}
-        </ul>
+        <GradeDeProdutos produtos={destaques} />
+      </Secao>
+
+      <Secao
+        titulo="Controles do produto"
+        descricao="Os seletores da página de produto, ligados a uma peça real do catálogo. A mensagem ao lado é montada de verdade pelo template do admin."
+      >
+        {produto ? (
+          <DemoInterativa
+            grupos={produto.grupos}
+            nomeDoProduto={produto.nome}
+            slugDoProduto={produto.slug}
+            template={config.whatsappTemplate}
+          />
+        ) : (
+          <p className="text-conteudo-suave">
+            Produto de exemplo não encontrado. Rode <code>pnpm db:seed</code>.
+          </p>
+        )}
+      </Secao>
+
+      <Secao
+        titulo="Cadastro de cor (admin)"
+        descricao="Três informações com papéis diferentes: o hex desenha a bolinha no site; a linha e o código do fio são o que a Raquel usa para recomprar. Desabilitar tira a cor do ar sem apagá-la — apagar removeria a cor de todos os produtos que já a usavam."
+      >
+        <DemoCadastroDeCor />
+      </Secao>
+
+      <Secao
+        titulo="Cabeçalho e rodapé"
+        descricao="Prontos, mas ainda fora do layout do site: os links apontam para /bolsas e /categorias, que só existem na etapa 6. Ligar agora daria 404."
+      >
+        <div className="overflow-hidden rounded-card border border-borda">
+          <Cabecalho />
+          <Rodape />
+        </div>
       </Secao>
     </main>
   );
