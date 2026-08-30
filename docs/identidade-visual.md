@@ -456,6 +456,39 @@ Esse laço é o símbolo isolado da marca. Ele funciona sozinho.
   só o laço.
 - **Área de proteção**: a altura do `c` de "crochê" em todos os lados.
 
+### 6.4 Revisão do desenho (implementação)
+
+O símbolo foi desenhado, renderizado e corrigido em ciclo. Fica registrado o que foi
+descartado, porque cada descarte é uma regra:
+
+| Tentativa | Por que foi descartada |
+|---|---|
+| Laço largo, pontas longas para baixo | Lê como **balão preso a um barbante** |
+| Laço com pontas abertas para fora | Lê como **Ω grego** |
+| Pontas perfeitamente simétricas | Lê como **laço de fita de campanha** |
+| Elo do ponto corrente (amêndoa) | Lê como **alfinete de mapa** |
+| Roseta de três elos | Lê como **trevo** |
+| Agulha com laço de fio | Lê como **&** — ilegível abaixo de 48px |
+
+**O desenho final** encurta as pontas até o cruzamento encostar na base do laço — é
+isso que troca a leitura de "balão" por "nó de fio" — e deixa as pontas levemente
+assimétricas para escapar da fita de campanha. Validado a 240px, 66px e 32px.
+
+### 6.5 Construção do lockup
+
+Três regras que sustentam a assinatura, todas medidas e não estimadas:
+
+1. **Altura do laço = 1,28em** do corpo da linha 1, dimensionado para o bloco de
+   tinta das duas linhas — não para a caixa de linha. Deslocamento ótico de 0,06em
+   para baixo. A 1,55em centralizado, o laço dominava a palavra em vez de assiná-la.
+2. **Distância laço → palavra = 0,42em.**
+3. **A subline é oticamente justificada à largura de "crochê".** A 0,38em ela media
+   146,9px contra 137,1px da palavra — 9,8px mais larga, o que desalinha a borda
+   direita. Corrigida para **0,345em**, fecha em 136,2px (0,9px de folga).
+   Junto vai `margin-right: -0.16em`, que **mata o espaço que o tracking deixa depois
+   da última letra** — sem isso a linha parece deslocada à direita mesmo com a
+   largura certa. Se a subline mudar de texto, refazer a medida.
+
 ---
 
 ## 7. Aplicação

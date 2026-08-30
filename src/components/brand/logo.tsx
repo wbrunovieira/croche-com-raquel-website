@@ -35,11 +35,13 @@ export function Logo({
 
   return (
     <span
-      className={`inline-flex items-center gap-[0.5em] ${className}`}
+      className={`inline-flex items-start gap-[0.42em] ${className}`}
       role="img"
       aria-label={titulo}
     >
-      <Laco className="h-[1.55em] w-[1.55em] shrink-0" />
+      {/* O laço é dimensionado para o bloco de tinta das duas linhas (~1,28em),
+          não para a caixa de linha — por isso o deslocamento ótico de 0,06em. */}
+      <Laco className="mt-[0.06em] h-[1.28em] w-[1.28em] shrink-0" />
       <span className="flex flex-col leading-none">
         <span
           className="font-display lowercase"
@@ -52,13 +54,18 @@ export function Logo({
         >
           crochê
         </span>
+        {/* Justificada oticamente à largura de "crochê": a 0,38em ela media 146,9px
+            contra 137,1px da palavra. A margem negativa mata o espaço que o
+            tracking deixa depois da última letra — sem ela a linha parece
+            deslocada para a direita mesmo com a largura certa. */}
         <span
           className="font-texto uppercase"
           style={{
-            fontSize: "0.38em",
+            fontSize: "0.345em",
             fontWeight: 500,
             letterSpacing: "0.16em",
-            marginTop: "0.28em",
+            marginRight: "-0.16em",
+            marginTop: "0.26em",
           }}
         >
           com Raquel
