@@ -4,7 +4,7 @@ Documento vivo. É atualizado a cada commit de etapa concluída.
 
 **Legenda:** ✅ concluída · 🔵 em andamento · ⬜ pendente · ⏸️ bloqueada
 
-Última atualização: 2026-08-30
+Última atualização: 2026-08-30 — Etapa 1 concluída
 
 ---
 
@@ -47,19 +47,30 @@ Vercel Blob · Auth.js (credenciais) · deploy na Vercel · pnpm
 Scaffold do Next.js 16 com TypeScript, Tailwind v4, ESLint, Turbopack e `src/`.
 Repositório público criado em `wbrunovieira/croche-com-raquel-website`. Build verde.
 
-### 🔵 Etapa 1 — Identidade visual
-Definir paleta, tipografia, formas, direção fotográfica e tokens do Tailwind v4.
-Aplicar no `globals.css` e no layout raiz (fontes via `next/font/google`).
-**Entrega:** `docs/identidade-visual.md` + tokens aplicados.
-**Você vai ver:** uma página de amostra com a paleta, a escala tipográfica e os
-componentes base, para aprovar a direção antes de qualquer tela real.
+### ✅ Etapa 1 — Identidade visual
+Direção **"Estufa da Serra"**: papel cru com blocos profundos de verde garrafa
+(Palácio de Cristal) e rosa-goiaba como acento. Light-only, sem dark mode.
+Tipografia Fraunces (display, com os eixos SOFT/WONK ligados) + Karla (texto).
+Máscara em **arco exclusiva de bolsas** — a forma codifica o carro-chefe.
+
+Entregue: `docs/identidade-visual.md` (813 linhas, com contrastes WCAG calculados e
+direção de arte fotográfica para a Raquel), tokens aplicados em `src/app/globals.css`,
+fontes em `src/app/fonts.ts`, layout raiz em pt-BR com metadados da marca, home
+provisória e a amostra em `/estilo`.
+
+*Mudança em relação ao planejado:* a amostra ficou mais completa que o previsto e já
+inclui card de produto e seção invertida, que eram da Etapa 4. A Etapa 4 fica menor.
 
 ### ⬜ Etapa 2 — Modelagem de dados
 Schema Prisma: `Product`, `Category`, `Subcategory`, `Collection`, `OptionGroup`,
 `OptionValue`, `ProductImage`, `Testimonial`, `SiteSettings`, `User`.
 Pontos-chave: preço nullable, `featured` + ordem para curadoria da home,
 `capacity` (texto) para bolsas, grupos de opções genéricos com tipo e obrigatoriedade.
-Provisionar o banco, rodar a primeira migration e criar um seed com dados de exemplo.
+Rodar a primeira migration e criar um seed com dados de exemplo.
+*Banco já provisionado:* Neon (plano Free) instalado pelo Marketplace da Vercel no
+escopo `brunoteam`, conectado ao projeto `croche-com-raquel-website` e com as
+variáveis injetadas em production/preview/development. `DATABASE_URL` já está no
+`.env.local` local (ignorado pelo git).
 **Você vai ver:** o diagrama do schema e os dados de exemplo no Prisma Studio.
 
 ### ⬜ Etapa 3 — Camada de dados
@@ -69,9 +80,10 @@ e tratamento de cache/revalidação.
 **Você vai ver:** nada visual — encerra junto com a Etapa 4.
 
 ### ⬜ Etapa 4 — Design system
-Componentes base a partir dos tokens da Etapa 1: tipografia, botões, cards,
-container, badge, seletor de cor, seletor de opção, campo de quantidade, galeria.
-**Você vai ver:** uma rota `/estilo` listando todos os componentes em seus estados.
+Transformar em componentes reais o que hoje é estático em `/estilo`, e acrescentar o
+que falta: seletor de cor, seletor de opção, campo de quantidade, galeria com zoom,
+cabeçalho e rodapé do site.
+**Você vai ver:** a rota `/estilo` atualizada com todos os componentes em seus estados.
 
 ### ⬜ Etapa 5 — Página de produto ⭐ *o coração do projeto*
 Galeria com zoom, descrição, medidas, prazo de produção, preço (ou "sob consulta"),
@@ -131,8 +143,6 @@ escrito para ela.
 
 ## Decisões em aberto
 
-- **Banco:** provisionar Neon pelo Marketplace da Vercel ou apontar para um Postgres
-  existente do Bruno? *(bloqueia a Etapa 2)*
 - **Fotos:** existe acervo de bolsa sendo usada por pessoa? Se não, a Raquel precisa
   produzir — é a mudança de maior impacto na conversão e independe de código.
 - **Número do WhatsApp** e domínio definitivo.

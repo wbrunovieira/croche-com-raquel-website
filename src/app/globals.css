@@ -1,26 +1,179 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Fontes vêm de next/font (variáveis no <html>) — por isso @theme inline. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-texto: var(--font-karla), ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@theme {
+  /* ---------- Cor: nomes da marca ---------- */
+  --color-cru:            #F4EEE2;
+  --color-papel:          #FBF7EF;
+  --color-cru-fundo:      #EDE4D3;
+  --color-tinta:          #241D16;
+  --color-tinta-suave:    #6A5C4C;
+  --color-verde-cristal:  #10402C;
+  --color-verde-musgo:    #0A2E1F;
+  --color-verde-fundo:    #0C3323;
+  --color-nevoa:          #C7D4C4;
+  --color-goiaba:         #C4425C;
+  --color-goiaba-tinta:   #A8324A;
+  --color-goiaba-clara:   #F3D9DD;
+  --color-rosa-fio:       #E8A0AE;
+  --color-linha:          #E3D8C4;
+  --color-linha-forte:    #8F7F62;
+  --color-zap:            #1E7B4F;
+  --color-zap-escuro:     #1A6B45;
+  --color-sucesso:        #2E6B45;
+  --color-atencao:        #75601C;
+  --color-erro:           #9C4221;
+
+  /* ---------- Cor: papéis semânticos (use estes na UI) ---------- */
+  --color-fundo:            var(--color-cru);
+  --color-superficie:       var(--color-papel);
+  --color-superficie-baixa: var(--color-cru-fundo);
+  --color-conteudo:         var(--color-tinta);
+  --color-conteudo-suave:   var(--color-tinta-suave);
+  --color-primaria:         var(--color-verde-cristal);
+  --color-primaria-hover:   var(--color-verde-musgo);
+  --color-sobre-primaria:   #FFFFFF;
+  --color-destaque:         var(--color-goiaba);
+  --color-destaque-texto:   var(--color-goiaba-tinta);
+  --color-borda:            var(--color-linha);
+  --color-borda-forte:      var(--color-linha-forte);
+  --color-foco:             var(--color-goiaba-tinta);
+  /* sobre seções escuras */
+  --color-inv-fundo:        var(--color-verde-fundo);
+  --color-inv-conteudo:     var(--color-cru);
+  --color-inv-suave:        var(--color-nevoa);
+  --color-inv-destaque:     var(--color-rosa-fio);
+  --color-inv-borda:        rgba(244, 238, 226, 0.22);
+
+  /* ---------- Tipografia ---------- */
+  --text-etiqueta: 0.6875rem;
+  --text-etiqueta--line-height: 1;
+  --text-etiqueta--letter-spacing: 0.12em;
+  --text-etiqueta--font-weight: 500;
+
+  --text-legenda: 0.75rem;
+  --text-legenda--line-height: 1.4;
+
+  --text-apoio: 0.875rem;
+  --text-apoio--line-height: 1.5;
+
+  --text-base: 1rem;
+  --text-base--line-height: 1.6;
+
+  --text-leitura: 1.125rem;
+  --text-leitura--line-height: 1.7;
+
+  --text-lead: 1.375rem;
+  --text-lead--line-height: 1.45;
+  --text-lead--letter-spacing: -0.005em;
+
+  --text-t3: 1.75rem;
+  --text-t3--line-height: 1.25;
+  --text-t3--letter-spacing: -0.01em;
+
+  --text-t2: 2.25rem;
+  --text-t2--line-height: 1.15;
+  --text-t2--letter-spacing: -0.015em;
+
+  --text-t1: 3rem;
+  --text-t1--line-height: 1.08;
+  --text-t1--letter-spacing: -0.02em;
+
+  --text-display: 4.25rem;
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.025em;
+
+  /* ---------- Forma ---------- */
+  --radius-fio:     2px;
+  --radius-card:    6px;
+  --radius-pilula:  999px;
+
+  /* ---------- Sombra ---------- */
+  --shadow-peca: 0 1px 2px rgba(36,29,22,.06), 0 6px 16px -8px rgba(36,29,22,.14);
+  --shadow-alta: 0 2px 4px rgba(36,29,22,.08), 0 16px 32px -12px rgba(36,29,22,.20);
+  --shadow-zap:  0 4px 14px -2px rgba(10,46,31,.35);
+
+  /* ---------- Movimento ---------- */
+  --ease-fio: cubic-bezier(.22, 1, .36, 1);
+
+  /* ---------- Layout ---------- */
+  /* namespace --container-* => utilitários max-w-medida / max-w-texto no v4 */
+  --container-medida: 72rem;   /* largura máx. do container do site */
+  --container-texto:  38rem;   /* ~62ch em text-leitura */
+}
+
+/* ---------- Base ---------- */
+:root { color-scheme: light; }
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background-color: var(--color-fundo);
+    color: var(--color-conteudo);
+    font-family: var(--font-texto);
+    font-size: var(--text-base);
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .display {
+    font-family: var(--font-display);
+    font-variation-settings: "opsz" 144, "SOFT" 60, "WONK" 1;
+    font-weight: 500;
+  }
+  p, li { hyphens: auto; }
+  :focus-visible {
+    outline: 2px solid var(--color-foco);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  ::selection { background: var(--color-goiaba-clara); color: var(--color-tinta); }
+  .tabular { font-variant-numeric: tabular-nums; }
+}
+
+/* ---------- Assinaturas da marca ---------- */
+@layer components {
+  /* arco: EXCLUSIVO de bolsas */
+  .arco { border-radius: 999px 999px var(--radius-card) var(--radius-card); overflow: hidden; }
+
+  /* ponto corrente: divisória e sublinhado */
+  .corrente {
+    height: 12px;
+    background-repeat: repeat-x;
+    background-size: 13px 12px;
+    background-image: radial-gradient(ellipse 8px 6px at 50% 50%,
+      transparent 0 58%, var(--color-linha-forte) 60% 82%, transparent 84%);
+  }
+  .corrente--claro {
+    background-image: radial-gradient(ellipse 8px 6px at 50% 50%,
+      transparent 0 58%, rgba(244,238,226,.45) 60% 82%, transparent 84%);
+  }
+
+  /* trama: só em seção verde */
+  .trama { position: relative; isolation: isolate; }
+  .trama::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: -1;
+    background-image:
+      repeating-linear-gradient( 45deg, rgba(244,238,226,.05) 0 1px, transparent 1px 6px),
+      repeating-linear-gradient(-45deg, rgba(244,238,226,.05) 0 1px, transparent 1px 6px);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* grão de papel global */
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: 60;
+  pointer-events: none; opacity: .05; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important; scroll-behavior: auto !important;
+  }
 }
