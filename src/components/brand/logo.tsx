@@ -28,20 +28,23 @@ export function Logo({
   if (variante === "laco") {
     return (
       <span className={`inline-flex ${className}`} role="img" aria-label={titulo}>
-        <Laco className="size-full" />
+        <Laco className="h-full w-auto" />
       </span>
     );
   }
 
   return (
     <span
-      className={`inline-flex items-start gap-[0.42em] ${className}`}
+      className={`inline-flex items-start gap-[0.30em] ${className}`}
       role="img"
       aria-label={titulo}
     >
-      {/* O laço é dimensionado para o bloco de tinta das duas linhas (~1,28em),
-          não para a caixa de linha — por isso o deslocamento ótico de 0,06em. */}
-      <Laco className="mt-[0.06em] h-[1.28em] w-[1.28em] shrink-0" />
+      {/* Altura medida: a tinta das duas linhas vai do topo do "ê" à base do
+          "COM RAQUEL" e ocupa 1,30em. O laço é igualado a isso, e como o viewBox
+          é apertado ao traçado, a altura escrita é a altura vista. O deslocamento
+          de 0,06em corrige os 2,8px que o laço ficava acima do centro ótico do
+          bloco — a caixa de linha da primeira linha não começa na tinta. */}
+      <Laco className="mt-[0.06em] h-[1.30em] w-auto shrink-0" />
       <span className="flex flex-col leading-none">
         <span
           className="font-display lowercase"

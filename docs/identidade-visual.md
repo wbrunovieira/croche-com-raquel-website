@@ -478,10 +478,21 @@ assimétricas para escapar da fita de campanha. Validado a 240px, 66px e 32px.
 
 Três regras que sustentam a assinatura, todas medidas e não estimadas:
 
-1. **Altura do laço = 1,28em** do corpo da linha 1, dimensionado para o bloco de
-   tinta das duas linhas — não para a caixa de linha. Deslocamento ótico de 0,06em
-   para baixo. A 1,55em centralizado, o laço dominava a palavra em vez de assiná-la.
-2. **Distância laço → palavra = 0,42em.**
+0. **O viewBox do laço é apertado ao traçado** (`5.9 2 12.2 19.7`), não a uma grade
+   quadrada. Esta é a regra que sustenta as outras duas. Na grade de 24×24 o desenho
+   ocupava só 40% da largura da caixa, deixando **18,4px de vazio de cada lado** — e
+   esse vazio somava com o gap: o espaço escrito era 0,42em e o **visto era 38,6px**,
+   quase o dobro. Com a caixa apertada, o espaço escrito é o espaço visto. A
+   proporção passa a ser 0,62:1, então **o laço é dimensionado pela altura**, nunca
+   por `size-*`.
+1. **Altura do laço = 1,30em**, igualada ao bloco de tinta das duas linhas — do topo
+   do `ê` à base do `COM RAQUEL`. Medido: laço 62,4px contra texto 62,6px. Mais
+   `margin-top: 0.06em`, que corrige os 2,8px que o laço ficava acima do centro
+   ótico, porque a caixa de linha da primeira linha não começa na tinta. Alinhamento
+   final: **0,0px**. A 1,55em centralizado na caixa de linha, o laço dominava a
+   palavra em vez de assiná-la.
+2. **Distância laço → palavra = 0,30em** (14,4px no corpo de 48px), medida de tinta
+   a tinta.
 3. **A subline é oticamente justificada à largura de "crochê".** A 0,38em ela media
    146,9px contra 137,1px da palavra — 9,8px mais larga, o que desalinha a borda
    direita. Corrigida para **0,345em**, fecha em 136,2px (0,9px de folga).

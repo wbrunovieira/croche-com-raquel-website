@@ -178,9 +178,9 @@ export default function EstiloPage() {
               Abaixo de 120px de largura, a assinatura completa sai e fica só ele.
             </p>
             <div className="mt-6 flex items-end gap-8">
-              <Laco className="size-20 text-primaria" />
-              <Laco className="size-12 text-primaria" />
-              <Laco className="size-8 text-primaria" />
+              <Laco className="h-20 w-auto text-primaria" />
+              <Laco className="h-12 w-auto text-primaria" />
+              <Laco className="h-8 w-auto text-primaria" />
             </div>
           </div>
 
@@ -191,14 +191,14 @@ export default function EstiloPage() {
               fecha a 2 cm em uma cor, está aprovado.
             </p>
             <div className="mt-6 flex items-end gap-6">
-              <div className="w-[2cm]">
-                <Laco className="w-full text-tinta" />
+              <div className="h-[3.23cm]">
+                <Laco className="h-full w-auto text-tinta" />
               </div>
-              <div className="w-[1.2cm]">
-                <Laco className="w-full text-tinta" />
+              <div className="h-[1.94cm]">
+                <Laco className="h-full w-auto text-tinta" />
               </div>
               <div className="rounded-fio bg-tinta p-3">
-                <Laco className="w-[2cm] text-cru" />
+                <Laco className="h-[2cm] w-auto text-cru" />
               </div>
             </div>
           </div>
