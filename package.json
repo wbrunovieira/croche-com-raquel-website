@@ -14,7 +14,9 @@
     "db:seed": "prisma db seed",
     "db:resumo": "tsx scripts/db-resumo.ts",
     "check:whatsapp": "tsx scripts/verifica-whatsapp.ts",
-    "check:produto": "node scripts/verifica-pagina-produto.mjs"
+    "check:produto": "node scripts/verifica-pagina-produto.mjs",
+    "admin:criar": "tsx scripts/criar-admin.ts",
+    "check:login": "tsx scripts/verifica-login.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.10.0",
@@ -23,6 +25,7 @@
     "lucide-react": "1.37.0",
     "motion": "13.1.1",
     "next": "16.3.3",
+    "next-auth": "5.0.0-beta.32",
     "pg": "8.23.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"

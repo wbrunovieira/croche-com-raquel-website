@@ -4,7 +4,7 @@ Documento vivo. É atualizado a cada commit de etapa concluída.
 
 **Legenda:** ✅ concluída · 🔵 em andamento · ⬜ pendente · ⏸️ bloqueada
 
-Última atualização: 2026-08-30 — Etapa 8 concluída
+Última atualização: 2026-08-30 — Etapa 9 concluída
 
 ---
 
@@ -219,10 +219,27 @@ O FAQ usa `<details>`: **a resposta fica no HTML mesmo com o item fechado** — 
 
 **Você vai ver:** o site institucional inteiro navegável, pelo rodapé.
 
-### ⬜ Etapa 9 — Autenticação do admin
-Auth.js com credenciais, senha com hash, sessão em cookie, rota protegida,
-script para criar a usuária inicial.
-**Você vai ver:** a tela de login funcionando.
+### ✅ Etapa 9 — Autenticação do admin
+Auth.js v5 (beta — é o caminho padrão para App Router há tempos) com provedor de
+credenciais, sessão JWT em cookie e `src/proxy.ts` protegendo `/admin`.
+
+**Hash com scrypt do `node:crypto`**, não bcrypt: é um KDF de senha de verdade,
+recomendado pela OWASP, e não entra dependência nova nem módulo nativo para
+compilar no deploy. Os parâmetros vão gravados junto do hash, então mudá-los no
+futuro não invalida as senhas antigas.
+
+Duas defesas contra vazamento de informação: e-mail inexistente ainda paga o
+custo do scrypt (senão o tempo de resposta entregaria quais e-mails existem) e a
+mensagem de erro é uma só, sem dizer qual campo errou.
+
+O site público foi para o grupo de rotas `(site)`, para o painel não herdar o
+cabeçalho e o rodapé da loja.
+
+`pnpm admin:criar "Nome" email@exemplo.com` cria a usuária — a senha é digitada,
+nunca vai na linha de comando, onde ficaria no histórico do shell.
+
+**Você vai ver:** http://localhost:3000/admin — e `pnpm check:login` exercita o
+fluxo inteiro num navegador, criando e apagando a própria usuária de teste.
 
 ### ⬜ Etapa 10 — Painel administrativo
 CRUD de produtos (rascunho/publicado, ordenação), categorias e subcategorias,

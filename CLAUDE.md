@@ -37,6 +37,15 @@ permissão para commitar. Push para o remoto: só quando ele pedir.
 - Cor e tamanho **não são campos fixos**. São grupos de opções genéricos por
   produto, porque tamanho só se aplica a algumas peças.
 
+## Verificações
+
+Antes de fechar uma etapa: `pnpm build`, `pnpm lint`, `pnpm check:espaco`,
+`pnpm check:whatsapp`. Os dois que precisam do `pnpm dev` de pé:
+`pnpm check:produto` (caminho de conversão) e `pnpm check:login` (acesso ao painel).
+
+Depois de `pnpm db:migrate`, **reinicie o `pnpm dev`** — ele guarda o cliente Prisma
+antigo em memória e a rota quebra com "Unknown field".
+
 ## Idioma
 
 Todo conteúdo visível, documentação e mensagem de commit em **português do Brasil**.
