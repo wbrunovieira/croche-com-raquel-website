@@ -1,0 +1,138 @@
+# Plano de ação — Crochê com Raquel
+
+Documento vivo. É atualizado a cada commit de etapa concluída.
+
+**Legenda:** ✅ concluída · 🔵 em andamento · ⬜ pendente · ⏸️ bloqueada
+
+Última atualização: 2026-08-30
+
+---
+
+## Visão do produto
+
+Site institucional com catálogo para a artesã **Raquel Boaventura** (Petrópolis/RJ).
+Peças de crochê e macramê feitas à mão, **sob encomenda**, personalizadas.
+
+- **Não é e-commerce.** Sem carrinho, checkout, pagamento ou estoque.
+- Cada produto tem **página própria e linkável** — é o link que a Raquel dispara no
+  WhatsApp do cliente.
+- A conversão acontece num **botão de WhatsApp** que abre a conversa com a mensagem
+  já preenchida (produto, quantidade, cor, tamanho, personalização e link da página).
+- Um **painel administrativo** permite a ela cadastrar produtos, categorias, cores e
+  tamanhos. O site é montado dinamicamente a partir desses dados.
+- **Bolsas são o carro-chefe** e têm tratamento privilegiado: hero da home,
+  subcategorias próprias e página-hub dedicada.
+
+## Arquitetura de conteúdo
+
+**Categorias:** Bolsas (com subcategorias) · Mesa Posta · Casa & Decoração ·
+Macramê · Cozinha · Bebê & Enxoval
+**Subcategorias de bolsa:** transversal · ombro/tote · clutch/festa · praia ·
+mochila · sacola/ecobag · necessaire
+**Eixos transversais (filtros, não categorias):** coleções sazonais · personalizados
+
+**Páginas:** Home · `/bolsas` (hub) · Catálogo · Produto · Sobre · Encomendas sob
+medida · FAQ · Cuidados com as peças · Contato · Admin
+
+## Stack
+
+Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · Neon Postgres · Prisma ·
+Vercel Blob · Auth.js (credenciais) · deploy na Vercel · pnpm
+
+---
+
+## Etapas
+
+### ✅ Etapa 0 — Fundação
+Scaffold do Next.js 16 com TypeScript, Tailwind v4, ESLint, Turbopack e `src/`.
+Repositório público criado em `wbrunovieira/croche-com-raquel-website`. Build verde.
+
+### 🔵 Etapa 1 — Identidade visual
+Definir paleta, tipografia, formas, direção fotográfica e tokens do Tailwind v4.
+Aplicar no `globals.css` e no layout raiz (fontes via `next/font/google`).
+**Entrega:** `docs/identidade-visual.md` + tokens aplicados.
+**Você vai ver:** uma página de amostra com a paleta, a escala tipográfica e os
+componentes base, para aprovar a direção antes de qualquer tela real.
+
+### ⬜ Etapa 2 — Modelagem de dados
+Schema Prisma: `Product`, `Category`, `Subcategory`, `Collection`, `OptionGroup`,
+`OptionValue`, `ProductImage`, `Testimonial`, `SiteSettings`, `User`.
+Pontos-chave: preço nullable, `featured` + ordem para curadoria da home,
+`capacity` (texto) para bolsas, grupos de opções genéricos com tipo e obrigatoriedade.
+Provisionar o banco, rodar a primeira migration e criar um seed com dados de exemplo.
+**Você vai ver:** o diagrama do schema e os dados de exemplo no Prisma Studio.
+
+### ⬜ Etapa 3 — Camada de dados
+Cliente Prisma com inicialização segura em build, funções de consulta tipadas
+(produtos por categoria, produto por slug, destaques, configurações do site),
+e tratamento de cache/revalidação.
+**Você vai ver:** nada visual — encerra junto com a Etapa 4.
+
+### ⬜ Etapa 4 — Design system
+Componentes base a partir dos tokens da Etapa 1: tipografia, botões, cards,
+container, badge, seletor de cor, seletor de opção, campo de quantidade, galeria.
+**Você vai ver:** uma rota `/estilo` listando todos os componentes em seus estados.
+
+### ⬜ Etapa 5 — Página de produto ⭐ *o coração do projeto*
+Galeria com zoom, descrição, medidas, prazo de produção, preço (ou "sob consulta"),
+seletores de opção, quantidade, capacidade em linguagem real, cuidados,
+peças relacionadas, compartilhar, e o **botão de WhatsApp sticky no mobile** que
+monta a mensagem com todas as escolhas + link da página.
+**Você vai ver:** uma página de produto real, e você mesmo pode clicar no botão e
+conferir a mensagem que chega no WhatsApp.
+
+### ⬜ Etapa 6 — Catálogo e hub de bolsas
+Grid do catálogo com filtro por categoria, subcategoria, cor e coleção.
+Página `/bolsas` como landing de verdade — conteúdo próprio, subtipos em destaque,
+texto indexável (alvo: "bolsa de crochê", "bolsa de fio de malha").
+**Você vai ver:** navegação completa do catálogo e a hub de bolsas.
+
+### ⬜ Etapa 7 — Home
+Hero com bolsa em uso · bolsas em destaque · navegar por tipo de bolsa · demais
+categorias · sobre resumido · depoimentos · Instagram · CTA de WhatsApp.
+**Você vai ver:** a home completa, que é o que você mostra pra Raquel.
+
+### ⬜ Etapa 8 — Páginas institucionais
+Sobre a Raquel · Encomendas sob medida (briefing que também cai no WhatsApp) ·
+FAQ · Cuidados com as peças · Contato · políticas.
+**Você vai ver:** o site institucional inteiro navegável.
+
+### ⬜ Etapa 9 — Autenticação do admin
+Auth.js com credenciais, senha com hash, sessão em cookie, rota protegida,
+script para criar a usuária inicial.
+**Você vai ver:** a tela de login funcionando.
+
+### ⬜ Etapa 10 — Painel administrativo
+CRUD de produtos (rascunho/publicado, ordenação), categorias e subcategorias,
+grupos de opções e valores (com hex da cor), upload e reordenação de imagens no
+Vercel Blob, depoimentos, e configurações globais (número do WhatsApp, template da
+mensagem, textos da home, banner de aviso).
+Prioridade: **usabilidade para uma pessoa não técnica** — formulário único,
+upload por arrastar, preview do resultado.
+**Você vai ver:** o painel completo — cadastre um produto de ponta a ponta e ele
+aparece no site.
+
+### ⬜ Etapa 11 — SEO e metadados
+Metadata por rota, Open Graph, `sitemap.xml`, `robots.txt`, JSON-LD
+(LocalBusiness, Product, BreadcrumbList, FAQPage), imagens OG geradas,
+performance e Core Web Vitals.
+**Você vai ver:** o relatório de auditoria antes do deploy.
+
+### ⬜ Etapa 12 — Deploy
+Deploy na Vercel, variáveis de ambiente, domínio, preview e produção.
+**Você vai ver:** o site no ar.
+
+### ⬜ Etapa 13 — Conteúdo real e handoff
+Cadastro do catálogo real com as fotos da Raquel e um guia curto de uso do painel
+escrito para ela.
+**Você vai ver:** o site pronto para ela usar sozinha.
+
+---
+
+## Decisões em aberto
+
+- **Banco:** provisionar Neon pelo Marketplace da Vercel ou apontar para um Postgres
+  existente do Bruno? *(bloqueia a Etapa 2)*
+- **Fotos:** existe acervo de bolsa sendo usada por pessoa? Se não, a Raquel precisa
+  produzir — é a mudança de maior impacto na conversão e independe de código.
+- **Número do WhatsApp** e domínio definitivo.
