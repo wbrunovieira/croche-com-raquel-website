@@ -4,7 +4,7 @@ Documento vivo. É atualizado a cada commit de etapa concluída.
 
 **Legenda:** ✅ concluída · 🔵 em andamento · ⬜ pendente · ⏸️ bloqueada
 
-Última atualização: 2026-08-30 — Etapa 1 concluída (identidade, logotipo e espaçamento)
+Última atualização: 2026-08-30 — Etapa 2 concluída
 
 ---
 
@@ -87,7 +87,7 @@ do `ê` de "crochê". Isso exige lettering customizado (desenhar o contorno da l
 não dá para fazer com a fonte viva. Hoje o laço é um elemento do lockup, ao lado da
 palavra. Se o Bruno quiser a versão desenhada, é trabalho de vetor à parte.
 
-### ⬜ Etapa 2 — Modelagem de dados
+### ✅ Etapa 2 — Modelagem de dados
 Schema Prisma: `Product`, `Category`, `Subcategory`, `Collection`, `OptionGroup`,
 `OptionValue`, `ProductImage`, `Testimonial`, `SiteSettings`, `User`.
 Pontos-chave: preço nullable, `featured` + ordem para curadoria da home,
@@ -97,7 +97,18 @@ Rodar a primeira migration e criar um seed com dados de exemplo.
 escopo `brunoteam`, conectado ao projeto `croche-com-raquel-website` e com as
 variáveis injetadas em production/preview/development. `DATABASE_URL` já está no
 `.env.local` local (ignorado pelo git).
-**Você vai ver:** o diagrama do schema e os dados de exemplo no Prisma Studio.
+Entregue: Prisma 7.10 (fixado — o `@latest` resolvia para um release candidate),
+`prisma/schema.prisma` com 12 modelos, migration `init` aplicada, seed idempotente
+com 6 categorias, 7 subcategorias de bolsa, 8 produtos e 6 grupos de opção,
+`src/lib/db.ts` com o cliente e `docs/modelo-de-dados.md` com as decisões.
+
+*Além do planejado:* `pnpm db:resumo` imprime o catálogo no terminal e detalha um
+produto — foi como validei que o modelo de opções responde à consulta que a página
+de produto vai fazer. E `src/lib/db-url.ts` força `sslmode=verify-full`, porque o
+driver `pg` vai enfraquecer o significado de `sslmode=require` na próxima major.
+
+**Você vai ver:** `pnpm db:studio` para navegar nos dados, ou `pnpm db:resumo` para
+o resumo no terminal.
 
 ### ⬜ Etapa 3 — Camada de dados
 Cliente Prisma com inicialização segura em build, funções de consulta tipadas
