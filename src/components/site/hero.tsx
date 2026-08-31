@@ -185,32 +185,36 @@ export function Hero({
                           />
                         </motion.div>
                       </AnimatePresence>
+
+                      {/* As cores moram sobre a foto, mas sem painel: um bloco
+                          opaco aqui cobre justamente o corpo da bolsa. O que
+                          sustenta a leitura é uma sombra curta na base, que
+                          funciona tanto na peça clara quanto na escura. */}
+                      {cores.length > 0 ? (
+                        <motion.div
+                          {...entrada(0.5)}
+                          className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/45 to-transparent px-5 pb-5 pt-16"
+                        >
+                          <p className="font-texto text-etiqueta uppercase text-cru/90">
+                            Escolha a cor
+                          </p>
+                          <ul className="mt-2 flex flex-wrap gap-1.5">
+                            {cores.map((c) => (
+                              <li
+                                key={c.id}
+                                title={c.nome}
+                                className="size-5 rounded-pilula ring-1 ring-cru/30"
+                                style={{ backgroundColor: c.hex }}
+                              >
+                                <span className="sr-only">{c.nome}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </motion.div>
+                      ) : null}
                     </div>
                   )}
                 </motion.div>
-
-                {cores.length > 0 ? (
-                  <motion.div
-                    {...entrada(0.5)}
-                    className="absolute bottom-6 -left-4 rounded-card border border-borda bg-superficie p-painel shadow-alta sm:-left-12"
-                  >
-                    <p className="font-texto text-etiqueta uppercase text-conteudo-suave">
-                      Escolha a cor
-                    </p>
-                    <ul className="mt-3 flex flex-wrap gap-2">
-                      {cores.map((c) => (
-                        <li
-                          key={c.id}
-                          title={c.nome}
-                          className="size-7 rounded-pilula border border-borda-forte/40"
-                          style={{ backgroundColor: c.hex }}
-                        >
-                          <span className="sr-only">{c.nome}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </motion.div>
-                ) : null}
               </div>
 
               {/* Fora da foto: o card de cores ocupa justamente o canto de

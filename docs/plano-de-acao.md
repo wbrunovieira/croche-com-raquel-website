@@ -343,9 +343,12 @@ Bruno):
   dentro**: trocar a foto embaixo do dedo de quem está decidindo é o jeito mais
   rápido de perder a pessoa. Com `prefers-reduced-motion` o rodízio não roda
   sozinho — o chevron continua valendo.
-- Os controles ficam **fora da foto**: o card "escolha a cor" ocupa exatamente o
-  canto de baixo e engolia o chevron. Só bolsa entra no rodízio, porque o arco é
-  exclusivo dela.
+- Os controles ficam **fora da foto**: o "escolha a cor" ocupa o canto de baixo
+  e engolia o chevron. Só bolsa entra no rodízio, porque o arco é exclusivo dela.
+- **O "escolha a cor" perdeu o painel** (crítica do Bruno: cobria metade da
+  bolsa). As bolinhas continuam sobre a foto — a promessa de escolher a cor vale
+  na primeira dobra —, mas agora numa faixa baixa, sustentada por uma sombra
+  curta na base em vez de um bloco opaco. Funciona na peça clara e na escura.
 - A faixa do "quem faz" ganhou **foto ao lado do texto** e hierarquia: o
   primeiro parágrafo virou o `h2` da seção, em display, e os seguintes são
   corpo. A Raquel controla isso escrevendo — sem campo separado de título.
