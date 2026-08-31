@@ -330,6 +330,12 @@ model SiteSettings {
   heroSubtitle String?
   aboutText    String?
 
+  /// Foto da seção "quem faz" da home: um retrato da Raquel, ou as mãos dela
+  /// trabalhando. Vive no Blob e é enviada pelo painel — a seção fala dela em
+  /// primeira pessoa, e um bloco de texto sem rosto não sustenta isso.
+  aboutImageUrl String?
+  aboutImageAlt String?
+
   /// Faixa de aviso no topo ("Encomendas de Natal até 30/11").
   announcementText   String?
   announcementActive Boolean @default(false)

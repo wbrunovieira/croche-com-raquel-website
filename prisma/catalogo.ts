@@ -81,6 +81,7 @@ export const PRODUTOS: {
     description: "Bolsa saco em dois pontos — o corpo texturizado e a base fechada — com alça longa trançada, cordão de contas de madeira e tassel de franja na frente.",
     price: null, material: "Fio de algodão",
     careText: "Lave à mão em água fria com sabão neutro. Seque à sombra, deitada.",
+    destaque: 3,
     fotos: [{ arquivo: "bolsa-saco-terracota.jpg", alt: "Bolsa saco de crochê terracota com tassel de franja, sendo usada a tiracolo", escalaHumana: true }],
     opcoes: [
       { grupo: "cor", obrigatorio: true, valores: ["terracota", "caramelo", "cafe", "mostarda"] },
@@ -94,7 +95,7 @@ export const PRODUTOS: {
     description: "Sousplat redondo em duas cores, com a borda desenhada em folhas. Fica firme na mesa e não enruga sob o prato.",
     price: null, material: "Barbante de algodão",
     careText: "Máquina em ciclo delicado, dentro de saquinho. Não use alvejante.",
-    destaque: 3,
+    destaque: 4,
     fotos: [{ arquivo: "sousplat-verde-cru.jpg", alt: "Sousplat de crochê em verde e cru com borda em folhas, com xícara e pires brancos por cima" }],
     opcoes: [
       { grupo: "cor", obrigatorio: true, valores: ["verde-musgo", "cru", "terracota", "off-white"] },

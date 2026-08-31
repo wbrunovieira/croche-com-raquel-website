@@ -29,6 +29,11 @@ export const buscarConfiguracoes = cache(async function buscarConfiguracoes(): P
     heroTitulo: s.heroTitle,
     heroSubtitulo: s.heroSubtitle,
     sobreTexto: s.aboutText,
+    // Sem URL não existe foto. O alt cai para um texto honesto: a seção fala
+    // da Raquel, e é isso que um leitor de tela precisa ouvir.
+    sobreFoto: s.aboutImageUrl
+      ? { url: s.aboutImageUrl, alt: s.aboutImageAlt || "Raquel, que faz as peças" }
+      : null,
     avisoTexto: s.announcementText,
     avisoAtivo: s.announcementActive,
   };

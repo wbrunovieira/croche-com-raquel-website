@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { del, put } from "@vercel/blob";
 import { db } from "@/lib/db";
 import { exigirSessao } from "@/lib/admin/sessao";
 import { revalidarCatalogo } from "@/lib/revalidar";
@@ -33,6 +34,7 @@ const esquemaDeConfiguracoes = z.object({
   heroTitle: opcional,
   heroSubtitle: opcional,
   aboutText: opcional,
+  aboutImageAlt: opcional,
   announcementText: opcional,
   announcementActive: z.coerce.boolean(),
 });
@@ -53,6 +55,72 @@ export async function salvarConfiguracoes(
   await db.siteSettings.update({ where: { id: "singleton" }, data: analise.data });
   revalidarCatalogo();
   return { ok: "Configurações salvas." };
+}
+
+/**
+ * Foto da seção "quem faz".
+ *
+ * Sobe na hora de escolher, e não ao salvar o formulário — mesma regra das
+ * fotos de peça: a Raquel escolhe a foto e vê a foto. A anterior é apagada do
+ * Blob, porque é uma só e a antiga não serve para mais nada.
+ */
+const TIPOS_DE_IMAGEM = ["image/jpeg", "image/png", "image/webp", "image/avif"];
+const TAMANHO_MAXIMO = 15 * 1024 * 1024;
+
+export async function enviarFotoDoQuemFaz(
+  _anterior: unknown,
+  dados: FormData
+): Promise<Resultado> {
+  await exigirSessao();
+
+  const arquivo = dados.get("arquivo");
+  if (!(arquivo instanceof File) || arquivo.size === 0) {
+    return { erro: "Escolha uma foto." };
+  }
+  if (!TIPOS_DE_IMAGEM.includes(arquivo.type)) {
+    return { erro: "Use uma foto em JPG, PNG, WebP ou AVIF." };
+  }
+  if (arquivo.size > TAMANHO_MAXIMO) {
+    return { erro: "A foto passa de 15 MB. Reduza antes de enviar." };
+  }
+
+  const atual = await db.siteSettings.findUniqueOrThrow({
+    where: { id: "singleton" },
+    select: { aboutImageUrl: true },
+  });
+
+  const enviado = await put(`site/quem-faz/${arquivo.name}`, arquivo, {
+    access: "public",
+    addRandomSuffix: true,
+  });
+
+  await db.siteSettings.update({
+    where: { id: "singleton" },
+    data: { aboutImageUrl: enviado.url },
+  });
+
+  // Depois de trocar, não antes: se o envio falhasse, a foto antiga já teria
+  // sido apagada e a home ficaria sem nada.
+  if (atual.aboutImageUrl) await Promise.allSettled([del(atual.aboutImageUrl)]);
+
+  revalidarCatalogo();
+  return { ok: "Foto atualizada." };
+}
+
+export async function apagarFotoDoQuemFaz(): Promise<void> {
+  await exigirSessao();
+  const atual = await db.siteSettings.findUniqueOrThrow({
+    where: { id: "singleton" },
+    select: { aboutImageUrl: true },
+  });
+  if (!atual.aboutImageUrl) return;
+
+  await db.siteSettings.update({
+    where: { id: "singleton" },
+    data: { aboutImageUrl: null },
+  });
+  await Promise.allSettled([del(atual.aboutImageUrl)]);
+  revalidarCatalogo();
 }
 
 // --------------------------------------------------------------- categorias

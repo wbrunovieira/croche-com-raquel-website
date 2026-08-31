@@ -1,9 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
-import { Hand, Package, Sparkles } from "lucide-react";
+import Image from "next/image";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "motion/react";
+import { ChevronRight, Hand, Package, Sparkles } from "lucide-react";
 import { Foto } from "@/components/ui/foto";
 import { IconeZap } from "@/components/ui/icone-zap";
 import type { ImagemDeProduto } from "@/lib/queries/tipos";
@@ -20,19 +27,23 @@ const SUAVE = [0.22, 1, 0.36, 1] as const;
  * As bolinhas de cor flutuando sobre a foto são as cores que o catálogo
  * realmente oferece, vindas do banco. Enfeite com cor que a Raquel não tem
  * seria promessa falsa na primeira dobra.
+ *
+ * A foto passa sozinha entre as bolsas em destaque: uma peça só na primeira
+ * dobra vende uma peça, o rodízio vende o ateliê. Quem não quiser esperar
+ * adianta pelo chevron.
  */
 export function Hero({
   titulo,
   subtitulo,
   cores,
-  capa,
+  capas,
   whatsappNumero,
   cidade,
 }: {
   titulo: string;
   subtitulo: string;
   cores: { id: string; nome: string; hex: string }[];
-  capa: ImagemDeProduto | null;
+  capas: ImagemDeProduto[];
   whatsappNumero: string;
   cidade: string;
 }) {
@@ -46,6 +57,24 @@ export function Hero({
     offset: ["start start", "end start"],
   });
   const deslocamento = useTransform(scrollYProgress, [0, 1], [0, 40]);
+
+  // Rodízio das fotos. Pausa quando o ponteiro está em cima ou quando algo ali
+  // dentro tem o foco do teclado: trocar a foto embaixo do dedo de quem está
+  // decidindo é o jeito mais rápido de perder a pessoa.
+  const [atual, setAtual] = useState(0);
+  const [pausado, setPausado] = useState(false);
+
+  const avancar = useCallback(() => {
+    setAtual((i) => (i + 1) % Math.max(capas.length, 1));
+  }, [capas.length]);
+
+  useEffect(() => {
+    // `semMovimento` desliga o rodízio inteiro — quem pediu menos movimento no
+    // sistema não pediu uma foto trocando sozinha. O chevron continua valendo.
+    if (semMovimento || pausado || capas.length < 2) return;
+    const relogio = setInterval(avancar, 5000);
+    return () => clearInterval(relogio);
+  }, [semMovimento, pausado, capas.length, avancar]);
 
   const entrada = (atraso: number) => ({
     initial: semMovimento ? { opacity: 0 } : { opacity: 0, y: 24 },
@@ -115,34 +144,111 @@ export function Hero({
             initial={semMovimento ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.9, delay: semMovimento ? 0 : 0.12, ease: SUAVE }}
-            className="relative lg:mb-bloco"
+            className="lg:mb-bloco"
           >
-            <motion.div style={semMovimento ? undefined : { y: deslocamento }}>
-              <Foto imagem={capa} arco prioridade sobreEscuro />
-            </motion.div>
+            <div
+              role="group"
+              aria-roledescription="carrossel"
+              aria-label="Bolsas em destaque"
+              onMouseEnter={() => setPausado(true)}
+              onMouseLeave={() => setPausado(false)}
+              onFocusCapture={() => setPausado(true)}
+              onBlurCapture={() => setPausado(false)}
+            >
+              {/* Âncora do card de cores: ele se posiciona pela foto, não pelo
+                  conjunto — senão os controles logo abaixo o empurram para
+                  cima e ele cobre a peça. */}
+              <div className="relative">
+                <motion.div style={semMovimento ? undefined : { y: deslocamento }}>
+                  {capas.length === 0 ? (
+                    <Foto imagem={null} arco prioridade sobreEscuro />
+                  ) : (
+                    <div className="arco relative aspect-peca w-full overflow-hidden">
+                      <AnimatePresence initial={false}>
+                        <motion.div
+                          key={capas[atual].id}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.6, ease: SUAVE }}
+                          className="absolute inset-0"
+                        >
+                          <Image
+                            src={capas[atual].url}
+                            alt={capas[atual].alt}
+                            fill
+                            // Só a primeira corre na primeira dobra; as demais
+                            // só entram depois e não disputam a LCP.
+                            priority={atual === 0}
+                            sizes="(min-width: 64rem) 21rem, 100vw"
+                            className="object-cover"
+                          />
+                        </motion.div>
+                      </AnimatePresence>
+                    </div>
+                  )}
+                </motion.div>
 
-            {cores.length > 0 ? (
-              <motion.div
-                {...entrada(0.5)}
-                className="absolute bottom-6 -left-4 rounded-card border border-borda bg-superficie p-painel shadow-alta sm:-left-12"
-              >
-                <p className="font-texto text-etiqueta uppercase text-conteudo-suave">
-                  Escolha a cor
-                </p>
-                <ul className="mt-3 flex flex-wrap gap-2">
-                  {cores.map((c) => (
-                    <li
-                      key={c.id}
-                      title={c.nome}
-                      className="size-7 rounded-pilula border border-borda-forte/40"
-                      style={{ backgroundColor: c.hex }}
-                    >
-                      <span className="sr-only">{c.nome}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ) : null}
+                {cores.length > 0 ? (
+                  <motion.div
+                    {...entrada(0.5)}
+                    className="absolute bottom-6 -left-4 rounded-card border border-borda bg-superficie p-painel shadow-alta sm:-left-12"
+                  >
+                    <p className="font-texto text-etiqueta uppercase text-conteudo-suave">
+                      Escolha a cor
+                    </p>
+                    <ul className="mt-3 flex flex-wrap gap-2">
+                      {cores.map((c) => (
+                        <li
+                          key={c.id}
+                          title={c.nome}
+                          className="size-7 rounded-pilula border border-borda-forte/40"
+                          style={{ backgroundColor: c.hex }}
+                        >
+                          <span className="sr-only">{c.nome}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                ) : null}
+              </div>
+
+              {/* Fora da foto: o card de cores ocupa justamente o canto de
+                  baixo e engoliria os controles. */}
+              {capas.length > 1 ? (
+                <div className="mt-3 flex items-center justify-end gap-2">
+                  <ul className="flex items-center gap-1.5">
+                    {capas.map((c, i) => (
+                      <li key={c.id}>
+                        <button
+                          type="button"
+                          onClick={() => setAtual(i)}
+                          aria-label={`Ver foto ${i + 1} de ${capas.length}`}
+                          aria-current={i === atual}
+                          // A área de toque de 44px mora no botão; o ponto
+                          // visível é o filho de 6px.
+                          className="grid size-11 place-items-center"
+                        >
+                          <span
+                            className={`block size-1.5 rounded-pilula transition-colors ${
+                              i === atual ? "bg-cru" : "bg-cru/40"
+                            }`}
+                          />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                  <button
+                    type="button"
+                    onClick={avancar}
+                    aria-label="Próxima foto"
+                    className="grid size-11 place-items-center rounded-pilula border border-inv-borda transition-colors hover:bg-white/10"
+                  >
+                    <ChevronRight className="size-5" aria-hidden="true" />
+                  </button>
+                </div>
+              ) : null}
+            </div>
           </motion.div>
         </div>
       </div>

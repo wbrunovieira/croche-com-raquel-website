@@ -3,6 +3,7 @@ import { exigirSessao } from "@/lib/admin/sessao";
 import { Etiqueta } from "@/components/ui/etiqueta";
 import { AreaDeTexto, Campo, Marcador, Secao } from "@/components/admin/campos";
 import { FormularioSimples } from "@/components/admin/formulario-simples";
+import { FotoDoQuemFaz } from "@/components/admin/foto-do-quem-faz";
 import { salvarConfiguracoes } from "../acoes-de-conteudo";
 
 export default async function PaginaDeConfiguracoes() {
@@ -59,13 +60,32 @@ export default async function PaginaDeConfiguracoes() {
               rows={2}
               defaultValue={c.heroSubtitle ?? ""}
             />
+          </Secao>
+
+          <Secao
+            titulo="Quem faz"
+            descricao="A faixa verde da home, onde você se apresenta. O primeiro parágrafo aparece grande; os seguintes, em corpo de leitura."
+          >
             <AreaDeTexto
               id="aboutText"
-              rotulo="Frase do “quem faz”"
-              dica="Aparece na faixa verde da home."
-              rows={3}
+              rotulo="Seu texto"
+              dica="Separe os parágrafos com uma linha em branco. Dois ou três dão o melhor resultado."
+              rows={8}
               defaultValue={c.aboutText ?? ""}
             />
+            <Campo
+              id="aboutImageAlt"
+              rotulo="Descrição da foto"
+              dica="Para quem não enxerga a tela. Ex.: “Raquel sorrindo, segurando uma bolsa de crochê”."
+              defaultValue={c.aboutImageAlt ?? ""}
+            />
+            {/* A foto sobe sozinha, na hora de escolher, então o bloco dela
+                fica fora deste formulário — formulário dentro de formulário
+                não é HTML válido. O ponteiro evita a procura. */}
+            <p className="text-apoio text-conteudo-suave">
+              A foto em si você envia no bloco <strong className="font-medium">Sua foto</strong>,
+              no fim desta página.
+            </p>
           </Secao>
 
           <Secao titulo="Contato">
@@ -74,6 +94,17 @@ export default async function PaginaDeConfiguracoes() {
             <Campo id="email" rotulo="E-mail" type="email" defaultValue={c.email ?? ""} />
           </Secao>
         </FormularioSimples>
+
+        <div className="mt-respiro rounded-card border border-borda bg-superficie p-painel">
+          <h2 className="font-display text-t3">Sua foto</h2>
+          <p className="mt-2 text-apoio text-conteudo-suave">
+            Aparece ao lado do texto do “quem faz”. Um retrato seu, ou as suas
+            mãos trabalhando — quem compra à mão quer ver quem fez.
+          </p>
+          <div className="mt-4">
+            <FotoDoQuemFaz url={c.aboutImageUrl} />
+          </div>
+        </div>
       </div>
     </main>
   );

@@ -4,7 +4,7 @@ Documento vivo. É atualizado a cada commit de etapa concluída.
 
 **Legenda:** ✅ concluída · 🔵 em andamento · ⬜ pendente · ⏸️ bloqueada
 
-Última atualização: 2026-08-31 — Etapa 11 concluída; catálogo real antecipado da etapa 13
+Última atualização: 2026-08-31 — Etapa 11 concluída; catálogo real e primeira dobra revistos (antecipados da etapa 13)
 
 ---
 
@@ -334,9 +334,32 @@ Decisões que valem registro:
   **a oferta do JSON-LD é a mesma coisa que a página mostra** —, comparando com
   o `data-preco` do componente de preço.
 
+**Rodízio de fotos no hero e seção "quem faz"** (segunda leva, a pedido do
+Bruno):
+
+- A primeira dobra passou a **rodar entre as bolsas em destaque** — uma peça só
+  vende uma peça; o rodízio vende o ateliê. Troca a cada 5s, com chevron e
+  pontos para adiantar. **Pausa com o ponteiro em cima ou com o foco do teclado
+  dentro**: trocar a foto embaixo do dedo de quem está decidindo é o jeito mais
+  rápido de perder a pessoa. Com `prefers-reduced-motion` o rodízio não roda
+  sozinho — o chevron continua valendo.
+- Os controles ficam **fora da foto**: o card "escolha a cor" ocupa exatamente o
+  canto de baixo e engolia o chevron. Só bolsa entra no rodízio, porque o arco é
+  exclusivo dela.
+- A faixa do "quem faz" ganhou **foto ao lado do texto** e hierarquia: o
+  primeiro parágrafo virou o `h2` da seção, em display, e os seguintes são
+  corpo. A Raquel controla isso escrevendo — sem campo separado de título.
+  Ganhou também um caminho para `/sobre`.
+- `SiteSettings.aboutImageUrl` + `aboutImageAlt`, com envio pelo painel
+  (imediato, como as fotos de peça; a anterior é apagada do Blob **depois** da
+  nova subir, senão uma falha deixaria a home sem nada).
+
 **Falta:** as fotos são recortes de capa de reel (640 × 800) e trazem a
-marca-d'água do Instagram; o acervo definitivo depende de ela fotografar. Falta
-também o guia curto do painel escrito para ela.
+marca-d'água do Instagram; o acervo definitivo depende de ela fotografar.
+**Não existe foto utilizável da Raquel no acervo** — a única com o rosto dela é
+um recorte de 160 × 310 dentro de uma colagem, com adesivo atravessado. A faixa
+está com o crochê em andamento no lugar, e ela troca pelo painel. Falta também o
+guia curto do painel escrito para ela.
 
 **Você vai ver:** `pnpm db:seed && pnpm fotos:importar`, depois a home e o
 catálogo com as peças dela.

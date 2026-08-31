@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { Hero } from "@/components/site/hero";
 import { Revelar } from "@/components/ui/revelar";
@@ -9,7 +10,11 @@ import { GradeDeProdutos } from "@/components/produto/card-de-produto";
 import { listarCategorias, listarTiposDeBolsa } from "@/lib/queries/categorias";
 import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
 import { listarCoresDisponiveis, listarDestaques } from "@/lib/queries/produtos";
-import { SLUG_BOLSAS } from "@/lib/queries/tipos";
+import {
+  SLUG_BOLSAS,
+  type ConfiguracoesDoSite,
+  type ImagemDeProduto,
+} from "@/lib/queries/tipos";
 
 // A home herda título e descrição do layout raiz; só a canônica precisa ser
 // declarada aqui, senão "/" fica sem ela.
@@ -26,7 +31,17 @@ export default async function Home() {
     listarCategorias(),
   ]);
 
-  const primeiraBolsa = destaques.find((p) => p.ehBolsa) ?? destaques[0] ?? null;
+  // O arco é exclusivo de bolsa, então só bolsa pode entrar no rodízio do hero.
+  // A ordem é a curadoria dela: quem está em destaque, na posição que ela deu.
+  // Sem bolsa com foto, cai numa peça qualquer — e, sem nenhuma, no placeholder.
+  const comFoto = (p: { capa: ImagemDeProduto | null }) => p.capa !== null;
+  const capasDeBolsa = destaques.filter((p) => p.ehBolsa).filter(comFoto);
+  // Sem bolsa com foto, o rodízio cai em qualquer peça que tenha uma; sem
+  // nenhuma, o Hero mostra o placeholder.
+  const capasDoHero = (capasDeBolsa.length > 0 ? capasDeBolsa : destaques.filter(comFoto))
+    .slice(0, 5)
+    .map((p) => p.capa)
+    .filter((c) => c !== null);
   const outrasCategorias = categorias.filter((c) => c.slug !== SLUG_BOLSAS);
 
   return (
@@ -38,7 +53,7 @@ export default async function Home() {
           "Peças de crochê feitas à mão, sob encomenda, na cor e no tamanho que você escolher."
         }
         cores={cores}
-        capa={primeiraBolsa?.capa ?? null}
+        capas={capasDoHero}
         whatsappNumero={config.whatsappNumero}
         cidade={config.cidade}
       />
@@ -126,17 +141,7 @@ export default async function Home() {
         </section>
       ) : null}
 
-      {config.sobreTexto ? (
-        <section className="trama bg-inv-fundo text-inv-conteudo">
-          <div className="container-site secao">
-            <Revelar>
-              <Etiqueta tom="invertido">Quem faz</Etiqueta>
-              <p className="mt-4 max-w-texto font-display text-t2">{config.sobreTexto}</p>
-              <div className="corrente corrente--claro mt-respiro" aria-hidden="true" />
-            </Revelar>
-          </div>
-        </section>
-      ) : null}
+      {config.sobreTexto ? <QuemFaz config={config} /> : null}
 
       <section className="container-site secao">
         <Revelar className="mx-auto max-w-texto text-center">
@@ -157,5 +162,64 @@ export default async function Home() {
         </Revelar>
       </section>
     </main>
+  );
+}
+
+/**
+ * A faixa do "quem faz".
+ *
+ * Quem compra feito à mão quer ver quem fez — por isso a foto vem antes do
+ * texto na leitura, e não como enfeite ao lado dele. Sem foto cadastrada a
+ * seção continua de pé, só com o texto, ocupando a largura de leitura.
+ *
+ * O texto se distribui sozinho: o primeiro parágrafo é o título da seção, em
+ * display; os seguintes são corpo. Assim a Raquel controla a hierarquia
+ * escrevendo, sem precisar de campo separado para título e para corpo.
+ */
+function QuemFaz({ config }: { config: ConfiguracoesDoSite }) {
+  const [abertura, ...resto] = (config.sobreTexto ?? "")
+    .split(/\n{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+
+  return (
+    <section className="trama bg-inv-fundo text-inv-conteudo">
+      <div className="container-site secao">
+        <div className="grid items-center gap-x-coluna gap-y-grade-linha lg:grid-cols-[minmax(0,20rem)_1fr]">
+          {config.sobreFoto ? (
+            <Revelar>
+              <div className="relative aspect-peca w-full overflow-hidden rounded-card">
+                <Image
+                  src={config.sobreFoto.url}
+                  alt={config.sobreFoto.alt}
+                  fill
+                  sizes="(min-width: 64rem) 20rem, 100vw"
+                  className="object-cover"
+                />
+              </div>
+            </Revelar>
+          ) : null}
+
+          <Revelar atraso={0.08} className={config.sobreFoto ? "" : "max-w-texto"}>
+            <Etiqueta tom="invertido">Quem faz</Etiqueta>
+            <h2 className="mt-4 max-w-texto font-display text-t2">{abertura}</h2>
+            {resto.map((paragrafo, i) => (
+              <p key={i} className="mt-4 max-w-texto text-leitura text-inv-suave">
+                {paragrafo}
+              </p>
+            ))}
+            <Link
+              href="/sobre"
+              className="mt-bloco inline-flex items-center gap-btn-icone text-leitura underline underline-offset-4 hover:no-underline"
+            >
+              Conheça o ateliê
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
+          </Revelar>
+        </div>
+
+        <div className="corrente corrente--claro mt-respiro" aria-hidden="true" />
+      </div>
+    </section>
   );
 }

@@ -7,6 +7,19 @@ import { DEMONSTRACOES_ANTIGAS, PRODUTOS } from "./catalogo";
 
 carregarEnv({ path: ".env.local", quiet: true });
 
+/**
+ * Texto da faixa "quem faz".
+ *
+ * Em parágrafos separados por linha em branco: a seção da home usa o primeiro
+ * como título e os demais como corpo. Três é o que cabe ao lado da foto sem a
+ * coluna ficar mais alta que ela.
+ */
+const SOBRE_A_RAQUEL = `Sou a Raquel. Faço crochê e macramê em Petrópolis, na serra do Rio, e cada peça que sai daqui foi feita à mão, uma de cada vez.
+
+Não trabalho com estoque. Você escolhe o tipo, a cor e o acabamento, e a peça só começa a ser feita depois disso — é por isso que ela sai do jeito que você quis, e é por isso que tem prazo.
+
+Se o que você tem em mente não está no site, me conte assim mesmo. Boa parte do que eu faço hoje nasceu de um pedido que ainda não existia.`;
+
 const db = new PrismaClient({
   adapter: new PrismaPg({ connectionString: urlComSslVerificado(process.env.DATABASE_URL) }),
 });
@@ -163,8 +176,7 @@ async function main() {
       heroTitle: "Bolsas que você carrega por anos",
       heroSubtitle:
         "Peças de crochê feitas à mão, sob encomenda, na cor e no tamanho que você escolher.",
-      aboutText:
-        "Sou a Raquel. Faço crochê e macramê em Petrópolis, na serra do Rio, e cada peça que sai daqui foi feita à mão, uma de cada vez.",
+      aboutText: SOBRE_A_RAQUEL,
       announcementText: null,
       announcementActive: false,
     },
