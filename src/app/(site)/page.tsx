@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Hero } from "@/components/site/hero";
@@ -9,6 +10,12 @@ import { listarCategorias, listarTiposDeBolsa } from "@/lib/queries/categorias";
 import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
 import { listarCoresDisponiveis, listarDestaques } from "@/lib/queries/produtos";
 import { SLUG_BOLSAS } from "@/lib/queries/tipos";
+
+// A home herda título e descrição do layout raiz; só a canônica precisa ser
+// declarada aqui, senão "/" fica sem ela.
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default async function Home() {
   const [config, destaques, cores, tiposDeBolsa, categorias] = await Promise.all([

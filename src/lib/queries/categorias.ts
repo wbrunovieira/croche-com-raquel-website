@@ -1,8 +1,16 @@
+import { cache } from "react";
 import { db } from "@/lib/db";
 import { SLUG_BOLSAS, type CategoriaResumo } from "./tipos";
 
-/** Categoria só aparece no menu se tiver produto publicado. */
-export async function listarCategorias(): Promise<CategoriaResumo[]> {
+/**
+ * Categoria só aparece no menu se tiver produto publicado.
+ *
+ * Em `cache()`: o cabeçalho e o rodapé pedem esta lista na mesma renderização,
+ * e `buscarCategoriaPorSlug` também se apoia nela.
+ */
+export const listarCategorias = cache(async function listarCategorias(): Promise<
+  CategoriaResumo[]
+> {
   const linhas = await db.category.findMany({
     orderBy: { position: "asc" },
     select: {
@@ -30,7 +38,7 @@ export async function listarCategorias(): Promise<CategoriaResumo[]> {
       subcategorias: c.subcategories.map((s) => ({ slug: s.slug, nome: s.name })),
       totalDeProdutos: c._count.products,
     }));
-}
+});
 
 export async function buscarCategoriaPorSlug(
   slug: string
@@ -43,7 +51,7 @@ export async function buscarCategoriaPorSlug(
  * Os tipos de bolsa, para a página-hub. Só entram os que têm peça publicada —
  * um atalho para uma prateleira vazia é pior que não ter o atalho.
  */
-export async function listarTiposDeBolsa(): Promise<
+export const listarTiposDeBolsa = cache(async function listarTiposDeBolsa(): Promise<
   { slug: string; nome: string; totalDeProdutos: number }[]
 > {
   const linhas = await db.subcategory.findMany({
@@ -58,7 +66,7 @@ export async function listarTiposDeBolsa(): Promise<
   return linhas
     .filter((s) => s._count.products > 0)
     .map((s) => ({ slug: s.slug, nome: s.name, totalDeProdutos: s._count.products }));
-}
+});
 
 export async function listarColecoesAtivas(): Promise<
   { slug: string; nome: string; descricao: string | null }[]

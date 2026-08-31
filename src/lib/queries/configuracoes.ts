@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { db } from "@/lib/db";
 import type { ConfiguracoesDoSite } from "./tipos";
 
@@ -5,8 +6,12 @@ import type { ConfiguracoesDoSite } from "./tipos";
  * Configurações do site — linha única, editável no admin. Nada aqui é
  * hard-coded no código: número de WhatsApp, template da mensagem e textos da
  * home saem daqui.
+ *
+ * Envolvido em `cache()` do React: cabeçalho, rodapé e a página chamam esta
+ * função na mesma renderização, e sem isto seriam três idas ao banco para
+ * buscar exatamente a mesma linha.
  */
-export async function buscarConfiguracoes(): Promise<ConfiguracoesDoSite> {
+export const buscarConfiguracoes = cache(async function buscarConfiguracoes(): Promise<ConfiguracoesDoSite> {
   const s = await db.siteSettings.findUnique({ where: { id: "singleton" } });
 
   if (!s) {
@@ -27,4 +32,4 @@ export async function buscarConfiguracoes(): Promise<ConfiguracoesDoSite> {
     avisoTexto: s.announcementText,
     avisoAtivo: s.announcementActive,
   };
-}
+});

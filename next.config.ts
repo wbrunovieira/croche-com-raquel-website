@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // As fontes das imagens de compartilhamento são lidas do disco em tempo de
+  // execução. Sem declará-las aqui, elas não entram no bundle do deploy e a
+  // geração da imagem quebra só em produção.
+  outputFileTracingIncludes: {
+    "/**": ["./src/lib/og/*.ttf"],
+  },
   images: {
     remotePatterns: [
       {

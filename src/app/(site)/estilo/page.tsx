@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   title: "Amostra da identidade",
   description:
     "Paleta, tipografia, formas e componentes base do sistema visual Estufa da Serra.",
+  // Página de trabalho, para conferir o sistema visual. Não é conteúdo do
+  // site: fica fora do sitemap e fora do buscador.
+  robots: { index: false, follow: false },
 };
 
 type Swatch = {

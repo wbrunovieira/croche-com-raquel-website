@@ -17,7 +17,8 @@
     "check:produto": "node scripts/verifica-pagina-produto.mjs",
     "admin:criar": "tsx scripts/criar-admin.ts",
     "check:login": "tsx scripts/verifica-login.ts",
-    "check:painel": "tsx scripts/verifica-painel.ts"
+    "check:painel": "tsx scripts/verifica-painel.ts",
+    "check:seo": "node scripts/verifica-seo.mjs"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.10.0",

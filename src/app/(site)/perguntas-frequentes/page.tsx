@@ -4,7 +4,11 @@ import { Etiqueta } from "@/components/ui/etiqueta";
 import { IconeZap } from "@/components/ui/icone-zap";
 import { Revelar } from "@/components/ui/revelar";
 import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
-import { listarPerguntas } from "@/lib/queries/paginas";
+import { listarPerguntas, listarPerguntasPlanas } from "@/lib/queries/paginas";
+import {
+  DadosEstruturados,
+  perguntasEstruturadas,
+} from "@/components/seo/dados-estruturados";
 
 export const metadata: Metadata = {
   title: "Perguntas frequentes",
@@ -14,13 +18,15 @@ export const metadata: Metadata = {
 };
 
 export default async function PaginaDePerguntas() {
-  const [grupos, config] = await Promise.all([
+  const [grupos, planas, config] = await Promise.all([
     listarPerguntas(),
+    listarPerguntasPlanas(),
     buscarConfiguracoes(),
   ]);
 
   return (
     <main className="container-site secao">
+      <DadosEstruturados dados={perguntasEstruturadas(planas)} />
       <Etiqueta>Dúvidas</Etiqueta>
       <h1 className="mt-2 font-display text-t1">Perguntas frequentes</h1>
       <p className="mt-4 max-w-texto text-lead text-conteudo-suave">

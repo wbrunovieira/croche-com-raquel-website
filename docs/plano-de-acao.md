@@ -4,7 +4,7 @@ Documento vivo. É atualizado a cada commit de etapa concluída.
 
 **Legenda:** ✅ concluída · 🔵 em andamento · ⬜ pendente · ⏸️ bloqueada
 
-Última atualização: 2026-08-30 — Etapa 10 concluída
+Última atualização: 2026-08-31 — Etapa 11 concluída
 
 ---
 
@@ -270,11 +270,39 @@ Decisões que valem registro:
 http://localhost:3000/admin. E `pnpm check:painel` cadastra uma peça de ponta a
 ponta — com foto de verdade no Blob — e limpa tudo no fim.
 
-### ⬜ Etapa 11 — SEO e metadados
-Metadata por rota, Open Graph, `sitemap.xml`, `robots.txt`, JSON-LD
-(LocalBusiness, Product, BreadcrumbList, FAQPage), imagens OG geradas,
-performance e Core Web Vitals.
-**Você vai ver:** o relatório de auditoria antes do deploy.
+### ✅ Etapa 11 — SEO e metadados
+`metadataBase` no layout raiz (sem ela, canônica e Open Graph relativos saem
+sem domínio) e **canônica em toda rota pública**, inclusive a home. `robots.ts`
+e `sitemap.ts` montados do banco.
+
+JSON-LD em `src/components/seo/dados-estruturados.tsx`: **LocalBusiness** no
+layout do site, **Product** e **BreadcrumbList** na página de peça, **FAQPage**
+nas perguntas — que já valiam a pena desde a etapa 8, quando o FAQ foi feito
+com `<details>` justamente para a resposta ficar no HTML.
+
+Imagens de compartilhamento geradas: uma para o site e uma **por peça**, com o
+laço, o nome, o preço (ou "sob consulta"), o prazo e as bolinhas das cores
+reais do catálogo.
+
+Decisões que valem registro:
+- **Sem preço fechado, nenhuma oferta é declarada.** Inventar um valor para
+  "aparecer melhor" seria mentir para a cliente e para o buscador. Com preço, a
+  disponibilidade é `MadeToOrder` — que é o que a página diz.
+- **Fora de produção o site inteiro é `Disallow: /`.** Um preview no ar
+  competindo com o domínio real é difícil de perceber e chato de desfazer.
+- **Rascunho e prateleira vazia ficam fora do sitemap** — mandar o buscador
+  para uma página sem nada gasta rastreamento e não ajuda ninguém.
+- `/estilo` é página de trabalho: `noindex`, e fora do sitemap.
+- As fontes das imagens são **TTF lidos do disco**, não os WOFF2 do
+  `next/font` (o gerador não lê WOFF2) e não via `fetch` de `file:` (só
+  funciona no Edge). O `outputFileTracingIncludes` leva os arquivos no deploy —
+  sem ele, a imagem quebraria só em produção.
+- `buscarConfiguracoes` e `listarCategorias` entraram no `cache()` do React:
+  cabeçalho, rodapé e página pediam a mesma linha três vezes por renderização.
+
+**Você vai ver:** `pnpm check:seo` (com o `pnpm dev` de pé) — 25 verificações
+do que o buscador encontra em cada página. E, no navegador, a imagem de
+compartilhamento de qualquer peça em `/produtos/<slug>/opengraph-image`.
 
 ### ⬜ Etapa 12 — Deploy
 Deploy na Vercel, variáveis de ambiente, domínio, preview e produção.

@@ -16,6 +16,11 @@ import {
   listarSlugsDeProduto,
 } from "@/lib/queries/produtos";
 import { urlDoProduto } from "@/lib/site";
+import {
+  DadosEstruturados,
+  produtoEstruturado,
+  trilha,
+} from "@/components/seo/dados-estruturados";
 
 export async function generateStaticParams() {
   const slugs = await listarSlugsDeProduto();
@@ -57,8 +62,30 @@ export default async function PaginaDeProduto({ params }: PageProps<"/produtos/[
   const linkDaCategoria =
     produto.categoria.slug === "bolsas" ? "/bolsas" : `/categorias/${produto.categoria.slug}`;
 
+  const cores =
+    produto.grupos.find((g) => g.slug === "cor")?.valores.map((v) => v.nome) ?? [];
+
   return (
     <main className="container-site secao">
+      <DadosEstruturados
+        dados={produtoEstruturado({
+          nome: produto.nome,
+          slug: produto.slug,
+          descricao: produto.descricao,
+          preco: produto.preco,
+          material: produto.material,
+          imagens: produto.imagens.map((i) => i.url),
+          categoria: produto.categoria.nome,
+          cores,
+        })}
+      />
+      <DadosEstruturados
+        dados={trilha([
+          { nome: "Início", caminho: "/" },
+          { nome: produto.categoria.nome, caminho: linkDaCategoria },
+          { nome: produto.nome, caminho: `/produtos/${produto.slug}` },
+        ])}
+      />
       <nav aria-label="Trilha" className="text-apoio text-conteudo-suave">
         <ol className="flex flex-wrap items-center gap-x-2">
           <li>
