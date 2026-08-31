@@ -189,14 +189,20 @@ export function Hero({
                       {/* As cores moram sobre a foto, mas sem painel: um bloco
                           opaco aqui cobre justamente o corpo da bolsa. O que
                           sustenta a leitura é uma sombra curta na base, que
-                          funciona tanto na peça clara quanto na escura. */}
+                          funciona tanto na peça clara quanto na escura.
+
+                          O rótulo é descritivo, e não "escolha a cor": aqui
+                          não se escolhe nada — quem escolhe é o seletor da
+                          página da peça. Verbo no imperativo prometia um
+                          controle que estas bolinhas não são. E "algumas"
+                          porque a faixa mostra no máximo 8 das cadastradas. */}
                       {cores.length > 0 ? (
                         <motion.div
                           {...entrada(0.5)}
                           className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/45 to-transparent px-5 pb-5 pt-16"
                         >
                           <p className="font-texto text-etiqueta uppercase text-cru/90">
-                            Escolha a cor
+                            Algumas cores disponíveis
                           </p>
                           <ul className="mt-2 flex flex-wrap gap-1.5">
                             {cores.map((c) => (

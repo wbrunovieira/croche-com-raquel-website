@@ -349,6 +349,12 @@ Bruno):
   bolsa). As bolinhas continuam sobre a foto — a promessa de escolher a cor vale
   na primeira dobra —, mas agora numa faixa baixa, sustentada por uma sombra
   curta na base em vez de um bloco opaco. Funciona na peça clara e na escura.
+- E o rótulo virou **"Algumas cores disponíveis"**: no imperativo ele prometia
+  um controle que aquelas bolinhas não são — quem escolhe é o seletor da página
+  da peça. "Algumas" porque a faixa mostra no máximo 8 das cadastradas.
+- As cores da faixa são **as do banco, não uma amostra decorativa**: só as
+  ligadas a peça publicada, só as ativas, só as que têm hex, na ordem que a
+  Raquel definir no painel. Desligar uma cor no admin tira ela da home.
 - A faixa do "quem faz" ganhou **foto ao lado do texto** e hierarquia: o
   primeiro parágrafo virou o `h2` da seção, em display, e os seguintes são
   corpo. A Raquel controla isso escrevendo — sem campo separado de título.
