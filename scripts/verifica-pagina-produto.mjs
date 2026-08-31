@@ -9,7 +9,9 @@
 import { chromium } from "playwright";
 
 const BASE = process.env.URL_BASE ?? "http://localhost:3000";
-const ROTA = "/produtos/bolsa-serra";
+// A transversal caramelo é a peça que exercita mais mecânica de uma vez:
+// três grupos de escolha única e um de texto livre.
+const ROTA = "/produtos/bolsa-transversal-caramelo";
 
 let falhas = 0;
 function conferir(nome, condicao, detalhe = "") {
@@ -34,7 +36,6 @@ try {
   await pagina.getByRole("radio", { name: "Terracota" }).click();
   await pagina.getByRole("radio", { name: "De couro" }).click();
   await pagina.getByRole("radio", { name: "Sem forro" }).click();
-  await pagina.getByRole("radio", { name: "Zíper" }).click();
   await pagina.getByPlaceholder("Nome ou monograma").fill("Raquel");
   await pagina.getByLabel("Aumentar quantidade").first().click();
 
@@ -50,9 +51,9 @@ try {
     /^\d{12,13}$/.test(url.pathname.slice(1)),
     url.pathname.slice(1)
   );
-  conferir("a mensagem nomeia a peça", texto.includes("Bolsa Serra"));
+  conferir("a mensagem nomeia a peça", texto.includes("Bolsa Transversal Caramelo"));
   conferir("carrega todas as escolhas", 
-    ["Cor: Terracota", "Alça: De couro", "Forro: Sem forro", "Fecho: Zíper", "Personalização: Raquel"]
+    ["Cor: Terracota", "Alça: De couro", "Forro: Sem forro", "Personalização: Raquel"]
       .every((t) => texto.includes(t))
   );
   conferir("leva a quantidade", texto.includes("Quantidade: 2"));

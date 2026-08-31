@@ -37,32 +37,56 @@ try {
   ok("e não expõe o painel", !urls.some((u) => u.includes("/admin")));
   ok("nem rascunhos", !urls.some((u) => u.includes("rascunho")));
 
-  // página de produto
-  await p.goto(`${BASE}/produtos/bolsa-serra`, { waitUntil: "networkidle" });
-  const dados = await jsonLd(p);
-  const produto = dados.find((d) => d["@type"] === "Product");
-  ok("produto tem JSON-LD Product", Boolean(produto));
-  ok("com oferta quando há preço", produto?.offers?.price === "320.00", produto?.offers?.price);
-  ok(
-    "e disponibilidade de peça sob encomenda",
-    produto?.offers?.availability === "https://schema.org/MadeToOrder"
-  );
-  ok("tem trilha estruturada", dados.some((d) => d["@type"] === "BreadcrumbList"));
-  ok("tem o negócio local", dados.some((d) => d["@type"] === "LocalBusiness"));
+  // Páginas de produto.
+  //
+  // Os slugs vêm do sitemap, e não escritos aqui: o catálogo muda, e um check
+  // preso a "bolsa-serra" morre no dia em que a peça sai do ar.
+  const slugsDeProduto = urls
+    .filter((u) => u.includes("/produtos/"))
+    .map((u) => u.split("/produtos/")[1]);
+  ok("o sitemap traz peças", slugsDeProduto.length > 0, `${slugsDeProduto.length} peças`);
 
-  const canonica = await p.getAttribute('link[rel="canonical"]', "href");
-  ok("tem canônica", canonica?.endsWith("/produtos/bolsa-serra") ?? false, canonica ?? "");
-  const ogProduto = await p.getAttribute('meta[property="og:image"]', "content");
-  ok("tem imagem de compartilhamento", Boolean(ogProduto));
-  if (ogProduto) {
-    const r = await fetch(ogProduto);
-    ok("e ela responde como imagem", r.headers.get("content-type") === "image/png");
+  let comOferta = 0;
+  for (const slug of slugsDeProduto.slice(0, 4)) {
+    await p.goto(`${BASE}/produtos/${slug}`, { waitUntil: "networkidle" });
+    const dados = await jsonLd(p);
+    const produto = dados.find((d) => d["@type"] === "Product");
+
+    ok(`${slug}: tem JSON-LD Product`, Boolean(produto));
+    ok(`${slug}: tem trilha estruturada`, dados.some((d) => d["@type"] === "BreadcrumbList"));
+    ok(`${slug}: tem o negócio local`, dados.some((d) => d["@type"] === "LocalBusiness"));
+
+    // A regra que importa: a oferta declarada é a mesma coisa que a página
+    // mostra para a cliente. Sem preço na tela não pode existir oferta no
+    // JSON-LD — seria prometer ao buscador o que a página não diz.
+    const naTela = await p.getAttribute("[data-preco]", "content").catch(() => null)
+      ?? await p.evaluate(() => document.querySelector("[data-preco]")?.dataset.preco ?? null);
+    if (naTela === "sob-consulta") {
+      ok(`${slug}: sob consulta, sem oferta declarada`, produto?.offers === undefined);
+    } else {
+      comOferta++;
+      ok(`${slug}: a oferta bate com o preço da página`, produto?.offers?.price === naTela, `${produto?.offers?.price} vs ${naTela}`);
+      ok(
+        `${slug}: disponibilidade de peça sob encomenda`,
+        produto?.offers?.availability === "https://schema.org/MadeToOrder"
+      );
+    }
+
+    const canonica = await p.getAttribute('link[rel="canonical"]', "href");
+    ok(`${slug}: tem canônica`, canonica?.endsWith(`/produtos/${slug}`) ?? false, canonica ?? "");
+    const og = await p.getAttribute('meta[property="og:image"]', "content");
+    ok(`${slug}: tem imagem de compartilhamento`, Boolean(og));
+    if (og) {
+      const r = await fetch(og);
+      ok(`${slug}: e ela responde como imagem`, r.headers.get("content-type") === "image/png");
+    }
   }
 
-  // peça sem preço não inventa oferta
-  await p.goto(`${BASE}/produtos/bolsa-cristal`, { waitUntil: "networkidle" });
-  const semPreco = (await jsonLd(p)).find((d) => d["@type"] === "Product");
-  ok("peça sob consulta não declara oferta", semPreco?.offers === undefined);
+  if (comOferta === 0) {
+    console.log(
+      "○ nenhuma peça com preço no banco — a regra de oferta com valor não foi exercitada"
+    );
+  }
 
   // FAQ
   await p.goto(`${BASE}/perguntas-frequentes`, { waitUntil: "networkidle" });
@@ -81,9 +105,10 @@ try {
   // a home precisa da própria canônica, e a amostra de estilo não pode indexar
   await p.goto(BASE, { waitUntil: "domcontentloaded" });
   const canonicaHome = await p.getAttribute('link[rel="canonical"]', "href");
-  // O Next resolve "/" contra a metadataBase sem a barra final — a mesma forma
-  // que o sitemap usa para a home.
-  ok("a home tem canônica", canonicaHome === BASE, canonicaHome ?? "");
+  // Comparada com a home do sitemap, não com a URL que navegamos: as duas saem
+  // de `urlDoSite()`, então o check continua valendo numa porta alternativa.
+  const homeNoSitemap = urls[0];
+  ok("a home tem canônica", canonicaHome === homeNoSitemap, canonicaHome ?? "");
 
   await p.goto(`${BASE}/estilo`, { waitUntil: "domcontentloaded" });
   const robotsEstilo = await p.getAttribute('meta[name="robots"]', "content");

@@ -4,7 +4,7 @@ Documento vivo. É atualizado a cada commit de etapa concluída.
 
 **Legenda:** ✅ concluída · 🔵 em andamento · ⬜ pendente · ⏸️ bloqueada
 
-Última atualização: 2026-08-31 — Etapa 11 concluída
+Última atualização: 2026-08-31 — Etapa 11 concluída; catálogo real antecipado da etapa 13
 
 ---
 
@@ -308,15 +308,48 @@ compartilhamento de qualquer peça em `/produtos/<slug>/opengraph-image`.
 Deploy na Vercel, variáveis de ambiente, domínio, preview e produção.
 **Você vai ver:** o site no ar.
 
-### ⬜ Etapa 13 — Conteúdo real e handoff
-Cadastro do catálogo real com as fotos da Raquel e um guia curto de uso do painel
-escrito para ela.
-**Você vai ver:** o site pronto para ela usar sozinha.
+### 🔵 Etapa 13 — Conteúdo real e handoff
+
+**Feito (antecipado, a pedido do Bruno, para a Raquel ver o site):** o catálogo
+de exemplo saiu e entraram **7 peças reais** dela, lidas das fotos do
+@croche.comraquel — quatro bolsas (transversal caramelo, saco café, ombro bordô,
+saco terracota) e três de mesa posta (sousplat de folhas, jogo mandala, centro de
+mesa rendado). As fotos estão no Blob e a home já abre com uma bolsa de verdade.
+
+Decisões que valem registro:
+- **Preço, medidas, capacidade e prazo entraram nulos de propósito.** São
+  compromissos que só a Raquel pode assumir; um número chutado aqui viraria
+  promessa no site. A UI já trata — tudo aparece como "sob consulta" — e ela
+  preenche no painel. Descrição e material vêm do que a foto mostra (ponto,
+  alça, fecho, acabamento) e nada afirma o que não dá para ver.
+- O seed **não sobe binário**: `prisma/catalogo.ts` guarda os dados,
+  `pnpm fotos:importar` leva as fotos de `prisma/fotos/` ao Blob. O caminho no
+  Blob é fixo, sem sufixo aleatório, e é isso que deixa rodar de novo sem
+  duplicar.
+- A remoção das peças de exemplo é uma **lista explícita de slugs**, e não
+  "apague o que não está no catálogo": um dia ela vai cadastrar peça pelo
+  painel, e um seed que varre o desconhecido apagaria o trabalho dela.
+- `check:produto` e `check:seo` estavam presos a `bolsa-serra`. Agora o
+  `check:seo` tira os slugs do sitemap e confere a regra que de fato importa —
+  **a oferta do JSON-LD é a mesma coisa que a página mostra** —, comparando com
+  o `data-preco` do componente de preço.
+
+**Falta:** as fotos são recortes de capa de reel (640 × 800) e trazem a
+marca-d'água do Instagram; o acervo definitivo depende de ela fotografar. Falta
+também o guia curto do painel escrito para ela.
+
+**Você vai ver:** `pnpm db:seed && pnpm fotos:importar`, depois a home e o
+catálogo com as peças dela.
 
 ---
 
 ## Decisões em aberto
 
-- **Fotos:** existe acervo de bolsa sendo usada por pessoa? Se não, a Raquel precisa
-  produzir — é a mudança de maior impacto na conversão e independe de código.
-- **Número do WhatsApp** e domínio definitivo.
+- **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a
+  saco café na mão) e elas já estão marcadas como tal. Mas todas são recorte de
+  capa de reel, em 640 × 800 e com marca-d'água — servem para ela ver o site,
+  não para o site no ar. Fotografar o acervo em resolução boa continua sendo a
+  mudança de maior impacto na conversão, e independe de código.
+- **Domínio definitivo** (para `NEXT_PUBLIC_SITE_URL`). O número do WhatsApp
+  está confirmado: o `5524992087591` do seed bate com a etiqueta de couro que
+  aparece na foto da bolsa caramelo.

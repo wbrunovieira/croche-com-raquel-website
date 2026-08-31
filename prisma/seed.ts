@@ -3,6 +3,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { urlComSslVerificado } from "../src/lib/db-url";
 import { PAGINAS, PERGUNTAS } from "./conteudo";
+import { DEMONSTRACOES_ANTIGAS, PRODUTOS } from "./catalogo";
 
 carregarEnv({ path: ".env.local", quiet: true });
 
@@ -11,8 +12,8 @@ const db = new PrismaClient({
 });
 
 // Seed idempotente: roda quantas vezes for preciso sem duplicar nada.
-// Os produtos aqui são exemplos plausíveis para a gente ver as telas de pé —
-// o catálogo real entra na etapa 13, com as fotos da Raquel.
+// Os produtos são as peças reais da Raquel, lidas das fotos do Instagram. As
+// fotos em si sobem ao Blob por `pnpm fotos:importar`, que roda depois deste.
 
 const TEXTO_LONGO_BOLSAS = `## Bolsa de crochê feita à mão, sob encomenda
 
@@ -97,6 +98,10 @@ const GRUPOS: GrupoOpcao[] = [
       { slug: "mostarda", name: "Mostarda", hex: "#C9A227", yarnLine: "Barroco Maxcolor 400g", yarnColorCode: "7334" },
       { slug: "azul-jeans", name: "Azul Jeans", hex: "#54708C", yarnLine: "Barroco Maxcolor 400g", yarnColorCode: "2012" },
       { slug: "preto", name: "Preto", hex: "#2B2B2B", yarnLine: "Barroco Maxcolor 400g", yarnColorCode: "8990" },
+      // Tiradas das fotos das peças reais. Sem linha nem código de fio: são
+      // dela, e chutar o código faria a Raquel recomprar o fio errado.
+      { slug: "vinho", name: "Vinho", hex: "#6E2233" },
+      { slug: "cafe", name: "Café", hex: "#4A3730" },
     ],
   },
   {
@@ -143,111 +148,6 @@ const COLECOES = [
   { slug: "dia-das-maes", name: "Dia das Mães", position: 1, active: false, description: "Presentes feitos à mão." },
 ];
 
-type Opcao = { grupo: string; obrigatorio: boolean; valores: string[] };
-
-const PRODUTOS: {
-  slug: string; name: string; description: string; price: number | null;
-  categoria: string; subcategoria?: string;
-  dimensions?: string; material?: string; capacity?: string; careText?: string;
-  diasMin?: number; diasMax?: number;
-  destaque?: number; opcoes: Opcao[];
-}[] = [
-  {
-    slug: "bolsa-serra", name: "Bolsa Serra", categoria: "bolsas", subcategoria: "transversal",
-    description: "Transversal de uso diário, com alça ajustável e corpo estruturado. Feita em ponto fechado, que segura o formato mesmo cheia.",
-    price: 320, dimensions: "24 × 18 × 8 cm", material: "Fio de malha de algodão",
-    capacity: "Cabe carteira, celular, chaves e um livro de bolso.",
-    careText: "Lave à mão em água fria com sabão neutro. Seque à sombra, deitada.",
-    diasMin: 7, diasMax: 10, destaque: 0,
-    opcoes: [
-      { grupo: "cor", obrigatorio: true, valores: ["cru", "caramelo", "terracota", "verde-musgo", "preto"] },
-      { grupo: "alca", obrigatorio: true, valores: ["transversal-ajustavel", "de-couro"] },
-      { grupo: "forro", obrigatorio: true, valores: ["com-forro", "sem-forro"] },
-      { grupo: "fecho", obrigatorio: true, valores: ["ziper", "botao-magnetico"] },
-      { grupo: "personalizacao", obrigatorio: false, valores: [] },
-    ],
-  },
-  {
-    slug: "bolsa-cristal", name: "Bolsa Cristal", categoria: "bolsas", subcategoria: "tote",
-    description: "Tote de ombro com boca larga, para quem carrega o dia inteiro junto. Alça reforçada em duas camadas.",
-    price: null, dimensions: "38 × 32 × 12 cm", material: "Fio de malha de algodão",
-    capacity: "Cabe notebook de 14\", garrafa d'água, carteira e caderno.",
-    careText: "Lave à mão em água fria. Não torça — pressione para tirar o excesso de água.",
-    diasMin: 10, diasMax: 15, destaque: 1,
-    opcoes: [
-      { grupo: "cor", obrigatorio: true, valores: ["cru", "off-white", "caramelo", "azul-jeans", "preto"] },
-      { grupo: "tamanho", obrigatorio: true, valores: ["m", "g"] },
-      { grupo: "forro", obrigatorio: true, valores: ["com-forro", "sem-forro"] },
-      { grupo: "personalizacao", obrigatorio: false, valores: [] },
-    ],
-  },
-  {
-    slug: "bolsa-imperial-praia", name: "Bolsa Imperial de Praia", categoria: "bolsas", subcategoria: "praia",
-    description: "Bolsa de praia em ponto vazado, larga e leve. Aguenta areia, sol e canga molhada.",
-    price: 260, dimensions: "42 × 36 × 14 cm", material: "Barbante ecológico",
-    capacity: "Cabe canga, toalha, protetor e uma garrafa de 1 litro.",
-    careText: "Enxágue em água doce depois da praia e seque à sombra.",
-    diasMin: 7, diasMax: 12,
-    opcoes: [
-      { grupo: "cor", obrigatorio: true, valores: ["cru", "mostarda", "terracota", "azul-jeans"] },
-      { grupo: "alca", obrigatorio: true, valores: ["de-mao", "transversal-ajustavel"] },
-    ],
-  },
-  {
-    slug: "necessaire-petropolis", name: "Necessaire Petrópolis", categoria: "bolsas", subcategoria: "necessaire",
-    description: "Necessaire de cordão para maquiagem, crochê de viagem ou o que você quiser guardar junto.",
-    price: 85, dimensions: "20 × 15 cm", material: "Fio de malha de algodão",
-    capacity: "Cabe o essencial de maquiagem ou um novelo com agulhas.",
-    careText: "Lave à mão em água fria com sabão neutro.",
-    diasMin: 4, diasMax: 7, destaque: 2,
-    opcoes: [
-      { grupo: "cor", obrigatorio: true, valores: ["cru", "rosa-antigo", "verde-musgo", "mostarda"] },
-      { grupo: "personalizacao", obrigatorio: false, valores: [] },
-    ],
-  },
-  {
-    slug: "jogo-americano-trancado", name: "Jogo Americano Trançado", categoria: "mesa-posta",
-    description: "Jogo americano em ponto trançado, que dá relevo à mesa sem desequilibrar o prato.",
-    price: 45, dimensions: "45 × 33 cm (cada peça)", material: "Barbante de algodão nº 6",
-    careText: "Máquina em ciclo delicado, dentro de saquinho. Não use alvejante.",
-    diasMin: 5, diasMax: 10, destaque: 3,
-    opcoes: [
-      { grupo: "cor", obrigatorio: true, valores: ["cru", "off-white", "terracota", "verde-musgo", "mostarda"] },
-    ],
-  },
-  {
-    slug: "porta-copos-ponto-alto", name: "Porta-copos Ponto Alto", categoria: "mesa-posta",
-    description: "Conjunto de porta-copos em ponto alto, grosso o bastante para segurar a umidade do copo gelado.",
-    price: 60, dimensions: "11 cm de diâmetro", material: "Barbante de algodão nº 6",
-    careText: "Lave à mão e seque no varal.",
-    diasMin: 3, diasMax: 6,
-    opcoes: [
-      { grupo: "cor", obrigatorio: true, valores: ["cru", "terracota", "verde-musgo", "azul-jeans"] },
-    ],
-  },
-  {
-    slug: "manta-petropolis", name: "Manta Petrópolis", categoria: "casa-decoracao",
-    description: "Manta de sofá em ponto grosso, pensada para o frio da serra. Pesada na medida certa.",
-    price: null, dimensions: "1,60 × 1,20 m", material: "Fio grosso de algodão",
-    careText: "Lave à mão ou em ciclo delicado. Seque deitada, nunca pendurada.",
-    diasMin: 20, diasMax: 30,
-    opcoes: [
-      { grupo: "cor", obrigatorio: true, valores: ["cru", "off-white", "caramelo", "verde-musgo"] },
-      { grupo: "tamanho", obrigatorio: true, valores: ["m", "g"] },
-    ],
-  },
-  {
-    slug: "suporte-planta-cascata", name: "Suporte de Planta Cascata", categoria: "macrame",
-    description: "Suporte de macramê para vaso pendurado, com franja longa. Os nós são dados um a um.",
-    price: 95, dimensions: "90 cm de comprimento", material: "Corda de algodão 4 mm",
-    careText: "Limpe com pano levemente úmido. Não molhe a corda.",
-    diasMin: 5, diasMax: 8,
-    opcoes: [
-      { grupo: "cor", obrigatorio: true, valores: ["cru", "off-white", "caramelo"] },
-      { grupo: "tamanho", obrigatorio: true, valores: ["p", "m", "g"] },
-    ],
-  },
-];
 
 async function main() {
   await db.siteSettings.upsert({
@@ -372,6 +272,15 @@ async function main() {
         });
       }
     }
+  }
+
+  // As peças de exemplo saem depois de os produtos reais entrarem, para o site
+  // nunca ficar sem catálogo entre um passo e outro.
+  const removidas = await db.product.deleteMany({
+    where: { slug: { in: DEMONSTRACOES_ANTIGAS } },
+  });
+  if (removidas.count > 0) {
+    console.log(`Removidas ${removidas.count} peças de demonstração.`);
   }
 
   for (const pagina of PAGINAS) {

@@ -12,6 +12,7 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:seed": "prisma db seed",
+    "fotos:importar": "tsx scripts/importar-fotos.ts",
     "db:resumo": "tsx scripts/db-resumo.ts",
     "check:whatsapp": "tsx scripts/verifica-whatsapp.ts",
     "check:produto": "node scripts/verifica-pagina-produto.mjs",
