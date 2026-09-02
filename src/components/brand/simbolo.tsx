@@ -21,11 +21,14 @@
  *
  * A proporção é 0,885:1 (largura:altura). Dimensione pela ALTURA (`h-*`).
  *
- * **Tamanho.** Medido no cabeçalho: 24 × 28px CSS. Em tela 2× fica nítido; em
- * 1× as tramas mais finas caem abaixo de um pixel e acinzentam. Abaixo de ~24px
- * o desenho fecha e vira mancha — é por isso que o favicon **não** usa este
- * traçado, e sim a versão reduzida de `src/app/icon.svg`: coração cheio com
- * três tramas vazadas, que aguenta 16px.
+ * **Tamanho.** Medido: 52 × 59px CSS no cabeçalho, 36 × 41 no rodapé. A 24 × 28,
+ * como ficou na primeira tentativa, não dava para ver o desenho — as tramas
+ * caíam abaixo de um pixel em tela 1× e o conjunto virava mancha cinza. Este é
+ * um símbolo ilustrado, não um pictograma: precisa de espaço.
+ *
+ * Abaixo de ~32px ele fecha. É por isso que o favicon **não** usa este traçado,
+ * e sim a versão reduzida de `src/app/icon.svg`: coração cheio com três tramas
+ * vazadas, que aguenta 16px.
  */
 
 /** Caixa apertada à tinta: o gap escrito é o gap visto. */

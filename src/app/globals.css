@@ -145,8 +145,11 @@
   /* ---- Alturas de controle e de cromo ---- */
   --spacing-controle:     3.375rem; /* 54 — botão md e campo, alinhados */
   --spacing-controle-sm:  2.25rem;  /* 36 — botão sm, seletor de cor */
-  --spacing-cabecalho:    4rem;     /* 64 — cabeçalho mobile, barra sticky */
-  --spacing-cabecalho-lg: 5rem;     /* 80 — cabeçalho desktop */
+  /* O símbolo da marca é ilustrado — novelo, agulhas, coraçõezinhos — e só lê
+     inteiro a partir de ~50px de altura. Com o cabeçalho a 80px o lockup ficava
+     com 1px de folga, violando a área de proteção da identidade (§6.3). */
+  --spacing-cabecalho:    5rem;     /* 80 — cabeçalho rolado, barra sticky */
+  --spacing-cabecalho-lg: 6.5rem;   /* 104 — cabeçalho desktop, no topo */
   --spacing-zap-flutua:   3.5rem;   /* 56 — botão flutuante (identidade 7.3) */
   /* 112 — folga no fim da página no mobile, para a barra fixa de WhatsApp da
      página de produto não cobrir o rodapé. A barra mede 87px (botão de 54 +

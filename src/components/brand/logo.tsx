@@ -43,7 +43,7 @@ export function Logo({
           isso, mas o novelo é 43% mais largo na mesma altura (0,885:1 contra
           0,62:1) e a essa escala dominava a assinatura. Recuado para 1,15em, a
           mancha do símbolo volta a pesar como a do texto. */}
-      <Simbolo className="mt-[0.10em] h-[1.15em] w-auto shrink-0" />
+      <Simbolo className="mt-[0.06em] h-[1.75em] w-auto shrink-0" />
       <span className="flex flex-col leading-none">
         <span
           className="font-display lowercase"

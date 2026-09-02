@@ -469,9 +469,8 @@ Proporção **0,885:1** (largura:altura) — dimensione pela altura.
   decisivo do logo não é a tela, é o bordado. Se o laço fecha a 2 cm em uma cor, está
   aprovado.
 - **Tamanho mínimo em tela**: 120px de largura na assinatura completa; abaixo disso,
-  só o símbolo. O símbolo completo **não desce abaixo de ~24px**: medido no cabeçalho
-  a 24 × 28px CSS, em tela 2× fica nítido e em 1× as tramas finas caem abaixo de um
-  pixel e acinzentam.
+  só o símbolo. O símbolo completo **não desce abaixo de ~32px de altura** — medido no
+  cabeçalho a 38 × 43px e no rodapé a 36 × 41, que é onde ele lê inteiro em 1× e em 2×.
 - **Área de proteção**: a altura do `c` de "crochê" em todos os lados.
 
 ### 6.4 O laço, e por que ele saiu
@@ -503,11 +502,16 @@ Três regras que sustentam a assinatura, todas medidas e não estimadas:
    a regra que sustenta as outras: com vazio na caixa, ele soma com o gap e o espaço
    escrito deixa de ser o espaço visto. A proporção é 0,885:1, então **o símbolo é
    dimensionado pela altura**, nunca por `size-*`.
-1. **Altura do símbolo = 1,15em**, e não os 1,30em do laço. O bloco de tinta das duas
-   linhas tem 1,30em de altura, mas o novelo é **43% mais largo que o laço na mesma
-   altura** (0,885:1 contra 0,62:1): igualado à tinta, ele dominava a assinatura em
-   vez de assiná-la. Recuado para 1,15em, a mancha do símbolo volta a pesar como a do
-   texto. Mais `margin-top: 0.10em`, porque a caixa de linha da primeira linha não
+1. **Altura do símbolo = 1,45em**, contra 1,30em do laço. A primeira tentativa foi o
+   caminho oposto — 1,15em, para o novelo não dominar, já que é **43% mais largo que
+   o laço na mesma altura** (0,885:1 contra 0,62:1). Errado: no cabeçalho isso dava
+   **24 × 28px CSS** e não dava para ver o desenho; em tela 1× as tramas caíam abaixo
+   de um pixel e o conjunto virava mancha cinza. **Um símbolo ilustrado não se mede
+   como um pictograma** — o laço era uma linha só e sobrevivia pequeno; este tem
+   tramas, agulhas e coraçõezinhos, e precisa de espaço para existir. A 1,75em, com o
+   corpo do cabeçalho subido de 1,5rem para 2,1rem, ele mede **52 × 59px** e lê
+   inteiro — e o cabeçalho subiu de 80px para **104px** no topo (80px rolado), porque
+   a 80px o lockup ficava com 1px de folga, violando a área de proteção. Mais `margin-top: 0.06em`, porque a caixa de linha da primeira linha não
    começa na tinta.
 2. **Distância símbolo → palavra = 0,30em** (14,4px no corpo de 48px), medida de tinta
    a tinta.
