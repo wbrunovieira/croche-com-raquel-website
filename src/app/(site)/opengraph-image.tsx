@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { LACO_PATH, LACO_VIEWBOX } from "@/components/brand/laco";
+import { SIMBOLO_PATH, SIMBOLO_VIEWBOX } from "@/components/brand/simbolo";
 import { CORES, TAMANHO, fontesDaMarca } from "@/lib/og/fontes";
 import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
 
@@ -24,14 +24,10 @@ export default async function Imagem() {
           padding: 72,
         }}
       >
-        <svg viewBox={LACO_VIEWBOX} width={70} height={113} fill="none">
-          <path
-            d={LACO_PATH}
-            stroke={CORES.texto}
-            strokeWidth={2.6}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+        {/* Largura derivada da altura pela proporção do símbolo (0,885:1) —
+            escrever as duas à mão deforma o desenho no dia em que uma mudar. */}
+        <svg viewBox={SIMBOLO_VIEWBOX} width={100} height={113}>
+          <path d={SIMBOLO_PATH} fill={CORES.texto} fillRule="evenodd" />
         </svg>
 
         <div style={{ display: "flex", flexDirection: "column" }}>

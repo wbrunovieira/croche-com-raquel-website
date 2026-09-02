@@ -431,21 +431,37 @@ funciona bem em minúsculas e mal em maiúsculas. O contraste de escala e de eix
 (serifa grande orgânica / grotesca pequena espaçada) já dá hierarquia — sem
 ornamento, sem moldura, sem "est. 2020".
 
-### 6.2 Símbolo
+### 6.2 Símbolo — o novelo-coração
 
-**Tem símbolo, e ele nasce da própria letra.** O terminal do **`ê`** de "crochê"
-prolonga-se num **laço fechado de fio** — uma volta simples que se cruza e volta, o
-começo de qualquer trabalho de crochê. Um traço de espessura constante (não caligrafia
-modulada), cantos totalmente arredondados, desenhado numa grade de 24×24.
+**O símbolo é o que a Raquel já usava.** Novelo em forma de coração com as tramas do
+fio, duas agulhas atravessando por trás, três coraçõezinhos acima e o fio solto em
+cacho embaixo à direita. Ela apresentou a arte dela e **reprovou o laço** que este
+documento propunha (registro em 02/09/2026).
 
-Esse laço é o símbolo isolado da marca. Ele funciona sozinho.
+A decisão é dela por um motivo que vale escrever: **a marca já circula**. Está na
+etiqueta de couro costurada nas bolsas, no perfil, nos posts. Trocar por um símbolo
+"melhor desenhado" custaria o reconhecimento que ela levou anos construindo, para
+ganhar coerência de sistema — troca ruim.
+
+**O traçado foi vetorizado da arte dela, não redesenhado.** A original é um raster de
+640×640 com traço creme sobre rosa. O canal verde separa os dois com folga (rosa ~143,
+creme ~238); dali sai uma máscara, ampliada 5× antes de limiarizar para o degrau do
+JPEG não virar serrilha, e os contornos saem por marching squares. Redesenhar no olho
+produziria "parecido" — e em marca, parecido é errado.
+
+**É caminho preenchido, não traço.** O desenho dela tem espessura variável e junções
+que um `stroke` de espessura única não reproduz. Exige `fill-rule="evenodd"`: sem ela
+os vazados internos entopem.
+
+Proporção **0,885:1** (largura:altura) — dimensione pela altura.
 
 ### 6.3 Favicon e versões
 
-- **Favicon 32×32 e 16×16**: só o laço, em Fio Cru sobre um quadrado sólido de Verde
-  Cristal. Sem letra — em 16px, letra vira mancha. Espessura mínima do traço: **3px em
-  32×32** (~2px em 16), com 3px de margem de segurança.
-- **Apple touch icon 180×180**: mesmo laço, mais folga.
+- **Favicon 32×32 e 16×16**: **não usa o traçado completo** — tramas, agulhas e
+  coraçõezinhos fecham e viram mancha. Usa a **marca reduzida**: coração cheio em Fio
+  Cru com três tramas vazadas, sobre quadrado sólido de Verde Cristal. Validada a
+  150, 48, 32 e 16px.
+- **Apple touch icon 180×180**: a mesma marca reduzida, gerada do `icon.svg`.
 - **Versão principal**: Verde Cristal sobre Fio Cru.
 - **Versão invertida**: Fio Cru sobre Verde Cristal (usada no rodapé e nas seções escuras).
 - **Versão 1 cor / bordada**: contorno em traço único, **testada a 2 cm de largura** —
@@ -453,13 +469,17 @@ Esse laço é o símbolo isolado da marca. Ele funciona sozinho.
   decisivo do logo não é a tela, é o bordado. Se o laço fecha a 2 cm em uma cor, está
   aprovado.
 - **Tamanho mínimo em tela**: 120px de largura na assinatura completa; abaixo disso,
-  só o laço.
+  só o símbolo. O símbolo completo **não desce abaixo de ~24px**: medido no cabeçalho
+  a 24 × 28px CSS, em tela 2× fica nítido e em 1× as tramas finas caem abaixo de um
+  pixel e acinzentam.
 - **Área de proteção**: a altura do `c` de "crochê" em todos os lados.
 
-### 6.4 Revisão do desenho (implementação)
+### 6.4 O laço, e por que ele saiu
 
-O símbolo foi desenhado, renderizado e corrigido em ciclo. Fica registrado o que foi
-descartado, porque cada descarte é uma regra:
+Fica registrado: antes do novelo-coração, este documento propunha um **laço de fio**
+nascido do terminal do `ê` de "crochê". Ele foi desenhado, renderizado e corrigido em
+ciclo — e **reprovado pela Raquel**, que já tinha símbolo próprio em uso. O trabalho
+de desenho abaixo continua valendo como registro do que cada forma comunica:
 
 | Tentativa | Por que foi descartada |
 |---|---|
@@ -470,28 +490,26 @@ descartado, porque cada descarte é uma regra:
 | Roseta de três elos | Lê como **trevo** |
 | Agulha com laço de fio | Lê como **&** — ilegível abaixo de 48px |
 
-**O desenho final** encurta as pontas até o cruzamento encostar na base do laço — é
-isso que troca a leitura de "balão" por "nó de fio" — e deixa as pontas levemente
-assimétricas para escapar da fita de campanha. Validado a 240px, 66px e 32px.
+**O laço final** encurtava as pontas até o cruzamento encostar na base — é isso que
+trocava a leitura de "balão" por "nó de fio". Validado a 240px, 66px e 32px, e
+descartado mesmo assim: nenhuma dessas medições responde à pergunta que importava, que
+era se a artesã se reconhece na marca.
 
 ### 6.5 Construção do lockup
 
 Três regras que sustentam a assinatura, todas medidas e não estimadas:
 
-0. **O viewBox do laço é apertado ao traçado** (`5.9 2 12.2 19.7`), não a uma grade
-   quadrada. Esta é a regra que sustenta as outras duas. Na grade de 24×24 o desenho
-   ocupava só 40% da largura da caixa, deixando **18,4px de vazio de cada lado** — e
-   esse vazio somava com o gap: o espaço escrito era 0,42em e o **visto era 38,6px**,
-   quase o dobro. Com a caixa apertada, o espaço escrito é o espaço visto. A
-   proporção passa a ser 0,62:1, então **o laço é dimensionado pela altura**, nunca
-   por `size-*`.
-1. **Altura do laço = 1,30em**, igualada ao bloco de tinta das duas linhas — do topo
-   do `ê` à base do `COM RAQUEL`. Medido: laço 62,4px contra texto 62,6px. Mais
-   `margin-top: 0.06em`, que corrige os 2,8px que o laço ficava acima do centro
-   ótico, porque a caixa de linha da primeira linha não começa na tinta. Alinhamento
-   final: **0,0px**. A 1,55em centralizado na caixa de linha, o laço dominava a
-   palavra em vez de assiná-la.
-2. **Distância laço → palavra = 0,30em** (14,4px no corpo de 48px), medida de tinta
+0. **O viewBox é apertado à tinta** (`0 0 24 27.12`), não a uma grade quadrada. Esta é
+   a regra que sustenta as outras: com vazio na caixa, ele soma com o gap e o espaço
+   escrito deixa de ser o espaço visto. A proporção é 0,885:1, então **o símbolo é
+   dimensionado pela altura**, nunca por `size-*`.
+1. **Altura do símbolo = 1,15em**, e não os 1,30em do laço. O bloco de tinta das duas
+   linhas tem 1,30em de altura, mas o novelo é **43% mais largo que o laço na mesma
+   altura** (0,885:1 contra 0,62:1): igualado à tinta, ele dominava a assinatura em
+   vez de assiná-la. Recuado para 1,15em, a mancha do símbolo volta a pesar como a do
+   texto. Mais `margin-top: 0.10em`, porque a caixa de linha da primeira linha não
+   começa na tinta.
+2. **Distância símbolo → palavra = 0,30em** (14,4px no corpo de 48px), medida de tinta
    a tinta.
 3. **A subline é oticamente justificada à largura de "crochê".** A 0,38em ela media
    146,9px contra 137,1px da palavra — 9,8px mais larga, o que desalinha a borda

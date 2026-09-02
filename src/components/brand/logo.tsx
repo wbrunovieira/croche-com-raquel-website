@@ -1,4 +1,4 @@
-import { Laco } from "./laco";
+import { Simbolo } from "./simbolo";
 
 /**
  * Assinatura da marca.
@@ -8,13 +8,13 @@ import { Laco } from "./laco";
  * espaçada, a ~38% do corpo da primeira linha. O contraste de escala e de eixo
  * já dá a hierarquia — sem ornamento, sem moldura.
  *
- * Abaixo de 120px de largura, use apenas o laço (`variante="laco"`).
+ * Abaixo de 120px de largura, use apenas o símbolo (`variante="simbolo"`).
  *
  * A cor vem de quem usa (`currentColor`): `text-primaria` na versão principal,
  * `text-inv-conteudo` sobre as seções verdes.
  */
 
-type Variante = "completo" | "laco";
+type Variante = "completo" | "simbolo";
 
 export function Logo({
   variante = "completo",
@@ -25,10 +25,10 @@ export function Logo({
   className?: string;
   titulo?: string;
 }) {
-  if (variante === "laco") {
+  if (variante === "simbolo") {
     return (
       <span className={`inline-flex ${className}`} role="img" aria-label={titulo}>
-        <Laco className="h-full w-auto" />
+        <Simbolo className="h-full w-auto" />
       </span>
     );
   }
@@ -39,12 +39,11 @@ export function Logo({
       role="img"
       aria-label={titulo}
     >
-      {/* Altura medida: a tinta das duas linhas vai do topo do "ê" à base do
-          "COM RAQUEL" e ocupa 1,30em. O laço é igualado a isso, e como o viewBox
-          é apertado ao traçado, a altura escrita é a altura vista. O deslocamento
-          de 0,06em corrige os 2,8px que o laço ficava acima do centro ótico do
-          bloco — a caixa de linha da primeira linha não começa na tinta. */}
-      <Laco className="mt-[0.06em] h-[1.30em] w-auto shrink-0" />
+      {/* A tinta das duas linhas ocupa 1,30em de altura. O laço era igualado a
+          isso, mas o novelo é 43% mais largo na mesma altura (0,885:1 contra
+          0,62:1) e a essa escala dominava a assinatura. Recuado para 1,15em, a
+          mancha do símbolo volta a pesar como a do texto. */}
+      <Simbolo className="mt-[0.10em] h-[1.15em] w-auto shrink-0" />
       <span className="flex flex-col leading-none">
         <span
           className="font-display lowercase"

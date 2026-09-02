@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Logo } from "@/components/brand/logo";
-import { Laco } from "@/components/brand/laco";
+import { Simbolo } from "@/components/brand/simbolo";
 import { Botao } from "@/components/ui/botao";
 import { Chip } from "@/components/ui/chip";
 import { Etiqueta } from "@/components/ui/etiqueta";
@@ -158,9 +158,9 @@ export default async function EstiloPage() {
               Abaixo de 120px de largura, a assinatura completa sai e fica só ele.
             </p>
             <div className="mt-6 flex items-end gap-8">
-              <Laco className="h-20 w-auto text-primaria" />
-              <Laco className="h-12 w-auto text-primaria" />
-              <Laco className="h-8 w-auto text-primaria" />
+              <Simbolo className="h-20 w-auto text-primaria" />
+              <Simbolo className="h-12 w-auto text-primaria" />
+              <Simbolo className="h-8 w-auto text-primaria" />
             </div>
           </div>
 
@@ -172,13 +172,13 @@ export default async function EstiloPage() {
             </p>
             <div className="mt-6 flex items-end gap-6">
               <div className="h-[3.23cm]">
-                <Laco className="h-full w-auto text-tinta" />
+                <Simbolo className="h-full w-auto text-tinta" />
               </div>
               <div className="h-[1.94cm]">
-                <Laco className="h-full w-auto text-tinta" />
+                <Simbolo className="h-full w-auto text-tinta" />
               </div>
               <div className="rounded-fio bg-tinta p-3">
-                <Laco className="h-[2cm] w-auto text-cru" />
+                <Simbolo className="h-[2cm] w-auto text-cru" />
               </div>
             </div>
           </div>

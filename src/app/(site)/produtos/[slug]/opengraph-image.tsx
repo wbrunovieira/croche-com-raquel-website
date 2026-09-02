@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { LACO_PATH, LACO_VIEWBOX } from "@/components/brand/laco";
+import { SIMBOLO_PATH, SIMBOLO_VIEWBOX } from "@/components/brand/simbolo";
 import { CORES, TAMANHO, fontesDaMarca } from "@/lib/og/fontes";
 import { buscarProdutoPorSlug } from "@/lib/queries/produtos";
 import { formatarPreco, formatarPrazo } from "@/lib/formatar";
@@ -42,14 +42,8 @@ export default async function Imagem({ params }: { params: Promise<{ slug: strin
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <svg viewBox={LACO_VIEWBOX} width={38} height={61} fill="none">
-            <path
-              d={LACO_PATH}
-              stroke={CORES.texto}
-              strokeWidth={2.6}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
+          <svg viewBox={SIMBOLO_VIEWBOX} width={54} height={61}>
+            <path d={SIMBOLO_PATH} fill={CORES.texto} fillRule="evenodd" />
           </svg>
           <div style={{ fontFamily: "Karla", fontSize: 24, color: CORES.suave }}>
             {categoria ? categoria.toUpperCase() : "CROCHÊ COM RAQUEL"}
