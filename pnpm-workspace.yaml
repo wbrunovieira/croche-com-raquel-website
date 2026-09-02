@@ -1,8 +1,19 @@
+# Quais dependências podem rodar script de build na instalação.
+#
+# O pnpm 11 gera este arquivo com "set this to true or false" em cada linha, e
+# **enquanto o placeholder fica lá o pnpm ignora aquele build**. No local isso
+# passa como aviso; na Vercel o install sai com código 1 e o deploy morre.
+#
+# prisma / @prisma/engines: precisam, é o que baixa e posiciona os engines.
+# esbuild: o `tsx` depende do binário dele — sem isso os scripts (seed,
+# admin:criar, os checks) não rodam.
 allowBuilds:
-  '@prisma/engines': set this to true or false
-  esbuild: set this to true or false
-  msgpackr-extract: set this to true or false
-  prisma: set this to true or false
+  '@prisma/engines': true
+  prisma: true
+  esbuild: true
+  # Aceleradores nativos opcionais: o código funciona sem eles, e cada build a
+  # menos é uma peça a menos para quebrar no deploy.
+  msgpackr-extract: false
+  workerd: false
   sharp: false
   unrs-resolver: false
-  workerd: set this to true or false
