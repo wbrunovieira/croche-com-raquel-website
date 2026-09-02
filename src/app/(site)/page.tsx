@@ -7,6 +7,7 @@ import { Revelar } from "@/components/ui/revelar";
 import { Etiqueta } from "@/components/ui/etiqueta";
 import { IconeZap } from "@/components/ui/icone-zap";
 import { GradeDeProdutos } from "@/components/produto/card-de-produto";
+import { Simbolo } from "@/components/brand/simbolo";
 import { listarCategorias, listarTiposDeBolsa } from "@/lib/queries/categorias";
 import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
 import { listarCoresDisponiveis, listarDestaques } from "@/lib/queries/produtos";
@@ -59,8 +60,16 @@ export default async function Home() {
       />
 
       {/* Destaques logo abaixo da dobra: bolsa é o carro-chefe e a vitrine é
-          curadoria da Raquel, não cálculo. */}
-      <section className="container-site secao">
+          curadoria da Raquel, não cálculo.
+
+          A marca entra aqui como marca-d'água, e só aqui na página clara: esta
+          é a única seção creme com espaço aberto de sobra. Grande e sangrando
+          pela borda — marca-d'água pequena lê como erro, enorme lê como
+          intenção. Não vai nas seções verdes porque a `trama` já faz textura
+          de superfície lá, e duas texturas na mesma superfície se anulam. */}
+      <section className="relative overflow-hidden">
+        <Simbolo className="pointer-events-none absolute right-[4%] top-1/2 h-[62%] -translate-y-1/2 text-primaria opacity-[0.05]" />
+        <div className="container-site secao relative">
         <Revelar>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -79,6 +88,7 @@ export default async function Home() {
         <Revelar atraso={0.08} className="mt-bloco">
           <GradeDeProdutos produtos={destaques} />
         </Revelar>
+        </div>
       </section>
 
       {tiposDeBolsa.length > 0 ? (
