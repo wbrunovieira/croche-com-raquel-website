@@ -12,16 +12,10 @@ export const configuracaoBase = {
   pages: {
     signIn: "/admin/entrar",
   },
-  callbacks: {
-    authorized({ auth, request }) {
-      const logado = Boolean(auth?.user);
-      const noAdmin = request.nextUrl.pathname.startsWith("/admin");
-      const naTelaDeEntrada = request.nextUrl.pathname === "/admin/entrar";
-
-      if (naTelaDeEntrada) return true;
-      if (noAdmin) return logado;
-      return true;
-    },
-  },
+  // Sem callback `authorized` de propósito. O `proxy.ts` passa um middleware
+  // próprio para o `auth()`, e nesse caminho o next-auth **descarta** o
+  // booleano deste callback (ver o ramo `else if (userMiddlewareOrRoute)` em
+  // `node_modules/next-auth/lib/index.js`). Um `authorized` aqui pareceria
+  // proteger o `/admin` sem proteger nada. A regra mora no `proxy.ts`.
   providers: [],
 } satisfies NextAuthConfig;

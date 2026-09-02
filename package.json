@@ -19,7 +19,8 @@
     "admin:criar": "tsx scripts/criar-admin.ts",
     "check:login": "tsx scripts/verifica-login.ts",
     "check:painel": "tsx scripts/verifica-painel.ts",
-    "check:seo": "node scripts/verifica-seo.mjs"
+    "check:seo": "node scripts/verifica-seo.mjs",
+    "check:hospedagem": "node scripts/verifica-hospedagem.mjs"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.10.0",

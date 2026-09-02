@@ -310,8 +310,36 @@ Decisões que valem registro:
 do que o buscador encontra em cada página. E, no navegador, a imagem de
 compartilhamento de qualquer peça em `/produtos/<slug>/opengraph-image`.
 
-### ⬜ Etapa 12 — Deploy
+### 🔵 Etapa 12 — Deploy
 Deploy na Vercel, variáveis de ambiente, domínio, preview e produção.
+
+**Domínio comprado:** `crochecomraquel.com.br`.
+
+**Feito: a estreia em duas portas.** Enquanto o catálogo não abre, o domínio
+mostra uma **página de obra** — só tipografia, sem o logotipo, a pedido do
+Bruno — e o site completo fica em `preview.crochecomraquel.com.br`.
+
+- O `src/proxy.ts` decide pelo host, por **allowlist**: host desconhecido cai
+  na obra. Blocklist vazaria o site inacabado no dia em que alguém apontasse um
+  alias novo.
+- **O gate do `/admin` mudou de lugar, e isso não era opcional.** Passar um
+  middleware próprio ao `auth()` do next-auth faz o `handleAuth` cair num
+  `else if` que **descarta o retorno do callback `authorized`** — a proteção
+  sumiria em silêncio. A regra agora é explícita no proxy, e o
+  `auth.config.ts` carrega o comentário para ninguém devolvê-la para lá.
+- **Preview não indexa.** Os dois hosts vivem no mesmo deploy, então
+  `VERCEL_ENV` não os distingue: quem distingue é o host. O `robots.ts` decide
+  por ele e o proxy ainda manda `X-Robots-Tag: noindex` em tudo que sai do
+  preview — cobre imagem e OG, que o robots.txt não cobriria.
+- Com a obra ligada o `robots.txt` do domínio **não aponta o sitemap**: ele
+  levaria o buscador a dezenas de URLs que hoje respondem todas a mesma página.
+- **`SITE_NO_AR=true`** derruba a obra no dia do lançamento, sem tocar em código.
+
+`pnpm check:hospedagem` cobre tudo isso. Ele usa `node:http`, e não `fetch`: o
+fetch do Node trata `Host` como header proibido e ignora em silêncio — os
+testes por host passariam medindo o localhost.
+
+**Falta:** apontar o DNS, subir para a Vercel e setar as variáveis.
 **Você vai ver:** o site no ar.
 
 ### 🔵 Etapa 13 — Conteúdo real e handoff
