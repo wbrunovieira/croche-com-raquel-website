@@ -2,6 +2,12 @@
 
 Documento vivo. É atualizado a cada commit de etapa concluída.
 
+> **O board é a fonte da verdade do andamento.** As etapas abaixo viraram issues
+> no projeto *Croche-com-raquel-website* do WB Project Manager, organizadas em
+> cinco milestones (Fase 1 a Fase 5). Este documento segue valendo pelo que o
+> board não guarda: o **porquê** de cada decisão. Para mexer no board, use a
+> skill `track-work` (`.claude/skills/track-work/`).
+
 **Legenda:** ✅ concluída · 🔵 em andamento · ⬜ pendente · ⏸️ bloqueada
 
 Última atualização: 2026-08-31 — Etapa 11 concluída; catálogo real e primeira dobra revistos (antecipados da etapa 13)
