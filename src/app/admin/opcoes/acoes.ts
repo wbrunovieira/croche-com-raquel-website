@@ -53,6 +53,37 @@ export async function salvarValor(_anterior: unknown, dados: FormData): Promise<
   return { ok: "Salvo." };
 }
 
+/**
+ * Troca o valor de lugar com o vizinho, dentro do mesmo grupo.
+ *
+ * A ordem não é enfeite de painel: ela decide **quais cores aparecem na
+ * primeira dobra do site** (o hero mostra as 8 primeiras), em que sequência a
+ * cliente vê as opções na página da peça e como o filtro do catálogo se
+ * organiza. Sem isto, a ordem era a de cadastro e não dava para mudar.
+ */
+export async function moverValor(id: string, direcao: -1 | 1) {
+  await exigirSessao();
+
+  const atual = await db.optionValue.findUnique({ where: { id } });
+  if (!atual) return;
+
+  const vizinho = await db.optionValue.findFirst({
+    where: {
+      groupId: atual.groupId,
+      position: direcao === -1 ? { lt: atual.position } : { gt: atual.position },
+    },
+    orderBy: { position: direcao === -1 ? "desc" : "asc" },
+  });
+  if (!vizinho) return;
+
+  await db.$transaction([
+    db.optionValue.update({ where: { id: atual.id }, data: { position: vizinho.position } }),
+    db.optionValue.update({ where: { id: vizinho.id }, data: { position: atual.position } }),
+  ]);
+
+  revalidarCatalogo();
+}
+
 export async function alternarValor(id: string, ativo: boolean) {
   await exigirSessao();
   await db.optionValue.update({ where: { id }, data: { active: ativo } });

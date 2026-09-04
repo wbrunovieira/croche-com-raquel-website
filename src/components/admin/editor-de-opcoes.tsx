@@ -1,12 +1,13 @@
 "use client";
 
 import { useActionState, useState, useTransition } from "react";
-import { Check, Plus, Trash2, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from "lucide-react";
 import {
   alternarGrupo,
   alternarValor,
   apagarValor,
   criarGrupo,
+  moverValor,
   salvarValor,
 } from "@/app/admin/opcoes/acoes";
 import { classesDeBotao } from "@/components/ui/botao";
@@ -75,9 +76,24 @@ function Grupo({ grupo }: { grupo: GrupoDoAdmin }) {
 
       {grupo.tipo !== "TEXT" ? (
         <>
+          {/* A ordem só serve para alguma coisa se ela souber que serve. Sem
+              esta linha, as setas parecem enfeite de painel. */}
+          <p className="mt-4 text-apoio text-conteudo-suave">
+            {ehCor
+              ? "A ordem manda: as 8 primeiras cores são as que aparecem na primeira dobra do site, e é nesta sequência que a cliente vê as opções na página da peça."
+              : "A ordem daqui é a que a cliente vê na página da peça."}
+          </p>
+
           <ul className="mt-bloco space-y-3">
-            {grupo.valores.map((v) => (
-              <Valor key={v.id} valor={v} grupoId={grupo.id} ehCor={ehCor} />
+            {grupo.valores.map((v, i) => (
+              <Valor
+                key={v.id}
+                valor={v}
+                grupoId={grupo.id}
+                ehCor={ehCor}
+                primeiro={i === 0}
+                ultimo={i === grupo.valores.length - 1}
+              />
             ))}
           </ul>
 
@@ -109,8 +125,12 @@ function Valor({
   valor,
   grupoId,
   ehCor,
+  primeiro,
+  ultimo,
 }: {
   valor: ValorDoAdmin;
+  primeiro: boolean;
+  ultimo: boolean;
   grupoId: string;
   ehCor: boolean;
 }) {
@@ -160,6 +180,29 @@ function Valor({
       </span>
 
       <span className="flex shrink-0 items-center gap-2">
+        {/* A ordem decide quais cores entram na primeira dobra do site e em que
+            sequência a cliente as vê na página da peça. Mesmo par de botões
+            das fotos de peça, que ela já conhece. */}
+        <span className="flex items-center gap-1">
+          <button
+            type="button"
+            disabled={primeiro || pendente}
+            aria-label={`Mover ${valor.nome} para cima`}
+            onClick={() => iniciar(() => moverValor(valor.id, -1))}
+            className="rounded-fio border border-borda-forte p-2 transition-colors hover:bg-superficie-baixa disabled:opacity-40"
+          >
+            <ArrowUp className="size-4" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            disabled={ultimo || pendente}
+            aria-label={`Mover ${valor.nome} para baixo`}
+            onClick={() => iniciar(() => moverValor(valor.id, 1))}
+            className="rounded-fio border border-borda-forte p-2 transition-colors hover:bg-superficie-baixa disabled:opacity-40"
+          >
+            <ArrowDown className="size-4" aria-hidden="true" />
+          </button>
+        </span>
         <button
           type="button"
           onClick={() => setEditando(true)}
