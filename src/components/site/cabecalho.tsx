@@ -15,18 +15,27 @@ export async function Cabecalho() {
     buscarConfiguracoes(),
   ]);
 
-  const itens: ItemDeMenu[] = categorias.map((c) =>
-    c.slug === SLUG_BOLSAS
-      ? {
-          rotulo: c.nome,
-          href: "/bolsas",
-          filhos: tiposDeBolsa.map((t) => ({
-            rotulo: t.nome,
-            href: `/bolsas/${t.slug}`,
-            total: t.totalDeProdutos,
-          })),
-        }
-      : { rotulo: c.nome, href: `/?categoria=${c.slug}#catalogo` }
+  // "Início" abre o menu porque o site é de uma página: das seções e do hub de
+  // bolsas, é o caminho de volta ao topo.
+  //
+  // Âncora `#topo`, e não `/`: o `Link` do Next para a rota em que já se está
+  // não rola a página — clicar em Início lá embaixo não fazia nada. A âncora
+  // sobe, e de `/bolsas` navega e sobe.
+  const itens: ItemDeMenu[] = [{ rotulo: "Início", href: "/#topo" }];
+  itens.push(
+    ...categorias.map((c) =>
+      c.slug === SLUG_BOLSAS
+        ? {
+            rotulo: c.nome,
+            href: "/bolsas",
+            filhos: tiposDeBolsa.map((t) => ({
+              rotulo: t.nome,
+              href: `/bolsas/${t.slug}`,
+              total: t.totalDeProdutos,
+            })),
+          }
+        : { rotulo: c.nome, href: `/?categoria=${c.slug}#catalogo` }
+    )
   );
   // O site é de uma página: fora de Bolsas, que tem página própria, o menu
   // navega por âncora.

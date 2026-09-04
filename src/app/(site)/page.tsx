@@ -78,7 +78,10 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const outrasCategorias = categorias.filter((c) => c.slug !== SLUG_BOLSAS);
 
   return (
-    <main>
+    // `scroll-mt`: a âncora fica no topo do `main`, que começa abaixo do
+    // cabeçalho e da faixa de aviso. Sem a margem, "Início" parava 128px
+    // abaixo do topo real e a faixa sumia.
+    <main id="topo" className="scroll-mt-cabecalho-lg">
       {/* O FAQPage mudou de página junto com as perguntas. */}
       <DadosEstruturados dados={perguntasEstruturadas(perguntasPlanas)} />
 
