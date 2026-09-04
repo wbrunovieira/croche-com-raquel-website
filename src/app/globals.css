@@ -166,7 +166,10 @@
 :root { color-scheme: light; }
 
 @layer base {
-  html { -webkit-text-size-adjust: 100%; }
+  /* O site é de uma página: o menu navega por âncora, e o salto seco perde a
+     noção de onde a pessoa está. O bloco de `prefers-reduced-motion` abaixo já
+     devolve o salto para quem pediu menos movimento. */
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
   body {
     background-color: var(--color-fundo);
     color: var(--color-conteudo);

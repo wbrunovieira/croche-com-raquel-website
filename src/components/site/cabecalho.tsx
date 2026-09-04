@@ -26,11 +26,13 @@ export async function Cabecalho() {
             total: t.totalDeProdutos,
           })),
         }
-      : { rotulo: c.nome, href: `/categorias/${c.slug}` }
+      : { rotulo: c.nome, href: `/?categoria=${c.slug}#catalogo` }
   );
+  // O site é de uma página: fora de Bolsas, que tem página própria, o menu
+  // navega por âncora.
   itens.push(
-    { rotulo: "Catálogo", href: "/catalogo" },
-    { rotulo: "Sob medida", href: "/encomendas" }
+    { rotulo: "Catálogo", href: "/#catalogo" },
+    { rotulo: "Sob medida", href: "/#encomendas" }
   );
 
   return (

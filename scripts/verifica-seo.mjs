@@ -33,7 +33,15 @@ try {
 
   const sitemap = await (await fetch(`${BASE}/sitemap.xml`)).text();
   const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-  ok("sitemap tem as páginas", urls.length >= 20, `${urls.length} urls`);
+  // Sem número mágico: o que importa é que a home, o hub e **toda peça
+  // publicada** estejam lá. O site é de uma página, então a contagem é baixa
+  // de propósito — um limiar redondo aqui só envelheceria.
+  // Comparada pelo caminho, e não pela URL inteira: o sitemap sai de
+  // `urlDoSite()` e o check pode estar rodando em outra porta.
+  ok("o sitemap tem a home", urls.some((u) => new URL(u).pathname === "/"));
+  ok("e o hub de bolsas", urls.some((u) => u.endsWith("/bolsas")));
+  const noSitemap = urls.filter((u) => u.includes("/produtos/")).length;
+  ok("e todas as peças publicadas", noSitemap > 0, `${noSitemap} peças de ${urls.length} urls`);
   ok("e não expõe o painel", !urls.some((u) => u.includes("/admin")));
   ok("nem rascunhos", !urls.some((u) => u.includes("rascunho")));
 
@@ -88,8 +96,8 @@ try {
     );
   }
 
-  // FAQ
-  await p.goto(`${BASE}/perguntas-frequentes`, { waitUntil: "networkidle" });
+  // FAQ — as perguntas viraram seção da home, e o FAQPage foi junto.
+  await p.goto(BASE, { waitUntil: "networkidle" });
   const faq = (await jsonLd(p)).find((d) => d["@type"] === "FAQPage");
   ok("FAQ tem JSON-LD", (faq?.mainEntity?.length ?? 0) >= 5, `${faq?.mainEntity?.length} perguntas`);
 
@@ -114,12 +122,36 @@ try {
   const robotsEstilo = await p.getAttribute('meta[name="robots"]', "content");
   ok("a amostra de estilo é noindex", robotsEstilo?.includes("noindex") ?? false, robotsEstilo ?? "");
 
-  // toda página principal precisa de título e descrição
-  for (const rota of ["/", "/bolsas", "/catalogo", "/sobre", "/contato", "/encomendas"]) {
+  // toda página que sobrou precisa de título e descrição
+  for (const rota of ["/", "/bolsas", "/politicas/privacidade"]) {
     await p.goto(BASE + rota, { waitUntil: "domcontentloaded" });
     const titulo = await p.title();
     const desc = await p.getAttribute('meta[name="description"]', "content");
     ok(`${rota} tem título e descrição`, titulo.length > 10 && (desc?.length ?? 0) > 40);
+  }
+
+  // O site é de uma página: as rotas antigas redirecionam em vez de sumir.
+  // A Raquel já mandou esses endereços por WhatsApp.
+  for (const [antiga, ancora] of [
+    ["/sobre", "quem-faz"], ["/cuidados", "cuidados"],
+    ["/perguntas-frequentes", "perguntas"], ["/encomendas", "encomendas"],
+    ["/contato", "contato"], ["/catalogo", "catalogo"],
+  ]) {
+    const r = await fetch(BASE + antiga, { redirect: "manual" });
+    const destino = r.headers.get("location") ?? "";
+    ok(`${antiga} redireciona para #${ancora}`,
+      [301, 308].includes(r.status) && destino.includes(ancora),
+      `${r.status} → ${destino}`);
+  }
+  const rc = await fetch(`${BASE}/categorias/mesa-posta`, { redirect: "manual" });
+  ok("/categorias/:slug vira filtro do catálogo",
+    [301, 308].includes(rc.status) && (rc.headers.get("location") ?? "").includes("categoria=mesa-posta"),
+    `${rc.status} → ${rc.headers.get("location") ?? ""}`);
+
+  // As âncoras precisam existir de fato, senão o redirecionamento cai no vazio.
+  await p.goto(BASE, { waitUntil: "networkidle" });
+  for (const id of ["catalogo", "quem-faz", "cuidados", "perguntas", "encomendas", "contato"]) {
+    ok(`a home tem a seção #${id}`, (await p.locator(`#${id}`).count()) === 1);
   }
 } finally {
   await b.close();

@@ -53,7 +53,7 @@ const DOMINIO = "crochecomraquel.com.br";
 const PREVIEW = `preview.${DOMINIO}`;
 
 // O domínio mostra a obra, e mostra em toda rota — não só na raiz.
-for (const rota of ["/", "/catalogo", "/bolsas", "/produtos/bolsa-saco-cafe"]) {
+for (const rota of ["/", "/bolsas", "/produtos/bolsa-saco-cafe"]) {
   const { corpo } = await pegar(rota, DOMINIO);
   ok(`${rota} no domínio cai na página de obra`, corpo.includes("O site está sendo feito"));
 }

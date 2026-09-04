@@ -13,11 +13,11 @@ export async function Rodape() {
   ]);
 
   const institucional = [
-    { rotulo: "Quem faz", href: "/sobre" },
-    { rotulo: "Encomenda sob medida", href: "/encomendas" },
-    { rotulo: "Perguntas frequentes", href: "/perguntas-frequentes" },
-    { rotulo: "Cuidados com as peças", href: "/cuidados" },
-    { rotulo: "Contato", href: "/contato" },
+    { rotulo: "Quem faz", href: "/#quem-faz" },
+    { rotulo: "Encomenda sob medida", href: "/#encomendas" },
+    { rotulo: "Perguntas frequentes", href: "/#perguntas" },
+    { rotulo: "Cuidados com as peças", href: "/#cuidados" },
+    { rotulo: "Contato", href: "/#contato" },
   ];
 
   const politicas = [
@@ -66,12 +66,12 @@ export async function Rodape() {
             {categorias.map((c) => (
               <LinkDoRodape
                 key={c.slug}
-                href={c.slug === SLUG_BOLSAS ? "/bolsas" : `/categorias/${c.slug}`}
+                href={c.slug === SLUG_BOLSAS ? "/bolsas" : `/?categoria=${c.slug}#catalogo`}
               >
                 {c.nome}
               </LinkDoRodape>
             ))}
-            <LinkDoRodape href="/catalogo">Todas as peças</LinkDoRodape>
+            <LinkDoRodape href="/#catalogo">Todas as peças</LinkDoRodape>
           </ColunaDoRodape>
 
           <ColunaDoRodape titulo="A Raquel">

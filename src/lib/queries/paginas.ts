@@ -36,9 +36,9 @@ export async function listarSlugsDePagina(): Promise<string[]> {
 }
 
 /** Perguntas agrupadas por tópico, preservando a ordem definida no admin. */
-export async function listarPerguntas(): Promise<
-  { topico: string; perguntas: Pergunta[] }[]
-> {
+export type GrupoDePerguntas = { topico: string; perguntas: Pergunta[] };
+
+export async function listarPerguntas(): Promise<GrupoDePerguntas[]> {
   const linhas = await db.faqItem.findMany({
     where: { published: true },
     orderBy: { position: "asc" },

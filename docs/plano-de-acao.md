@@ -409,6 +409,36 @@ catálogo com as peças dela.
 
 ---
 
+### ✅ Etapa 14 — Página única *(pedido do Bruno)*
+
+O site passou a ser **uma página só**, com duas exceções: `/produtos/[slug]`,
+que são os links que a Raquel manda no WhatsApp, e **`/bolsas`**, o hub do
+carro-chefe — a única página com texto longo escrito para ranquear. As
+políticas seguem com URL própria porque precisam ser linkáveis de e-mail e de
+recibo.
+
+Viraram seção com âncora: catálogo filtrável, quem faz, cuidados, perguntas,
+encomenda sob medida e contato.
+
+- **O custo foi consciente e é de descoberta, não de conversão.** O sitemap caiu
+  de 25 para 13 URLs e sumiu a cauda longa de `/categorias/[slug]`. O caminho de
+  conversão fica intacto: as páginas de peça não mudaram. O tráfego dela vem do
+  Instagram, então a troca se paga.
+- **`/bolsas/[tipo]` ficou de pé.** Manter o hub pelo SEO do carro-chefe e
+  jogar fora os sete endereços de cauda longa dele seria incoerente.
+- **As rotas antigas redirecionam (308), não somem.** A Raquel já mandou
+  `/perguntas-frequentes` por WhatsApp; link compartilhado virando 404 é
+  confiança perdida. `/categorias/:slug` vira `/?categoria=:slug#catalogo`.
+- **O filtro continua na URL**, agora como parâmetro da home. O preço é a home
+  deixar de ser estática — ler `searchParams` torna a rota dinâmica. Vale:
+  link filtrado é recurso de venda dela.
+- **O texto do `/sobre` mudou de lugar, não sumiu.** É o conteúdo que constrói
+  confiança, e segue editável pelo painel, renderizado abaixo da faixa verde.
+
+`pnpm check:seo` cobre os redirecionamentos e a existência de cada âncora — um
+redirecionamento apontando para uma âncora que não existe cai no vazio em
+silêncio.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

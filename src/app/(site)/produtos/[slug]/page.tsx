@@ -60,7 +60,9 @@ export default async function PaginaDeProduto({ params }: PageProps<"/produtos/[
   const prazo = formatarPrazo(produto.prazoMinDias, produto.prazoMaxDias);
   const url = urlDoProduto(produto.slug);
   const linkDaCategoria =
-    produto.categoria.slug === "bolsas" ? "/bolsas" : `/categorias/${produto.categoria.slug}`;
+    produto.categoria.slug === "bolsas"
+      ? "/bolsas"
+      : `/?categoria=${produto.categoria.slug}#catalogo`;
 
   const cores =
     produto.grupos.find((g) => g.slug === "cor")?.valores.map((v) => v.nome) ?? [];
