@@ -151,7 +151,7 @@ export default async function Home() {
         </section>
       ) : null}
 
-      {config.sobreTexto ? <QuemFaz config={config} /> : null}
+      <QuemFaz config={config} />
 
       <section className="container-site secao">
         <Revelar className="mx-auto max-w-texto text-center">
@@ -179,23 +179,25 @@ export default async function Home() {
  * A faixa do "quem faz".
  *
  * Quem compra feito à mão quer ver quem fez — por isso a foto vem antes do
- * texto na leitura, e não como enfeite ao lado dele. Sem foto cadastrada a
- * seção continua de pé, só com o texto, ocupando a largura de leitura.
+ * texto na leitura, e não como enfeite ao lado dele.
  *
- * O texto se distribui sozinho: o primeiro parágrafo é o título da seção, em
- * display; os seguintes são corpo. Assim a Raquel controla a hierarquia
- * escrevendo, sem precisar de campo separado para título e para corpo.
+ * **O texto mora aqui, e não no painel.** Ele carrega a hierarquia: a primeira
+ * frase é o gancho, em display, e o resto é corpo de leitura. Como campo livre,
+ * a coisa desandava — o texto inteiro entrava num parágrafo só e a seção virava
+ * um paredão de serifada em corpo de título, que é fonte para frase curta e não
+ * para leitura corrida. Só a foto e o texto alternativo dela seguem editáveis.
  */
-function QuemFaz({ config }: { config: ConfiguracoesDoSite }) {
-  const [abertura, ...resto] = (config.sobreTexto ?? "")
-    .split(/\n{2,}/)
-    .map((p) => p.trim())
-    .filter(Boolean);
+const ABERTURA = "Sou a Raquel. Faço tudo à mão, uma peça de cada vez.";
+const PARAGRAFOS = [
+  "Crochê e macramê em Petrópolis, na serra do Rio. Não trabalho com estoque: você escolhe o tipo, a cor e o acabamento, e a peça só começa a ser feita depois disso. É por isso que ela sai do jeito que você quis — e é por isso que tem prazo.",
+  "Se o que você tem em mente não está no site, me conte assim mesmo. Boa parte do que eu faço hoje nasceu de um pedido que ainda não existia.",
+];
 
+function QuemFaz({ config }: { config: ConfiguracoesDoSite }) {
   return (
     <section className="trama bg-inv-fundo text-inv-conteudo">
       <div className="container-site secao">
-        <div className="grid items-center gap-x-coluna gap-y-grade-linha lg:grid-cols-[minmax(0,20rem)_1fr]">
+        <div className="grid items-center gap-x-coluna gap-y-grade-linha lg:grid-cols-[minmax(0,22rem)_1fr]">
           {config.sobreFoto ? (
             <Revelar>
               <div className="relative aspect-peca w-full overflow-hidden rounded-card">
@@ -203,7 +205,7 @@ function QuemFaz({ config }: { config: ConfiguracoesDoSite }) {
                   src={config.sobreFoto.url}
                   alt={config.sobreFoto.alt}
                   fill
-                  sizes="(min-width: 64rem) 20rem, 100vw"
+                  sizes="(min-width: 64rem) 22rem, 100vw"
                   className="object-cover"
                 />
               </div>
@@ -212,12 +214,19 @@ function QuemFaz({ config }: { config: ConfiguracoesDoSite }) {
 
           <Revelar atraso={0.08} className={config.sobreFoto ? "" : "max-w-texto"}>
             <Etiqueta tom="invertido">Quem faz</Etiqueta>
-            <h2 className="mt-4 max-w-texto font-display text-t2">{abertura}</h2>
-            {resto.map((paragrafo, i) => (
-              <p key={i} className="mt-4 max-w-texto text-leitura text-inv-suave">
-                {paragrafo}
-              </p>
-            ))}
+
+            {/* Só o gancho em display. O corpo vai na fonte de texto, na medida
+                de leitura — serifada grande em parágrafo longo cansa. */}
+            <h2 className="mt-4 max-w-[20ch] font-display text-t2">{ABERTURA}</h2>
+
+            <div className="mt-bloco max-w-texto">
+              {PARAGRAFOS.map((paragrafo, i) => (
+                <p key={i} className={`text-leitura text-inv-suave ${i > 0 ? "mt-4" : ""}`}>
+                  {paragrafo}
+                </p>
+              ))}
+            </div>
+
             <Link
               href="/sobre"
               className="mt-bloco inline-flex items-center gap-btn-icone text-leitura underline underline-offset-4 hover:no-underline"

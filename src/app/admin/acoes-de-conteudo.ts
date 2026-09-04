@@ -8,7 +8,19 @@ import { revalidarCatalogo } from "@/lib/revalidar";
 
 export type Resultado = { erro?: string; ok?: string };
 
-const opcional = z.string().trim().transform((v) => (v === "" ? null : v));
+/**
+ * Campo de texto opcional, com as quebras de linha normalizadas.
+ *
+ * O `\r\n` não é capricho: a especificação de formulário HTML manda **normalizar
+ * a quebra de `textarea` para CRLF** no envio. Quem lê o texto depois e separa
+ * parágrafos por `\n{2,}` não encontra nada — o `\r` fica no meio dos dois `\n`.
+ * Foi assim que o "quem faz" da home virou um bloco só.
+ */
+const opcional = z
+  .string()
+  .trim()
+  .transform((v) => v.replace(/\r\n?/g, "\n"))
+  .transform((v) => (v === "" ? null : v));
 
 // ------------------------------------------------------------ configurações
 
@@ -33,7 +45,6 @@ const esquemaDeConfiguracoes = z.object({
   city: z.string().trim().min(2, "Informe a cidade."),
   heroTitle: opcional,
   heroSubtitle: opcional,
-  aboutText: opcional,
   aboutImageAlt: opcional,
   announcementText: opcional,
   announcementActive: z.coerce.boolean(),

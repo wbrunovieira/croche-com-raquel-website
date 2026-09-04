@@ -328,7 +328,6 @@ model SiteSettings {
 
   heroTitle    String?
   heroSubtitle String?
-  aboutText    String?
 
   /// Foto da seção "quem faz" da home: um retrato da Raquel, ou as mãos dela
   /// trabalhando. Vive no Blob e é enviada pelo painel — a seção fala dela em

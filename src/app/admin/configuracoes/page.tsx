@@ -64,15 +64,8 @@ export default async function PaginaDeConfiguracoes() {
 
           <Secao
             titulo="Quem faz"
-            descricao="A faixa verde da home, onde você se apresenta. O primeiro parágrafo aparece grande; os seguintes, em corpo de leitura."
+            descricao="A faixa verde da home, onde você se apresenta."
           >
-            <AreaDeTexto
-              id="aboutText"
-              rotulo="Seu texto"
-              dica="Separe os parágrafos com uma linha em branco. Dois ou três dão o melhor resultado."
-              rows={8}
-              defaultValue={c.aboutText ?? ""}
-            />
             <Campo
               id="aboutImageAlt"
               rotulo="Descrição da foto"
@@ -84,7 +77,8 @@ export default async function PaginaDeConfiguracoes() {
                 não é HTML válido. O ponteiro evita a procura. */}
             <p className="text-apoio text-conteudo-suave">
               A foto em si você envia no bloco <strong className="font-medium">Sua foto</strong>,
-              no fim desta página.
+              no fim desta página. O texto da seção fica no código — ele carrega
+              a hierarquia da tipografia e não é campo livre.
             </p>
           </Secao>
 

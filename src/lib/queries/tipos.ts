@@ -81,7 +81,6 @@ export type ConfiguracoesDoSite = {
   cidade: string;
   heroTitulo: string | null;
   heroSubtitulo: string | null;
-  sobreTexto: string | null;
   /** Foto da seção "quem faz". Nula até a Raquel enviar uma pelo painel. */
   sobreFoto: { url: string; alt: string } | null;
   avisoTexto: string | null;

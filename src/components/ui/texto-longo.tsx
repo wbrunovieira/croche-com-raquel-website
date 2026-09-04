@@ -23,8 +23,10 @@ function comNegrito(texto: string): React.ReactNode[] {
 }
 
 export function TextoLongo({ texto }: { texto: string }) {
+  // Aceita `\r\n` além de `\n`: texto salvo pelo painel antes da normalização
+  // chegou ao banco com CRLF, e sem isto vira um parágrafo só.
   const blocos = texto
-    .split(/\n{2,}/)
+    .split(/(?:\r?\n){2,}/)
     .map((b) => b.trim())
     .filter(Boolean);
 
