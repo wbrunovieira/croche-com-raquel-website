@@ -28,8 +28,17 @@ try {
 
   // robots e sitemap
   const robots = await (await fetch(`${BASE}/robots.txt`)).text();
-  ok("robots.txt bloqueia o painel", robots.includes("Disallow: /admin"));
-  ok("e aponta o sitemap", robots.includes("/sitemap.xml"));
+
+  // O check roda tanto contra o localhost/domínio quanto contra o preview, e as
+  // regras corretas são opostas nos dois. Sem distinguir, ele acusa seis falhas
+  // no preview — e check que grita lobo passa a ser ignorado.
+  const foraDoBuscador = /Disallow: \/$/m.test(robots) && !robots.includes("Allow: /");
+  if (foraDoBuscador) {
+    ok("host fora do buscador: robots bloqueia tudo", robots.includes("Disallow: /"));
+  } else {
+    ok("robots.txt bloqueia o painel", robots.includes("Disallow: /admin"));
+    ok("e aponta o sitemap", robots.includes("/sitemap.xml"), robots.includes("/sitemap.xml") ? "" : "obra ligada? o domínio só aponta o sitemap depois do lançamento");
+  }
 
   const sitemap = await (await fetch(`${BASE}/sitemap.xml`)).text();
   const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
@@ -85,8 +94,16 @@ try {
     const og = await p.getAttribute('meta[property="og:image"]', "content");
     ok(`${slug}: tem imagem de compartilhamento`, Boolean(og));
     if (og) {
-      const r = await fetch(og);
-      ok(`${slug}: e ela responde como imagem`, r.headers.get("content-type") === "image/png");
+      // A `og:image` aponta para o domínio, que é o certo — mas enquanto a obra
+      // está ligada o domínio responde a página de obra em tudo. Então a imagem
+      // é buscada no host que estamos medindo, e não na URL declarada.
+      const noHostMedido = og.replace(/^https?:\/\/[^/]+/, BASE);
+      const r = await fetch(noHostMedido);
+      ok(
+        `${slug}: e ela responde como imagem`,
+        r.headers.get("content-type") === "image/png",
+        r.headers.get("content-type") ?? ""
+      );
     }
   }
 
