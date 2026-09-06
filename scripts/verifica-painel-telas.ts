@@ -29,7 +29,6 @@ const TELAS = [
   "/admin/produtos/nova",
   "/admin/opcoes",
   "/admin/categorias",
-  "/admin/paginas",
   "/admin/configuracoes",
 ];
 
@@ -77,8 +76,8 @@ async function main() {
     await p.goto(`${BASE}/admin`, { waitUntil: "networkidle" });
     const menu = await p.locator("nav a").allInnerTexts();
     ok(
-      "o menu não oferece Perguntas nem Depoimentos",
-      !menu.some((i) => /Perguntas|Depoimentos/.test(i)),
+      "o menu não oferece as telas removidas",
+      !menu.some((i) => /Perguntas|Depoimentos|Textos do site/.test(i)),
       menu.map((i) => i.trim()).join(" · ")
     );
   } finally {

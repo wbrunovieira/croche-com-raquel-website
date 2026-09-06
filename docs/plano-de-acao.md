@@ -332,8 +332,18 @@ Menos portas, menos medo.
   alguma não responder 200. Erro de renderização em componente de servidor não
   aparece em build nem em lint — só quando alguém visita. O check é esse alguém.
 
-O menu do painel caiu de oito para seis: Início, Peças, Cores e opções,
-Categorias, Textos do site, Configurações.
+Depois saiu também **Textos do site** (`/admin/paginas`): o trabalho dela é
+cadastrar, excluir e desativar peça, e marcar destaque. Texto institucional ela
+pede ao Bruno. O conteúdo segue no banco e renderizando — `sobre` na faixa "quem
+faz", `cuidados` como seção da home, as políticas em `/politicas/[slug]` — e a
+edição é por `prisma/conteudo.ts` + `pnpm db:seed`.
+
+O seed reconcilia as páginas também: página que sai de `conteudo.ts` sai do
+banco. Sem isso sobraria endereço fantasma, porque `listarSlugsDePagina` gera
+`/politicas/<slug>` a partir do banco.
+
+O menu do painel caiu de **oito para cinco**: Início, Peças, Cores e opções,
+Categorias, Configurações.
 
 ### 🔵 Etapa 12 — Deploy
 Deploy na Vercel, variáveis de ambiente, domínio, preview e produção.

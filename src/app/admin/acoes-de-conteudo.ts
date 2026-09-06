@@ -221,28 +221,6 @@ export async function salvarCategoria(
 
 // -------------------------------------------------------------------- páginas
 
-export async function salvarPagina(_anterior: unknown, dados: FormData): Promise<Resultado> {
-  await exigirSessao();
-  const slug = String(dados.get("slug") ?? "");
-  const title = String(dados.get("title") ?? "").trim();
-  const content = String(dados.get("content") ?? "").trim();
-  if (!slug) return { erro: "Página não encontrada." };
-  if (title.length < 2) return { erro: "Dê um título à página." };
-  if (content.length < 20) return { erro: "Escreva o conteúdo da página." };
-
-  await db.page.update({
-    where: { slug },
-    data: {
-      title,
-      content,
-      lead: String(dados.get("lead") ?? "").trim() || null,
-      seoDescription: String(dados.get("seoDescription") ?? "").trim() || null,
-      published: dados.get("published") === "on",
-    },
-  });
-  revalidarCatalogo();
-  return { ok: "Texto salvo." };
-}
 
 // ------------------------------------------------------------------ perguntas
 

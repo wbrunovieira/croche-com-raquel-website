@@ -296,6 +296,15 @@ async function main() {
       create: { slug: pagina.slug, ...dados },
     });
   }
+  // Reconcilia, como o FAQ: os textos saíram do painel e `conteudo.ts` é a
+  // fonte da verdade. Página que fica para trás vira endereço fantasma — o
+  // `listarSlugsDePagina` gera `/politicas/<slug>` a partir do banco.
+  const paginasOrfas = await db.page.deleteMany({
+    where: { slug: { notIn: PAGINAS.map((p) => p.slug) } },
+  });
+  if (paginasOrfas.count > 0) {
+    console.log(`Removidas ${paginasOrfas.count} página(s) que saíram de conteudo.ts.`);
+  }
 
   // O FAQ saiu do painel: `prisma/conteudo.ts` virou a fonte da verdade, e por
   // isso o seed **reconcilia** em vez de só inserir. A chave é o texto da

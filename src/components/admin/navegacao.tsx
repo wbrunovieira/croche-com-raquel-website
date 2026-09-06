@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
 import {
   Home,
-  Image as ImagemIcone,
   Palette,
   Settings,
   ShoppingBag,
@@ -17,7 +16,6 @@ const ITENS = [
   { href: "/admin/produtos", rotulo: "Peças", Icone: ShoppingBag },
   { href: "/admin/opcoes", rotulo: "Cores e opções", Icone: Palette },
   { href: "/admin/categorias", rotulo: "Categorias", Icone: Tags },
-  { href: "/admin/paginas", rotulo: "Textos do site", Icone: ImagemIcone },
   { href: "/admin/configuracoes", rotulo: "Configurações", Icone: Settings },
 ];
 
