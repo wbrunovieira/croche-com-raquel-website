@@ -258,6 +258,31 @@ export default async function EstiloPage() {
           </div>
 
           <div className="rounded-card border border-borda bg-superficie p-painel lg:col-span-2">
+            <Etiqueta>A batida</Etiqueta>
+            <p className="mt-2 max-w-texto text-apoio text-conteudo-suave">
+              O novelo bate como um coração: duas batidas curtas seguidas e um
+              repouso longo. Pulso único e regular lê como respiração, não como
+              batida — e numa barra que fica na tela o tempo todo, ritmo rápido vira
+              tique nervoso, daí o ciclo de 3s com 2,2s de descanso.
+            </p>
+            <p className="mt-3 max-w-texto text-apoio text-conteudo-suave">
+              <strong>A amplitude de 4,5% não é gosto, é geometria.</strong> Com a
+              origem no centro do novelo, a borda dele anda ~1,5 unidade no pico, e
+              os fios que o ligam ao <strong>l</strong> e ao <strong>C</strong> têm
+              3 de espessura: o deslocamento cabe dentro do próprio traço e a emenda
+              nunca abre. Acima disso, o fio descola no auge da batida.
+            </p>
+            <p className="mt-3 max-w-texto text-apoio text-conteudo-suave">
+              Bate <strong>um por página</strong> — só no cabeçalho. Dois logotipos
+              batendo fora de sincronia na mesma tela viram duas coisas disputando o
+              olho. E quem pediu menos movimento no sistema não vê batida nenhuma.
+            </p>
+            <div className="mt-6">
+              <Logo batendo className="h-20 text-primaria" />
+            </div>
+          </div>
+
+          <div className="rounded-card border border-borda bg-superficie p-painel lg:col-span-2">
             <Etiqueta>Favicon · pixel real</Etiqueta>
             <p className="mt-2 text-apoio text-conteudo-suave">
               Só o novelo, em Fio Cru sobre Verde Cristal — em 16px a letra viraria

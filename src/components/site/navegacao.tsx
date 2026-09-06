@@ -124,7 +124,7 @@ export function Navegacao({
               }}
               transition={{ duration: semMovimento ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
             >
-              <Logo variante="linha" className="h-[1em]" />
+              <Logo variante="linha" batendo className="h-[1em]" />
             </motion.span>
           </Link>
 

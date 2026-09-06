@@ -598,6 +598,30 @@ do mobile, na entrada do painel e no `/estilo`, que foi reescrito. *De carona:* 
 PNGs de `public/marca/` ainda mostravam o laço reprovado duas etapas antes —
 regerados de `src/app/icon.svg`; e o rodapé repetia "feito à mão / Petrópolis", que
 agora está na assinatura do logotipo.
+### ✅ Etapa 17 — A batida do coração *(pedido do Bruno)*
+
+O novelo bate como um coração no cabeçalho: duas batidas curtas seguidas e um
+repouso longo. Pulso único e regular lê como respiração, não como batida; e numa
+barra que fica na tela o tempo todo, ritmo rápido vira tique nervoso — daí o ciclo
+de 3s, com 2,2s de descanso.
+
+**A amplitude de 4,5% é geometria, não gosto.** Com a origem no centro do novelo, a
+borda dele anda ~1,5 unidade do lockup no pico, e os dois fios que o ligam ao `l` e
+ao `C` têm 3 de espessura: o deslocamento cabe dentro do próprio traço e a emenda
+nunca abre. Conferido congelando a animação no pico (escala 1,045, medida no DOM) e
+no repouso. Acima disso, o fio descola no auge da batida.
+
+**Bate um por página** — só no cabeçalho. Dois logotipos batendo fora de sincronia
+na mesma tela viram duas coisas disputando o olho; rodapé e entrada do painel ficam
+parados. A prop é `batendo`, e o `/estilo` documenta a regra com um exemplo vivo.
+
+*Detalhe de SVG que custaria um bug:* são **dois `g` aninhados**. O de fora carrega
+o `transform` de atributo que posiciona o símbolo; o de dentro fica livre para a
+animação. Em SVG2 a propriedade CSS `transform` **substitui** o atributo — num `g`
+só, a batida jogaria o novelo para fora do lockup.
+
+Acessibilidade sai de graça: o bloco global de `prefers-reduced-motion` do
+`globals.css` já desliga a animação.
 
 ## Decisões em aberto
 

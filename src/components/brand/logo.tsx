@@ -161,11 +161,18 @@ export function Logo({
   variante = "completo",
   className = "",
   titulo = "Crochê com Raquel",
+  batendo = false,
   ...props
 }: {
   variante?: Variante;
   className?: string;
   titulo?: string;
+  /**
+   * Faz o novelo bater como um coração. **Um por página**: dois logotipos
+   * batendo fora de sincronia na mesma tela viram duas coisas disputando o
+   * olho. Fica no cabeçalho; rodapé e entrada do painel ficam parados.
+   */
+  batendo?: boolean;
 } & Omit<SVGProps<SVGSVGElement>, "className">) {
   if (variante === "simbolo") {
     return (
@@ -194,8 +201,14 @@ export function Logo({
       {...props}
     >
       <path d={RAQUEL_PATH} fillRule="evenodd" />
+      {/* Dois `g` aninhados de propósito: o de fora carrega o `transform` de
+          atributo que posiciona o símbolo, e o de dentro fica livre para a
+          animação. Em SVG2 a propriedade CSS `transform` SUBSTITUI o atributo —
+          num `g` só, a batida jogaria o novelo para o canto. */}
       <g transform={`translate(${SIMBOLO_X} ${SIMBOLO_Y}) scale(${SIMBOLO_ESC})`}>
-        <path d={SIMBOLO_PATH} fillRule="evenodd" />
+        <g className={batendo ? "batida-do-coracao" : undefined}>
+          <path d={SIMBOLO_PATH} fillRule="evenodd" />
+        </g>
       </g>
       <g transform={`translate(${CROCHE_X - CROCHE_X0} 0)`}>
         <path d={CROCHE_PATH} fillRule="evenodd" />
