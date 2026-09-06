@@ -46,7 +46,8 @@ import { CROCHE_PATH, CROCHE_VIEWBOX, RAQUEL_PATH } from "./assinatura";
  * `C` foram medidos na arte, e a ponta do fio solto vem da própria vetorização
  * do símbolo (`SIMBOLO_PONTA_FIO`), então acompanha se o peso dele mudar.
  *
- * **Cada fio é uma curva só.** Ver `FIO_DIREITO`.
+ * **Cada fio é um movimento só**, e o da direita sobe direto para o `C` — ver
+ * `FIO_DIREITO`.
  *
  * A assinatura em caixa alta espaçada é o que dá o tom de casa estabelecida — e
  * é verdade, não enfeite. Ela usa `textLength` com `lengthAdjust="spacing"`:
@@ -130,14 +131,21 @@ const FIO_ESQUERDO =
   `C ${n(ENTRADA_X - 3.5)} ${n(ENTRADA_Y + 1.1)} ${n(ENTRADA_X - 1.4)} ${n(ENTRADA_Y + 0.4)} ` +
   `${n(ENTRADA_X)} ${ENTRADA_Y}`;
 /**
- * **Uma curva só.** A primeira versão descia e subia — duas cúbicas —, e o fio
- * dela já termina numa volta em S: eram duas voltas seguidas, e o encontro lia
- * como nó. Uma reta pura também não serve: emenda em bico com a volta curva dela
- * e deixa de parecer fio. Um arco, com a folga que um fio teria.
+ * **Sobe direto para o `C`.** Duas versões caíram antes desta. A primeira descia
+ * e subia — duas cúbicas — e, como o fio dela já termina numa volta em S, eram
+ * duas voltas seguidas: o encontro lia como nó. A segunda era um arco só, mas
+ * ainda com barriga, e barriga continua sendo desvio.
+ *
+ * Agora é uma reta com um sopro de curvatura: as alças saem a 30% e 22% do
+ * desnível, o suficiente para o fio deixar a ponta dela na tangente e chegar no
+ * `C` na tangente. Reta pura foi testada e emenda em bico com a volta curva dela
+ * — vira filete, deixa de parecer fio.
  */
+const SUBIDA = PONTA_Y - ENTRADA_C.y;
 const FIO_DIREITO =
   `M ${n(PONTA_X)} ${n(PONTA_Y)} ` +
-  `C ${n(PONTA_X + 14)} ${n(PONTA_Y + 1)} ${n(ENTRADA_C.x - 14)} ${n(ENTRADA_C.y + 14)} ` +
+  `C ${n(PONTA_X + 10)} ${n(PONTA_Y - SUBIDA * 0.3)} ` +
+  `${n(ENTRADA_C.x - 10)} ${n(ENTRADA_C.y + SUBIDA * 0.22)} ` +
   `${n(ENTRADA_C.x)} ${ENTRADA_C.y}`;
 const FIO_ESPESSURA = 3.0;
 
