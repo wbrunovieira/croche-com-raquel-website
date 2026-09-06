@@ -221,23 +221,28 @@ export default async function EstiloPage() {
               dos dois lados fazia o buraco parecer maior à direita.
             </p>
             <p className="mt-3 max-w-texto text-apoio text-conteudo-suave">
-              <strong>O símbolo tem três pesos.</strong> Na arte, símbolo e escrita
-              têm a mesma caneta de 5px — mas ela desenhou o símbolo com 259px de
-              altura e o nome com 143px. Em escala de logotipo o traço dele caía
-              para 49% do da escrita e os dois deixavam de conversar. Engrossar
-              tudo por igual corrigiu isso e criou outro problema: o novelo virou
-              mancha, e as agulhas ficaram mais pesadas que o próprio coração.
-              Agora o <strong>contorno do coração</strong> é dilatado 2,6px, as{" "}
-              <strong>agulhas e o fio</strong> só 0,8px e a <strong>trama
-              interna</strong> é erodida — vira textura, não desenho.
+              <strong>O alvo não é a espessura do traço, é a mancha.</strong> Na
+              arte, símbolo e escrita têm a mesma caneta de 5px — mas ela desenhou
+              o símbolo com 259px de altura e o nome com 143px. Encolhido para
+              caber ao lado das palavras, o traço dele cai para 49% do da escrita:
+              some. Só que engrossar até casar a espessura deixou a{" "}
+              <em>mancha</em> do símbolo em 2,61× a da escrita, e ele passou a
+              berrar — símbolo é denso, muitos traços numa área pequena.
             </p>
             <p className="mt-3 max-w-texto text-apoio text-conteudo-suave">
-              As três fatias saem da geometria, não do olho. Uma abertura
-              morfológica separa o miolo das saliências finas (as agulhas e o fio
-              solto); e preenchendo os buracos e medindo a distância de cada pixel
-              até a borda, o contorno cai na beirada e as tramas ficam no meio. Dá
-              51% de coração, 7% de agulha e fio, 41% de trama.
+              A referência certa estava na arte dela o tempo todo: ali a razão é{" "}
+              <strong>1,80</strong>. Calibrado contra as duas medidas, ficou:
+              contorno do coração dilatado 1,4px, agulhas e fio 0,4px, trama
+              interna erodida — e os coraçõezinhos <strong>intocados</strong>, que
+              são figura cheia e não traço, engordá-los só faz bolinha. Dá traço de
+              5,00px, exatamente o da escrita dela, com mancha em 1,88×.
             </p>
+            <p className="mt-3 max-w-texto text-apoio text-conteudo-suave">
+              As fatias saem da geometria, não do olho. Uma abertura morfológica
+              separa o miolo das saliências finas — as agulhas e o fio, que ficam
+              na borda da silhueta e por isso levavam a dilatação do contorno,
+              espetando o novelo. E a distância de cada pixel até a borda do
+              preenchimento separa contorno de trama.</p>
             <p className="mt-3 max-w-texto text-apoio text-conteudo-suave">
               <strong>Os dois fios.</strong> O novelo dela já terminava numa ponta
               solta; ela agora vai até o <strong>C</strong> de Crochê, e um segundo

@@ -552,24 +552,32 @@ Três coisas vieram junto, e as três saíram de observação dele:
   de Crochê, e um segundo fio sai do `l` de Raquel e entra no novelo. Lidos juntos
   são um fio só atravessando a marca. As pontas foram medidas na arte, não
   escolhidas no olho.
-- **O símbolo passou a ter três pesos**, em duas rodadas de crítica dele. Na arte,
-  símbolo e escrita têm a mesma caneta de 5px, mas ela desenhou o símbolo com 259px
-  de altura e o nome com 143px: em escala de logotipo o traço dele cai para **49% do
-  da escrita** e os dois deixam de conversar. Engrossar tudo por igual corrigiu isso
-  e virou mancha (*"agora está muito forte, talvez apenas alguns traços assim,
-  outros mais suaves"*); e com a trama aliviada, as agulhas passaram a pesar mais
-  que o próprio coração (*"as agulhas espetadas no novelo não estão muito
-  fortes?"*). Ele estava certo nas duas. Ficou: **contorno do coração** dilatado
-  2,6px, **agulhas e fio solto** 0,8px, **trama interna erodida**.
+- **O peso do símbolo levou quatro rodadas de crítica dele, e o aprendizado é
+  medível.** Na arte, símbolo e escrita têm a mesma caneta de 5px, mas ela desenhou
+  o símbolo com 259px de altura e o nome com 143px: encolhido para caber ao lado das
+  palavras, o traço dele cai para **49% do da escrita** e some. Engrossar até casar a
+  espessura corrigiu isso — e criou o problema seguinte: *"agora está muito forte"*.
 
-  As três fatias saem da geometria, não do olho. Uma abertura morfológica de raio 20
-  separa o miolo das saliências finas — as agulhas e o fio —, e a distância de cada
-  pixel de tinta até a borda do preenchimento separa contorno de trama. Dá 51% de
-  coração, 7% de agulha e fio, 41% de trama.
+  **O alvo errado era a espessura; o certo é a mancha.** Símbolo é denso: muitos
+  traços numa área pequena. Casando só a espessura, a mancha do símbolo foi parar em
+  **2,61× a da escrita**. A referência estava na arte dela o tempo todo — ali a razão
+  é **1,80**, justamente porque o símbolo é grande e os traços ficam espalhados.
+
+  Ainda no caminho, duas correções dele: as **agulhas** ficam na borda da silhueta,
+  então caíam junto com o contorno e levavam a dilatação cheia — retas e longas,
+  espetavam o novelo; e os **coraçõezinhos** são figura cheia, não traço, então
+  dilatá-los só fazia bolinha (*"os corações também, eles estavam bom"*).
+
+  Calibrado contra as duas medidas ao mesmo tempo: contorno do coração +1,4px,
+  agulhas e fio +0,4px, trama interna erodida, coraçõezinhos intocados. Dá traço de
+  **5,00px** — exatamente o da escrita dela — com mancha em **1,88×**, o equilíbrio
+  da própria arte. As fatias saem da geometria: uma abertura morfológica separa o
+  miolo das saliências finas, e a distância até a borda do preenchimento separa
+  contorno de trama.
 
   *Os coraçõezinhos ficaram.* Eu tinha proposto tirá-los do lockup — são o elemento
-  que mais lê como artesanato caseiro — e ele pediu para manter no mesmo lugar. Com
-  os três pesos eles param de brigar do jeito que brigavam.
+  que mais lê como artesanato caseiro — e ele pediu para manter. No peso certo eles
+  param de brigar.
 
 A assinatura de lugar usa `textLength` com `lengthAdjust="spacing"`: a entreletra é
 calculada para a linha medir exatamente 72% da largura do logotipo, então a
