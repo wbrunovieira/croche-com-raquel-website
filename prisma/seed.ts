@@ -151,22 +151,30 @@ const COLECOES = [
 
 
 async function main() {
+  // O painel deixou de editar configurações, então **o seed passou a ser o
+  // dono delas**. Antes era `update: {}`, para não sobrescrever o que a Raquel
+  // tivesse mudado na tela; sem a tela, isso significaria que ninguém consegue
+  // mudar nada — editar este arquivo não teria efeito sobre a linha existente.
+  //
+  // A foto do "quem faz" fica de fora de propósito: ela vem do Blob, pelo
+  // `pnpm fotos:importar`, e não daqui.
+  const configuracoes = {
+    whatsappNumber: "5524992087591",
+    whatsappTemplate:
+      "Oi Raquel! Vi no site e me interessei 💛\n\n*{produto}* ({codigo})\n{opcoes}\nQuantidade: {quantidade}\n\n{link}",
+    instagramUrl: "https://www.instagram.com/croche.comraquel/",
+    city: "Petrópolis, RJ",
+    heroTitle: "Bolsas que você carrega por anos",
+    heroSubtitle:
+      "Peças de crochê feitas à mão, sob encomenda, na cor e no tamanho que você escolher.",
+    announcementText:
+      "Não achou? A Raquel faz sob medida — é só contar o que você tem em mente",
+    announcementActive: true,
+  };
   await db.siteSettings.upsert({
     where: { id: "singleton" },
-    update: {},
-    create: {
-      id: "singleton",
-      whatsappNumber: "5524992087591",
-      whatsappTemplate:
-        "Oi Raquel! Vi no site e me interessei 💛\n\n*{produto}* ({codigo})\n{opcoes}\nQuantidade: {quantidade}\n\n{link}",
-      instagramUrl: "https://www.instagram.com/croche.comraquel/",
-      city: "Petrópolis, RJ",
-      heroTitle: "Bolsas que você carrega por anos",
-      heroSubtitle:
-        "Peças de crochê feitas à mão, sob encomenda, na cor e no tamanho que você escolher.",
-      announcementText: null,
-      announcementActive: false,
-    },
+    update: configuracoes,
+    create: { id: "singleton", ...configuracoes },
   });
 
   for (const c of CATEGORIAS) {

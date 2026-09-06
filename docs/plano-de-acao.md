@@ -342,8 +342,21 @@ O seed reconcilia as páginas também: página que sai de `conteudo.ts` sai do
 banco. Sem isso sobraria endereço fantasma, porque `listarSlugsDePagina` gera
 `/politicas/<slug>` a partir do banco.
 
-O menu do painel caiu de **oito para cinco**: Início, Peças, Cores e opções,
-Categorias, Configurações.
+Por fim saíram **Categorias** e **Configurações**. O menu do painel caiu de
+**oito telas para três**: Início, Peças, Cores e opções.
+
+- **Cores fica porque é fluxo diário dela**: para cadastrar uma peça, ela
+  escolhe as cores daquela peça, e a cor precisa existir antes.
+- **O que ela perdeu, e vale saber:** trocar a própria foto da faixa "quem faz"
+  e ligar o aviso do topo ("estou de férias até dia 20"). Eram as duas únicas
+  coisas do painel que ela mudaria sozinha sem risco. Agora passam pelo Bruno.
+- **O seed virou dono das configurações.** Ele fazia `update: {}` para não
+  sobrescrever o que ela editasse na tela; sem a tela, isso significaria que
+  ninguém consegue mudar nada. A foto do "quem faz" fica de fora: vem do Blob,
+  pelo `pnpm fotos:importar`.
+- O `check:telas` passou a **caçar link morto**: a tela de início ficou com um
+  atalho para `/admin/perguntas` depois que ela foi removida, e link morto não
+  quebra build, lint nem tipo — só o dia da Raquel.
 
 ### 🔵 Etapa 12 — Deploy
 Deploy na Vercel, variáveis de ambiente, domínio, preview e produção.

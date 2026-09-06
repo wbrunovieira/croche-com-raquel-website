@@ -28,8 +28,6 @@ const TELAS = [
   "/admin/produtos",
   "/admin/produtos/nova",
   "/admin/opcoes",
-  "/admin/categorias",
-  "/admin/configuracoes",
 ];
 
 const db = new PrismaClient({
@@ -72,12 +70,32 @@ async function main() {
       );
     }
 
+    // Nenhum link do painel pode apontar para tela que não existe mais. A tela
+    // de início ficou com um atalho para `/admin/perguntas` depois que ela foi
+    // removida: link morto não quebra build, lint nem tipo — só o dia da
+    // Raquel.
+    const rotasVivas = new Set([...TELAS, "/admin/entrar"]);
+    for (const rota of TELAS) {
+      await p.goto(BASE + rota, { waitUntil: "networkidle" });
+      const hrefs = await p
+        .locator("a[href^='/admin']")
+        .evaluateAll((as) => as.map((a) => a.getAttribute("href") ?? ""));
+      const mortos = [
+        ...new Set(
+          hrefs
+            .map((h) => h.split("?")[0]!)
+            .filter((h) => !rotasVivas.has(h) && !/^\/admin\/produtos\//.test(h))
+        ),
+      ];
+      ok(`${rota} não tem link para tela removida`, mortos.length === 0, mortos.join(" · "));
+    }
+
     // As telas removidas não podem voltar por engano — nem como link no menu.
     await p.goto(`${BASE}/admin`, { waitUntil: "networkidle" });
     const menu = await p.locator("nav a").allInnerTexts();
     ok(
       "o menu não oferece as telas removidas",
-      !menu.some((i) => /Perguntas|Depoimentos|Textos do site/.test(i)),
+      !menu.some((i) => /Perguntas|Depoimentos|Textos do site|Categorias|Configurações/.test(i)),
       menu.map((i) => i.trim()).join(" · ")
     );
   } finally {

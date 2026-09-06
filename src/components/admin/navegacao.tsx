@@ -6,17 +6,13 @@ import { motion } from "motion/react";
 import {
   Home,
   Palette,
-  Settings,
   ShoppingBag,
-  Tags,
-} from "lucide-react";
+  } from "lucide-react";
 
 const ITENS = [
   { href: "/admin", rotulo: "Início", Icone: Home },
   { href: "/admin/produtos", rotulo: "Peças", Icone: ShoppingBag },
   { href: "/admin/opcoes", rotulo: "Cores e opções", Icone: Palette },
-  { href: "/admin/categorias", rotulo: "Categorias", Icone: Tags },
-  { href: "/admin/configuracoes", rotulo: "Configurações", Icone: Settings },
 ];
 
 export function NavegacaoDoAdmin() {
