@@ -72,3 +72,23 @@ export async function conferirSenha(senha: string, guardado: string): Promise<bo
   // quantos bytes do hash bateram.
   return derivada.length === esperado.length && timingSafeEqual(derivada, esperado);
 }
+
+/**
+ * Política de senha do painel.
+ *
+ * Mínimo de 8 caracteres, com maiúscula, número e caractere especial. Mora
+ * aqui, e não dentro do script de criação, porque uma tela de troca de senha
+ * vai precisar exatamente da mesma regra — duas cópias divergem na primeira
+ * vez que alguém mexe numa delas.
+ *
+ * Devolve a lista do que falta, e não um booleano: quem digita precisa saber
+ * qual exigência não cumpriu, senão fica tentando no escuro.
+ */
+export function conferirPoliticaDeSenha(senha: string): string[] {
+  const faltas: string[] = [];
+  if (senha.length < 8) faltas.push("pelo menos 8 caracteres");
+  if (!/[A-ZÀ-Þ]/.test(senha)) faltas.push("uma letra maiúscula");
+  if (!/[0-9]/.test(senha)) faltas.push("um número");
+  if (!/[^A-Za-zÀ-ÿ0-9]/.test(senha)) faltas.push("um caractere especial");
+  return faltas;
+}

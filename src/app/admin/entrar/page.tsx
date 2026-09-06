@@ -19,7 +19,7 @@ export default async function PaginaDeEntrada({
     "use server";
     try {
       await signIn("credentials", {
-        email: dadosDoFormulario.get("email"),
+        usuario: dadosDoFormulario.get("usuario"),
         senha: dadosDoFormulario.get("senha"),
         redirectTo: "/admin",
       });

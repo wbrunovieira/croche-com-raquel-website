@@ -16,21 +16,24 @@ export function FormularioDeEntrada({
   return (
     <form action={acao}>
       {erro ? (
-        // Mensagem única de propósito: dizer "e-mail não existe" contaria a
-        // quem tenta invadir quais e-mails estão cadastrados.
+        // Mensagem única de propósito: dizer "usuário não existe" contaria a
+        // quem tenta invadir quais usuários estão cadastrados.
         <p role="alert" className="mb-bloco rounded-fio bg-goiaba-clara px-4 py-3 text-apoio">
-          E-mail ou senha incorretos.
+          Usuário ou senha incorretos.
         </p>
       ) : null}
 
-      <label htmlFor="email" className="block text-apoio font-medium">
-        E-mail
+      <label htmlFor="usuario" className="block text-apoio font-medium">
+        Usuário
       </label>
       <input
-        id="email"
-        name="email"
-        type="email"
+        id="usuario"
+        name="usuario"
+        type="text"
         autoComplete="username"
+        autoCapitalize="none"
+        autoCorrect="off"
+        spellCheck={false}
         required
         className={`${campo} mt-2`}
       />

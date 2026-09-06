@@ -1,7 +1,7 @@
 /**
  * Cria (ou atualiza) o usuário do painel.
  *
- *   pnpm admin:criar "Raquel Boaventura" raquel@exemplo.com
+ *   pnpm admin:criar "Raquel Boaventura" raquel
  *
  * A senha NÃO vai na linha de comando: ela seria gravada no histórico do shell.
  * O script pede a senha e a lê com o eco desligado.
@@ -11,7 +11,7 @@ import { config } from "dotenv";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { urlComSslVerificado } from "../src/lib/db-url";
-import { gerarHashDeSenha } from "../src/lib/senha";
+import { conferirPoliticaDeSenha, gerarHashDeSenha } from "../src/lib/senha";
 
 config({ path: ".env.local", quiet: true });
 
@@ -70,12 +70,18 @@ function perguntarSenha(rotulo: string): Promise<string> {
 }
 
 async function main() {
-  const [nome, emailBruto] = process.argv.slice(2);
-  if (!nome || !emailBruto) {
-    console.error('Uso: pnpm admin:criar "Nome Completo" email@exemplo.com');
+  const [nome, usuarioBruto] = process.argv.slice(2);
+  if (!nome || !usuarioBruto) {
+    console.error('Uso: pnpm admin:criar "Nome Completo" usuario');
     process.exit(1);
   }
-  const email = emailBruto.trim().toLowerCase();
+  const username = usuarioBruto.trim().toLowerCase();
+  if (!/^[a-z0-9._-]{3,}$/.test(username)) {
+    console.error(
+      "O usuário deve ter ao menos 3 caracteres, só letras, números, ponto, hífen ou sublinhado."
+    );
+    process.exit(1);
+  }
 
   const senha = await perguntarSenha("Senha: ");
   const confirmacao = await perguntarSenha("Repita a senha: ");
@@ -84,24 +90,25 @@ async function main() {
     console.error("As senhas não conferem.");
     process.exit(1);
   }
-  if (senha.length < 10) {
-    console.error("Use pelo menos 10 caracteres.");
+  const faltas = conferirPoliticaDeSenha(senha);
+  if (faltas.length > 0) {
+    console.error(`A senha precisa ter ${faltas.join(", ")}.`);
     process.exit(1);
   }
 
   const passwordHash = await gerarHashDeSenha(senha);
-  const existente = await db.user.findUnique({ where: { email } });
+  const existente = await db.user.findUnique({ where: { username } });
 
   await db.user.upsert({
-    where: { email },
+    where: { username },
     update: { name: nome, passwordHash },
-    create: { email, name: nome, passwordHash },
+    create: { username, name: nome, passwordHash },
   });
 
   console.log(
     existente
-      ? `Senha atualizada para ${email}.`
-      : `Usuária ${nome} <${email}> criada. Entre em /admin/entrar.`
+      ? `Senha atualizada para o usuário ${username}.`
+      : `Usuária ${nome} criada com o usuário ${username}. Entre em /admin/entrar.`
   );
 }
 

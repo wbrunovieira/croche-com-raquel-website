@@ -18,8 +18,10 @@ import { gerarHashDeSenha } from "../src/lib/senha";
 config({ path: ".env.local", quiet: true });
 
 const BASE = process.env.URL_BASE ?? "http://localhost:3000";
-const EMAIL = "verificacao-automatica@exemplo.invalid";
-const SENHA = "senha-descartavel-da-verificacao";
+const USUARIO = "verificacao-automatica";
+// Cumpre a política do painel de propósito: senha de teste fora da regra
+// faria o check passar por um caminho que a Raquel nunca percorre.
+const SENHA = "Verificacao#2026";
 
 const db = new PrismaClient({
   adapter: new PrismaPg({ connectionString: urlComSslVerificado(process.env.DATABASE_URL) }),
@@ -33,9 +35,9 @@ function conferir(nome: string, condicao: boolean, detalhe = "") {
 
 async function main() {
   await db.user.upsert({
-    where: { email: EMAIL },
+    where: { username: USUARIO },
     update: { name: "Verificação", passwordHash: await gerarHashDeSenha(SENHA) },
-    create: { email: EMAIL, name: "Verificação", passwordHash: await gerarHashDeSenha(SENHA) },
+    create: { username: USUARIO, name: "Verificação", passwordHash: await gerarHashDeSenha(SENHA) },
   });
 
   const navegador = await chromium.launch();
@@ -45,7 +47,7 @@ async function main() {
     await p.goto(`${BASE}/admin`, { waitUntil: "networkidle" });
     conferir("sem sessão, /admin manda para a entrada", p.url().includes("/admin/entrar"));
 
-    await p.fill("#email", EMAIL);
+    await p.fill("#usuario", USUARIO);
     await p.fill("#senha", "senha-errada");
     await p.click('button[type="submit"]');
     await p.waitForURL("**/admin/entrar?erro=1", { timeout: 15000 }).catch(() => {});
@@ -58,12 +60,12 @@ async function main() {
       .textContent({ timeout: 10000 })
       .catch(() => null);
     conferir(
-      "e a mensagem não revela se o e-mail existe",
-      (alerta ?? "").includes("E-mail ou senha incorretos"),
+      "e a mensagem não revela se o usuário existe",
+      (alerta ?? "").includes("Usuário ou senha incorretos"),
       alerta ?? "(não encontrada)"
     );
 
-    await p.fill("#email", EMAIL);
+    await p.fill("#usuario", USUARIO);
     await p.fill("#senha", SENHA);
     await p.click('button[type="submit"]');
     await p.waitForURL("**/admin", { timeout: 15000 }).catch(() => {});
@@ -81,7 +83,7 @@ async function main() {
     conferir("e a sessão não volta sozinha", p.url().includes("/admin/entrar"));
   } finally {
     await navegador.close();
-    await db.user.deleteMany({ where: { email: EMAIL } });
+    await db.user.deleteMany({ where: { username: USUARIO } });
     await db.$disconnect();
   }
 }

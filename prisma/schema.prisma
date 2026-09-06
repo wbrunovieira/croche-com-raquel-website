@@ -31,7 +31,11 @@ enum OptionType {
 
 model User {
   id           String   @id @default(cuid())
-  email        String   @unique
+  /// Nome de usuário, não e-mail: a Raquel trabalha por WhatsApp e Instagram, e
+  /// exigir e-mail para entrar no próprio painel era barreira sem contrapartida
+  /// — não há recuperação de senha nem notificação por e-mail. Guardado em
+  /// minúsculas para a entrada não depender de como ela digitou.
+  username     String   @unique
   passwordHash String
   name         String
   createdAt    DateTime @default(now())

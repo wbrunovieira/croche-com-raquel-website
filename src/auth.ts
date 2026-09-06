@@ -9,17 +9,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
   providers: [
     Credentials({
-      credentials: { email: {}, senha: {} },
+      credentials: { usuario: {}, senha: {} },
       async authorize(credenciais) {
-        const email = String(credenciais?.email ?? "").trim().toLowerCase();
+        const usuarioDigitado = String(credenciais?.usuario ?? "").trim().toLowerCase();
         const senha = String(credenciais?.senha ?? "");
-        if (!email || !senha) return null;
+        if (!usuarioDigitado || !senha) return null;
 
-        const usuario = await db.user.findUnique({ where: { email } });
+        const usuario = await db.user.findUnique({ where: { username: usuarioDigitado } });
 
         // Mesmo sem usuário, roda a verificação contra um hash descartável.
-        // Sem isso, "e-mail não existe" responde em milissegundos e "senha
-        // errada" demora — e essa diferença de tempo entrega quais e-mails
+        // Sem isso, "usuário não existe" responde em milissegundos e "senha
+        // errada" demora — e essa diferença de tempo entrega quais usuários
         // estão cadastrados.
         const guardado =
           usuario?.passwordHash ??
@@ -28,7 +28,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const confere = await conferirSenha(senha, guardado);
         if (!usuario || !confere) return null;
 
-        return { id: usuario.id, name: usuario.name, email: usuario.email };
+        return { id: usuario.id, name: usuario.name };
       },
     }),
   ],

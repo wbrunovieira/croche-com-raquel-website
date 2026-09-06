@@ -18,8 +18,10 @@ config({ path: ".env.local", quiet: true });
 
 const BASE = process.env.URL_BASE ?? "http://localhost:3000";
 const FOTO = process.env.FOTO_DE_TESTE;
-const EMAIL = "verificacao-painel@exemplo.invalid";
-const SENHA = "senha-descartavel-da-verificacao";
+const USUARIO = "verificacao-painel";
+// Cumpre a política do painel de propósito: senha de teste fora da regra
+// faria o check passar por um caminho que a Raquel nunca percorre.
+const SENHA = "Verificacao#2026";
 const NOME_DA_PECA = "Peça de verificação automática";
 
 const db = new PrismaClient({
@@ -41,13 +43,13 @@ async function limpar() {
     await Promise.allSettled(p.images.map((i) => del(i.url)));
   }
   await db.product.deleteMany({ where: { name: { startsWith: NOME_DA_PECA } } });
-  await db.user.deleteMany({ where: { email: EMAIL } });
+  await db.user.deleteMany({ where: { username: USUARIO } });
 }
 
 async function main() {
   await limpar();
   await db.user.create({
-    data: { email: EMAIL, name: "Verificação", passwordHash: await gerarHashDeSenha(SENHA) },
+    data: { username: USUARIO, name: "Verificação", passwordHash: await gerarHashDeSenha(SENHA) },
   });
 
   const navegador = await chromium.launch();
@@ -55,7 +57,7 @@ async function main() {
     const p = await navegador.newPage({ viewport: { width: 1400, height: 1000 } });
 
     await p.goto(`${BASE}/admin/entrar`, { waitUntil: "networkidle" });
-    await p.fill("#email", EMAIL);
+    await p.fill("#usuario", USUARIO);
     await p.fill("#senha", SENHA);
     await p.click('button[type="submit"]');
     await p.waitForURL("**/admin", { timeout: 20000 });
