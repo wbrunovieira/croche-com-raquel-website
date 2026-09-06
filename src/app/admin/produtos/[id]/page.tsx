@@ -58,7 +58,7 @@ export default async function EditarProduto({ params }: PageProps<"/admin/produt
       </Link>
 
       <div className="mt-4">
-        <Etiqueta>{produto.status === "PUBLISHED" ? "No ar" : "Rascunho"}</Etiqueta>
+        <Etiqueta>{produto.status === "PUBLISHED" ? "No ar" : "Fora do ar"}</Etiqueta>
         <h1 className="mt-2 font-display text-t1">{produto.name}</h1>
       </div>
 

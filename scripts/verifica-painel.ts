@@ -73,7 +73,7 @@ async function main() {
     conferir("cria a peça e abre a edição", /\/produtos\/c[a-z0-9]{15,}$/.test(p.url()));
 
     const criada = await db.product.findFirst({ where: { name: NOME_DA_PECA } });
-    conferir("e ela nasce como rascunho", criada?.status === "DRAFT", criada?.status);
+    conferir("e ela nasce fora do ar", criada?.status === "DRAFT", criada?.status);
 
     // tenta publicar sem foto
     await p.fill("#description", "Descrição de verificação automática do painel.");
@@ -85,7 +85,7 @@ async function main() {
       .textContent({ timeout: 15000 })
       .catch(() => null);
     conferir(
-      "recusa publicar sem foto",
+      "recusa colocar no ar sem foto",
       (alerta ?? "").includes("não tem foto"),
       alerta ?? "(sem alerta)"
     );

@@ -279,10 +279,10 @@ export function FormularioDeProduto({
         <Selecao
           id="status"
           rotulo="Situação"
-          dica="Rascunho fica só aqui no painel. No ar aparece no site."
+          dica="Fora do ar, a peça fica só aqui no painel. No ar, ela aparece no site."
           defaultValue={produto.status}
         >
-          <option value="DRAFT">Rascunho</option>
+          <option value="DRAFT">Fora do ar</option>
           <option value="PUBLISHED">No ar</option>
         </Selecao>
       </Secao>

@@ -40,7 +40,7 @@ export function FormularioDeNovaPeca({
       </Selecao>
 
       <button type="submit" disabled={pendente} className={`${classesDeBotao()} mt-bloco`}>
-        {pendente ? "Criando…" : "Criar rascunho"}
+        {pendente ? "Criando…" : "Criar peça"}
       </button>
     </form>
   );

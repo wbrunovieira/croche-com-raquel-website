@@ -10,7 +10,8 @@ import {
  * Consultas de produto.
  *
  * Duas regras valem em todas elas:
- *  - só produto `PUBLISHED` chega ao site; rascunho é da Raquel;
+ *  - só produto `PUBLISHED` chega ao site; `DRAFT` — "fora do ar" no
+ *    painel — fica só para a Raquel;
  *  - grupo e valor de opção desligados (`active: false`) não aparecem. É assim
  *    que ela tira uma cor do ar quando acaba o fio, sem perder o vínculo.
  */

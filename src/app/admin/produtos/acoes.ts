@@ -69,7 +69,8 @@ export async function criarProduto(_anterior: unknown, dados: FormData) {
       name: nome,
       description: "",
       categoryId,
-      // Nasce como rascunho: peça sem foto e sem descrição não deve ir ao ar
+      // Nasce fora do ar (DRAFT no banco): peça sem foto e sem descrição não deve
+      // aparecer no site
       // por um clique.
       status: "DRAFT",
     },
@@ -126,7 +127,7 @@ export async function salvarProduto(
     const fotos = await db.productImage.count({ where: { productId: id } });
     if (fotos === 0) {
       return {
-        erro: "Esta peça não tem foto. Adicione pelo menos uma antes de publicar.",
+        erro: "Esta peça não tem foto. Adicione pelo menos uma antes de colocar no ar.",
       };
     }
   }
@@ -323,7 +324,7 @@ export async function duplicarProduto(id: string) {
       productionDaysMax: original.productionDaysMax,
       categoryId: original.categoryId,
       subcategoryId: original.subcategoryId,
-      // A cópia nasce rascunho e sem destaque: duplicar é ponto de partida,
+      // A cópia nasce fora do ar e sem destaque: duplicar é ponto de partida,
       // não publicação.
       status: "DRAFT",
       featured: false,

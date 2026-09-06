@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { urlDoSite } from "@/lib/site";
 
 /**
- * Sitemap montado do banco: peça publicada entra, rascunho não. Categoria
+ * Sitemap montado do banco: peça no ar entra, peça fora do ar não. Categoria
  * vazia também fica de fora — mandar o buscador para uma prateleira sem nada
  * gasta rastreamento e não ajuda ninguém.
  */

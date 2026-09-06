@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { exigirSessao } from "@/lib/admin/sessao";
-import { Etiqueta } from "@/components/ui/etiqueta";
 import { FormularioDeNovaPeca } from "./formulario";
 
 export default async function NovaPeca() {
@@ -13,13 +12,15 @@ export default async function NovaPeca() {
       <Link href="/admin/produtos" className="text-apoio text-conteudo-suave hover:text-conteudo">
         ← Peças
       </Link>
+      {/* O título repete as palavras do botão que trouxe até aqui — "Nova
+          peça", na lista. Chegar num título diferente do que se clicou faz
+          quem não está à vontade com o painel duvidar se está no lugar certo.
+          A etiqueta "Nova" saiu por ser a mesma palavra do título. */}
       <div className="mt-4 max-w-texto">
-        <Etiqueta>Nova</Etiqueta>
-        <h1 className="mt-2 font-display text-t1">Começar uma peça</h1>
+        <h1 className="font-display text-t1">Nova peça</h1>
         <p className="mt-3 text-leitura text-conteudo-suave">
-          Só o nome e a categoria por enquanto. A peça nasce como rascunho e o
-          resto você preenche na tela seguinte — ela só vai ao ar quando você
-          mandar.
+          Só o nome e a categoria por enquanto. A peça começa fora do ar: você
+          completa na tela seguinte e coloca no ar quando ela estiver pronta.
         </p>
 
         <div className="mt-respiro">
