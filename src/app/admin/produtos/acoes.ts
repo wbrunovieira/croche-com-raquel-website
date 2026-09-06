@@ -57,6 +57,17 @@ export async function criarProduto(_anterior: unknown, dados: FormData) {
   if (nome.length < 2) return { erro: "Dê um nome para a peça." };
   if (!categoryId) return { erro: "Escolha a categoria." };
 
+  // As fotos são conferidas ANTES de a peça existir. Se a validação
+  // acontecesse durante o envio, uma foto ruim no meio da fila deixaria a peça
+  // criada pela metade — e ela teria de descobrir isso na tela seguinte.
+  const fotos = dados
+    .getAll("fotos")
+    .filter((f): f is File => f instanceof File && f.size > 0);
+  for (const foto of fotos) {
+    const problema = problemaNaFoto(foto);
+    if (problema) return { erro: problema };
+  }
+
   const slug = await slugUnico(nome, async (candidato) =>
     Boolean(
       await db.product.findUnique({ where: { slug: candidato }, select: { id: true } })
@@ -75,6 +86,12 @@ export async function criarProduto(_anterior: unknown, dados: FormData) {
       status: "DRAFT",
     },
   });
+
+  // Só agora as fotos sobem: elas vão para `produtos/<slug>/` no Blob e a
+  // linha precisa do id da peça. Do ponto de vista dela foi um envio só.
+  for (const [i, foto] of fotos.entries()) {
+    await guardarFoto(produto, foto, i);
+  }
 
   redirect(`/admin/produtos/${produto.id}`);
 }
@@ -201,31 +218,31 @@ export async function apagarProduto(id: string) {
 const TIPOS_DE_IMAGEM = ["image/jpeg", "image/png", "image/webp", "image/avif"];
 const TAMANHO_MAXIMO = 15 * 1024 * 1024;
 
-export async function enviarImagem(
-  _anterior: unknown,
-  dados: FormData
-): Promise<ResultadoDaAcao> {
-  await exigirSessao();
-
-  const productId = String(dados.get("productId") ?? "");
-  const arquivo = dados.get("arquivo");
-
-  if (!productId || !(arquivo instanceof File) || arquivo.size === 0) {
-    return { erro: "Escolha uma foto." };
-  }
+/**
+ * Valida um arquivo de foto. Devolve a mensagem do problema, ou null.
+ *
+ * Separado para a criação poder conferir **todas** as fotos antes de criar a
+ * peça: se a validação acontecesse durante o envio, uma foto ruim no meio da
+ * fila deixaria a peça criada pela metade.
+ */
+function problemaNaFoto(arquivo: unknown): string | null {
+  if (!(arquivo instanceof File) || arquivo.size === 0) return "Escolha uma foto.";
   if (!TIPOS_DE_IMAGEM.includes(arquivo.type)) {
-    return { erro: "Use uma foto em JPG, PNG, WebP ou AVIF." };
+    return `"${arquivo.name}" não é JPG, PNG, WebP ou AVIF.`;
   }
   if (arquivo.size > TAMANHO_MAXIMO) {
-    return { erro: "A foto passa de 15 MB. Reduza antes de enviar." };
+    return `"${arquivo.name}" passa de 15 MB. Reduza antes de enviar.`;
   }
+  return null;
+}
 
-  const produto = await db.product.findUnique({
-    where: { id: productId },
-    select: { slug: true, _count: { select: { images: true } } },
-  });
-  if (!produto) return { erro: "Peça não encontrada." };
-
+/** Sobe a foto ao Blob e liga à peça. Usado na criação e na edição. */
+async function guardarFoto(
+  produto: { id: string; slug: string },
+  arquivo: File,
+  posicao: number,
+  extras: { alt?: string; escalaHumana?: boolean } = {}
+) {
   const enviado = await put(`produtos/${produto.slug}/${arquivo.name}`, arquivo, {
     access: "public",
     // Nome com sufixo aleatório: duas fotos com o mesmo nome não se
@@ -235,12 +252,37 @@ export async function enviarImagem(
 
   await db.productImage.create({
     data: {
-      productId,
+      productId: produto.id,
       url: enviado.url,
-      alt: String(dados.get("alt") ?? "").trim() || produto.slug.replace(/-/g, " "),
-      position: produto._count.images,
-      hasHumanScale: dados.get("escalaHumana") === "on",
+      alt: extras.alt?.trim() || produto.slug.replace(/-/g, " "),
+      position: posicao,
+      hasHumanScale: extras.escalaHumana ?? false,
     },
+  });
+}
+
+export async function enviarImagem(
+  _anterior: unknown,
+  dados: FormData
+): Promise<ResultadoDaAcao> {
+  await exigirSessao();
+
+  const productId = String(dados.get("productId") ?? "");
+  const arquivo = dados.get("arquivo");
+
+  if (!productId) return { erro: "Peça não encontrada." };
+  const problema = problemaNaFoto(arquivo);
+  if (problema) return { erro: problema };
+
+  const produto = await db.product.findUnique({
+    where: { id: productId },
+    select: { id: true, slug: true, _count: { select: { images: true } } },
+  });
+  if (!produto) return { erro: "Peça não encontrada." };
+
+  await guardarFoto(produto, arquivo as File, produto._count.images, {
+    alt: String(dados.get("alt") ?? ""),
+    escalaHumana: dados.get("escalaHumana") === "on",
   });
 
   revalidarProduto(produto.slug);

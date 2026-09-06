@@ -19,7 +19,7 @@ export default async function NovaPeca() {
       <div className="mt-4 max-w-texto">
         <h1 className="font-display text-t1">Nova peça</h1>
         <p className="mt-3 text-leitura text-conteudo-suave">
-          Só o nome e a categoria por enquanto. A peça começa fora do ar: você
+          Nome, categoria e as fotos. A peça começa fora do ar: o resto você
           completa na tela seguinte e coloca no ar quando ela estiver pronta.
         </p>
 
