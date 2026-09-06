@@ -504,30 +504,40 @@ borda irregular, `R` e `C` de barriga muito aberta e minúsculas pequenas quase
 soltas —, provavelmente uma fonte comercial fora do Google Fonts. Numa assinatura
 de marca, "parecido" é pior que idêntico: ficou o desenho dela.
 
-**Vetorizado** em `src/components/brand/assinatura.tsx`, mesmo pipeline do
-símbolo: canal verde do JPEG, ampliação 8×, limiar, contornos por marching squares
-com tolerância 1.0. Um só `path` com `fillRule="evenodd"` — 9,4 kB, ~3 kB no
-gzip —, legível até 56px de largura (medido).
+**Vetorizadas as DUAS palavras**, em `src/components/brand/assinatura.tsx`.
+A primeira tentativa fez só o "Raquel" e deixou "crochê" em Fraunces; o Bruno
+reprovou na hora — *"não ficou igual, e crochê também usa a mesma fonte"*. Estava
+certo: na arte dela as duas palavras são a mesma letra, e trocar uma só não
+reproduz logotipo nenhum. Saindo do mesmo recorte, saem com a mesma escala e o
+mesmo peso de traço.
 
-**Só a palavra "Raquel".** A arte diz "Raquel Crochê" e o site se chama "Crochê
-com Raquel"; a escrita é ligada, não dá para recortar letras e recompor, e "com"
-não existe na fonte original. Então o nome vem da mão dela e o resto continua na
-tipografia da marca.
+Mesmo pipeline do símbolo: canal verde do JPEG, ampliação 8×, limiar em 195
+**calibrado por cobertura de tinta** contra o original na resolução nativa (8,34%
+contra 8,81%) em vez de chutado, contornos por marching squares com tolerância
+1.0 — a 0.7 o arquivo dobra e a diferença some já a 120px de altura. 20,7 kB de
+`path`, ~6 kB no gzip.
 
-**A hierarquia inverteu, e isso é a mudança de verdade.** Antes "crochê" vinha
-grande em Fraunces e "COM RAQUEL" era a legenda; o nome dela era a menor coisa da
-marca. Agora "CROCHÊ COM" é a sobrancelha pequena e "Raquel" é o elemento maior —
-que é o que a etiqueta dela faz. Mantê-lo como legenda de 0,345em deixaria a
-assinatura ilegível no cabeçalho (testado antes de decidir) além de contar a
-história errada. A sobrancelha é justificada oticamente à largura da assinatura:
-248,2px contra 249,2px num corpo de 100px.
+**O `viewBox` das duas cobre a altura inteira da marca (0–100), não a caixa de
+cada palavra.** É o que faz o alinhamento sair sem número mágico: na mesma altura
+CSS, as linhas de base coincidem sozinhas. Só o "com" precisa de conta, por ser
+texto — e a margem é **dividida pelo corpo dele**, porque `em` numa margem
+resolve contra a `font-size` do próprio elemento e não a do pai. Sem isso ele
+sobe e vira expoente (aconteceu, e apareceu na prova visual).
 
-Conferido no cabeçalho (desktop e mobile), no rodapé invertido e na entrada do
-painel. O `/estilo` ganhou o card da assinatura com o mínimo de 56px e teve
-corrigidas as descrições que ainda falavam do laço.
+**"com" é a única palavra em tipografia.** A escrita é ligada: não dá para
+recortar letras e compor outra coisa, e "com" não existe na arte dela. Como as
+duas palavras são peças independentes, a ordem é a do site — "Crochê com Raquel"
+— e não a da etiqueta, sem perder a letra dela em nenhuma delas.
 
-*De carona:* a legenda da tela de entrada ainda prometia "os textos do site", que
-saíram do painel na Etapa 15.
+Conferido no cabeçalho (1280, 768 e 390px), no rodapé invertido e na entrada do
+painel. O `/estilo` ganhou o card da letra e teve corrigidas as descrições que
+ainda falavam do laço.
+
+*Dois achados de carona:* a legenda da tela de entrada ainda prometia "os textos
+do site", que saíram do painel na Etapa 15; e os PNGs de `public/marca/` — a
+demonstração de favicon em pixel real do `/estilo` — ainda mostravam **o laço**,
+reprovado duas etapas antes. Regerados a partir de `src/app/icon.svg`, que é o
+favicon de verdade.
 
 ## Decisões em aberto
 

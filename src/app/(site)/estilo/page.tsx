@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Logo } from "@/components/brand/logo";
 import { Simbolo } from "@/components/brand/simbolo";
-import { Assinatura } from "@/components/brand/assinatura";
+import { PalavraCroche, PalavraRaquel } from "@/components/brand/assinatura";
 import { Botao } from "@/components/ui/botao";
 import { Chip } from "@/components/ui/chip";
 import { Etiqueta } from "@/components/ui/etiqueta";
@@ -134,7 +134,7 @@ export default async function EstiloPage() {
 
       <Secao
         titulo="Logotipo"
-        descricao="Símbolo à esquerda e, à direita, duas linhas: a categoria em grotesca pequena e espaçada, e o nome da Raquel escrito com a letra dela. Quem assina a peça é ela — no logotipo o nome é o elemento maior, como nas etiquetas de couro."
+        descricao="Símbolo à esquerda e, à direita, o nome numa linha: &ldquo;Crochê&rdquo; e &ldquo;Raquel&rdquo; com a letra da própria Raquel, tirados da arte das etiquetas de couro. Só o &ldquo;com&rdquo; é tipografia — é a única palavra que a arte dela não tem."
       >
         <div className="grid gap-x-grade-col gap-y-grade-linha lg:grid-cols-2">
           <div className="rounded-card border border-borda bg-superficie p-painel">
@@ -188,25 +188,20 @@ export default async function EstiloPage() {
             <Etiqueta>A letra da Raquel</Etiqueta>
             <p className="mt-2 max-w-texto text-apoio text-conteudo-suave">
               Não é fonte: é o desenho dela, vetorizado da mesma arte das etiquetas
-              de couro. Testei 38 scripts conhecidos antes e nenhum bate. Vale só
-              para a palavra &ldquo;Raquel&rdquo; — não há como escrever outra coisa
-              com ela. Legível até 56px de largura; abaixo disso, texto normal.
+              de couro. Testei 38 scripts conhecidos antes e nenhum bate. Existem
+              só estas duas palavras — a escrita é ligada, não dá para recortar
+              letras e escrever outra coisa. Por isso o &ldquo;com&rdquo; do
+              logotipo é o único pedaço em tipografia.
             </p>
-            <div className="mt-6 flex flex-wrap items-end gap-8 text-primaria">
-              <div className="w-[220px]">
-                <Assinatura className="w-full" />
-              </div>
-              <div className="w-[110px]">
-                <Assinatura className="w-full" />
-              </div>
-              <div className="text-center">
-                <div className="w-[56px]">
-                  <Assinatura className="w-full" />
-                </div>
-                <span className="mt-2 block text-legenda text-conteudo-suave">
-                  56px · mínimo
-                </span>
-              </div>
+            <p className="mt-3 max-w-texto text-apoio text-conteudo-suave">
+              As duas saem do mesmo recorte e dividem a caixa vertical: na mesma
+              altura, as linhas de base coincidem sem ajuste.
+            </p>
+            <div className="mt-6 flex flex-wrap items-start gap-x-6 gap-y-4 text-primaria">
+              <PalavraCroche className="h-16 w-auto" />
+              <PalavraRaquel className="h-16 w-auto" />
+              <PalavraCroche className="h-9 w-auto" />
+              <PalavraRaquel className="h-9 w-auto" />
             </div>
           </div>
 
@@ -214,7 +209,8 @@ export default async function EstiloPage() {
             <Etiqueta>Favicon · pixel real</Etiqueta>
             <p className="mt-2 text-apoio text-conteudo-suave">
               Só o novelo, em Fio Cru sobre Verde Cristal — em 16px a letra viraria
-              mancha. Traço de 3,5px no 32×32, acima do mínimo de 3px.
+              mancha. Traço de 3,5px no 32×32, acima do mínimo de 3px. Os PNGs
+              saem de <code>src/app/icon.svg</code>, que é o favicon de verdade.
             </p>
             <div className="mt-6 flex items-end gap-8">
               <div className="text-center">
