@@ -310,6 +310,31 @@ Decisões que valem registro:
 do que o buscador encontra em cada página. E, no navegador, a imagem de
 compartilhamento de qualquer peça em `/produtos/<slug>/opengraph-image`.
 
+### ✅ Etapa 15 — Painel enxuto *(pedido do Bruno)*
+
+O painel tinha **oito telas com o mesmo peso**, e duas delas respondiam **HTTP
+500** havia tempo sem ninguém notar — `/admin/perguntas` e `/admin/depoimentos`
+compartilhavam um componente de cliente que recebia funções vindas do servidor.
+Passaram despercebidas porque o `check:painel` só exercita o cadastro de peça:
+sete das oito telas não eram abertas por verificação nenhuma.
+
+**Decisão: remover, não consertar.** A Raquel não está à vontade com tecnologia
+e o trabalho dela é cadastrar e tirar peça; FAQ e depoimentos ela pede ao Bruno.
+Menos portas, menos medo.
+
+- O **seed virou a fonte da verdade do FAQ** e passou a reconciliar: pergunta que
+  sai de `prisma/conteudo.ts` sai do banco. A chave é o texto da pergunta, então
+  reescrever o enunciado criava uma duplicata — armadilha que só apareceu quando
+  editar pelo seed virou o único caminho.
+- **Depoimentos não aparecem no site**: a seção nunca foi construída e nenhum
+  componente lê o modelo. Remover a tela não tirou nada de visível.
+- Nasceu o **`pnpm check:telas`**, que abre todas as telas do painel e reprova se
+  alguma não responder 200. Erro de renderização em componente de servidor não
+  aparece em build nem em lint — só quando alguém visita. O check é esse alguém.
+
+O menu do painel caiu de oito para seis: Início, Peças, Cores e opções,
+Categorias, Textos do site, Configurações.
+
 ### 🔵 Etapa 12 — Deploy
 Deploy na Vercel, variáveis de ambiente, domínio, preview e produção.
 

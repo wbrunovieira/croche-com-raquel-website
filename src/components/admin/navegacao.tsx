@@ -4,10 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
 import {
-  HelpCircle,
   Home,
   Image as ImagemIcone,
-  MessageSquareQuote,
   Palette,
   Settings,
   ShoppingBag,
@@ -20,8 +18,6 @@ const ITENS = [
   { href: "/admin/opcoes", rotulo: "Cores e opções", Icone: Palette },
   { href: "/admin/categorias", rotulo: "Categorias", Icone: Tags },
   { href: "/admin/paginas", rotulo: "Textos do site", Icone: ImagemIcone },
-  { href: "/admin/perguntas", rotulo: "Perguntas", Icone: HelpCircle },
-  { href: "/admin/depoimentos", rotulo: "Depoimentos", Icone: MessageSquareQuote },
   { href: "/admin/configuracoes", rotulo: "Configurações", Icone: Settings },
 ];
 

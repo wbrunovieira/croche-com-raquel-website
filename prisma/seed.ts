@@ -297,8 +297,11 @@ async function main() {
     });
   }
 
-  // As perguntas não têm slug natural, então a pergunta em si é a chave: assim
-  // reordenar ou reescrever a resposta não cria duplicata.
+  // O FAQ saiu do painel: `prisma/conteudo.ts` virou a fonte da verdade, e por
+  // isso o seed **reconcilia** em vez de só inserir. A chave é o texto da
+  // pergunta, então reescrever o enunciado criava uma pergunta nova e deixava a
+  // velha para trás — armadilha que só apareceu quando editar pelo seed passou
+  // a ser o único caminho. Apagar o que saiu da lista resolve na raiz.
   for (const [i, p] of PERGUNTAS.entries()) {
     const existente = await db.faqItem.findFirst({ where: { question: p.question } });
     const dados = { answer: p.answer, topic: p.topic, position: i, published: true };
@@ -307,6 +310,12 @@ async function main() {
     } else {
       await db.faqItem.create({ data: { question: p.question, ...dados } });
     }
+  }
+  const orfas = await db.faqItem.deleteMany({
+    where: { question: { notIn: PERGUNTAS.map((p) => p.question) } },
+  });
+  if (orfas.count > 0) {
+    console.log(`Removidas ${orfas.count} pergunta(s) que saíram de conteudo.ts.`);
   }
 
   const [cat, sub, prod, grp, val] = await Promise.all([

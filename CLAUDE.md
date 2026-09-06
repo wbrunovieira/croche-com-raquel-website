@@ -52,8 +52,10 @@ Antes de fechar uma etapa: `pnpm build`, `pnpm lint`, `pnpm check:espaco`,
 `pnpm check:whatsapp`. Os que precisam do `pnpm dev` de pé:
 `pnpm check:produto` (caminho de conversão), `pnpm check:login` (acesso ao painel),
 `pnpm check:painel` (cadastro de peça de ponta a ponta; aceita `FOTO_DE_TESTE=<caminho>`
-para exercitar também o envio ao Blob), `pnpm check:seo` (o que o buscador encontra
-em cada página) e `pnpm check:hospedagem` (quem vê a obra e quem vê o site).
+para exercitar também o envio ao Blob), `pnpm check:telas` (abre todas as telas do
+painel — duas ficaram quebradas em silêncio antes dele existir), `pnpm check:seo`
+(o que o buscador encontra em cada página) e `pnpm check:hospedagem` (quem vê a
+obra e quem vê o site).
 
 Depois de `pnpm db:migrate`, **reinicie o `pnpm dev`** — ele guarda o cliente Prisma
 antigo em memória e a rota quebra com "Unknown field".

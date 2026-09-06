@@ -246,68 +246,8 @@ export async function salvarPagina(_anterior: unknown, dados: FormData): Promise
 
 // ------------------------------------------------------------------ perguntas
 
-export async function salvarPergunta(
-  _anterior: unknown,
-  dados: FormData
-): Promise<Resultado> {
-  await exigirSessao();
-  const id = String(dados.get("id") ?? "");
-  const question = String(dados.get("question") ?? "").trim();
-  const answer = String(dados.get("answer") ?? "").trim();
-  if (question.length < 5) return { erro: "Escreva a pergunta." };
-  if (answer.length < 5) return { erro: "Escreva a resposta." };
 
-  const conteudo = {
-    question,
-    answer,
-    topic: String(dados.get("topic") ?? "").trim() || null,
-    position: Number(dados.get("position") ?? 0) || 0,
-    published: dados.get("published") === "on",
-  };
-
-  if (id) await db.faqItem.update({ where: { id }, data: conteudo });
-  else await db.faqItem.create({ data: conteudo });
-
-  revalidarCatalogo();
-  return { ok: "Pergunta salva." };
-}
-
-export async function apagarPergunta(id: string) {
-  await exigirSessao();
-  await db.faqItem.delete({ where: { id } });
-  revalidarCatalogo();
-}
 
 // ---------------------------------------------------------------- depoimentos
 
-export async function salvarDepoimento(
-  _anterior: unknown,
-  dados: FormData
-): Promise<Resultado> {
-  await exigirSessao();
-  const id = String(dados.get("id") ?? "");
-  const authorName = String(dados.get("authorName") ?? "").trim();
-  const text = String(dados.get("text") ?? "").trim();
-  if (authorName.length < 2) return { erro: "Escreva o nome de quem falou." };
-  if (text.length < 10) return { erro: "Escreva o depoimento." };
 
-  const conteudo = {
-    authorName,
-    text,
-    city: String(dados.get("city") ?? "").trim() || null,
-    position: Number(dados.get("position") ?? 0) || 0,
-    published: dados.get("published") === "on",
-  };
-
-  if (id) await db.testimonial.update({ where: { id }, data: conteudo });
-  else await db.testimonial.create({ data: conteudo });
-
-  revalidarCatalogo();
-  return { ok: "Depoimento salvo." };
-}
-
-export async function apagarDepoimento(id: string) {
-  await exigirSessao();
-  await db.testimonial.delete({ where: { id } });
-  revalidarCatalogo();
-}
