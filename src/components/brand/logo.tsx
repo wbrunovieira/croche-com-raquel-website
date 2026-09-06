@@ -1,82 +1,90 @@
-import { Simbolo } from "./simbolo";
-import { MARCA_BASE, PalavraCroche, PalavraRaquel } from "./assinatura";
+import type { SVGProps } from "react";
+import { SIMBOLO_PATH } from "./simbolo";
+import { CROCHE_PATH, RAQUEL_PATH } from "./assinatura";
 
 /**
- * Assinatura da marca.
+ * O logotipo da Raquel, reproduzido.
  *
- * Símbolo à esquerda e, à direita, **"Crochê com Raquel" com a letra da própria
- * Raquel** nas duas palavras — vetorizadas da arte dela, a mesma escrita das
- * etiquetas de couro das peças (ver `assinatura.tsx`). Entre elas, o "com" em
- * Karla: é a única palavra que a arte dela não tem, e a escrita é ligada, então
- * não dá para recortar letras e recompor.
+ * Ela já tinha logotipo antes do site: símbolo em cima, **"Raquel Crochê"**
+ * embaixo, centrados, quase se encostando. É o que está costurado nas etiquetas
+ * de couro das peças. Este componente reproduz aquela peça — não uma releitura
+ * dela.
  *
- * A ordem é a do site, não a da arte. A etiqueta dela diz "Raquel Crochê"; aqui
- * as palavras são peças independentes, o que deixa montar o nome do site sem
- * perder a letra dela em nenhuma delas.
+ * **Tudo num `<svg>` só, de propósito.** As três partes vinham montadas com
+ * flex, cada uma no seu elemento, e o resultado era símbolo e texto lado a lado
+ * lendo como duas coisas separadas. Num SVG único a relação é geometria, não
+ * layout: não há entrelinha, `gap` ou arredondamento de subpixel que descole o
+ * desenho do nome, em nenhum tamanho.
  *
- * O alinhamento das três não usa número mágico: as duas palavras compartilham o
- * mesmo `viewBox` vertical, então na mesma altura CSS as linhas de base já
- * coincidem. Só o "com" precisa de conta, porque é texto — a margem o desce até
- * `MARCA_BASE`, descontando a distância do topo da linha até a base da fonte
- * (≈0,75 do corpo em Karla). **A margem é dividida pelo corpo do `com`** porque
- * `em` numa margem resolve contra a `font-size` do próprio elemento, não a do
- * pai — sem isso ele sobe e vira expoente.
+ * As proporções são medidas na arte dela, não escolhidas:
  *
- * Abaixo de 120px de largura, use apenas o símbolo (`variante="simbolo"`).
+ * | | |
+ * |---|---|
+ * | largura do símbolo | 49,8% da largura das palavras |
+ * | altura do símbolo  | 181,1% da altura das palavras |
+ * | vão entre os dois  | 9,1% da altura das palavras |
+ * | centro do símbolo  | 2,9% da largura à direita do centro das palavras |
+ *
+ * O desalinhamento dos centros é dela e fica: a entrada do `R` avança muito para
+ * a esquerda, e centralizar pela caixa jogaria o símbolo visualmente para fora.
+ * Confirmação de que a medição está certa: a proporção do símbolo deduzida
+ * dessas medidas dá 0,8855, contra 0,885 do símbolo vetorizado à parte.
+ *
+ * **É "Raquel Crochê", não "Crochê com Raquel".** A marca dela veio antes do
+ * domínio; o nome do site continua no `aria-label`, no `<title>` e no texto.
  *
  * A cor vem de quem usa (`currentColor`): `text-primaria` na versão principal,
  * `text-inv-conteudo` sobre as seções verdes.
  */
 
-type Variante = "completo" | "simbolo";
+/** Caixa do lockup inteiro. A escrita ocupa 0–100 em y; o símbolo fica acima, em y negativo. */
+const LOCKUP_VIEWBOX = "0 -190.2 322.03 290.2";
 
-/** Altura das palavras e corpo do "com", em `em` do tamanho herdado. */
-const PALAVRA = 1.25;
-const COM = 0.38;
-const COM_MARGEM = (MARCA_BASE * PALAVRA - 0.75 * COM) / COM;
+/** Largura ÷ altura, para reservar espaço sem esperar o SVG carregar. */
+export const LOGO_PROPORCAO = 322.03 / 290.2;
+
+/** Leva o símbolo (`viewBox` próprio, 24 × 27,12) para o lugar e a escala dela. */
+const SIMBOLO_NO_LOCKUP = "translate(90.17 -190.2) scale(6.6777)";
+
+type Variante = "completo" | "simbolo";
 
 export function Logo({
   variante = "completo",
   className = "",
   titulo = "Crochê com Raquel",
+  ...props
 }: {
   variante?: Variante;
   className?: string;
   titulo?: string;
-}) {
-  if (variante === "simbolo") {
-    return (
-      <span className={`inline-flex ${className}`} role="img" aria-label={titulo}>
-        <Simbolo className="h-full w-auto" />
-      </span>
-    );
-  }
+} & Omit<SVGProps<SVGSVGElement>, "className">) {
+  const so = variante === "simbolo";
+
+  // A altura sai em `em` para quem chama continuar dimensionando com a escala
+  // tipográfica (`text-t1`, `text-t3`), como era antes de o lockup virar um SVG
+  // só. Na completa, 1em é a altura da escrita — o resto é o símbolo e o vão.
+  const tamanho = so ? "h-[1em] w-auto" : "h-[2.902em] w-auto";
 
   return (
-    <span
-      className={`inline-flex items-start gap-[0.2em] ${className}`}
+    <svg
+      viewBox={so ? "0 0 24 27.12" : LOCKUP_VIEWBOX}
+      className={`${tamanho} ${className}`}
+      fill="currentColor"
       role="img"
       aria-label={titulo}
+      {...props}
     >
-      {/* O símbolo é vazado — coração de novelo com agulhas e ar em volta —,
-          então ele pode passar da altura das palavras sem dominar: a mancha
-          continua parecida. */}
-      <Simbolo className="mt-[0.06em] h-[1.45em] w-auto shrink-0" />
-      <span className="flex items-start gap-[0.14em]">
-        <PalavraCroche className="h-[1.25em] w-auto shrink-0" />
-        <span
-          className="font-texto shrink-0"
-          style={{
-            fontSize: `${COM}em`,
-            fontWeight: 500,
-            lineHeight: 1,
-            marginTop: `${COM_MARGEM.toFixed(3)}em`,
-          }}
-        >
-          com
-        </span>
-        <PalavraRaquel className="h-[1.25em] w-auto shrink-0" />
-      </span>
-    </span>
+      {so ? (
+        <path d={SIMBOLO_PATH} fillRule="evenodd" />
+      ) : (
+        <>
+          <g transform={SIMBOLO_NO_LOCKUP}>
+            <path d={SIMBOLO_PATH} fillRule="evenodd" />
+          </g>
+          <path d={RAQUEL_PATH} fillRule="evenodd" />
+          <path d={CROCHE_PATH} fillRule="evenodd" />
+        </>
+      )}
+    </svg>
   );
 }

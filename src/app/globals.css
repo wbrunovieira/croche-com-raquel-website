@@ -148,8 +148,12 @@
   /* O símbolo da marca é ilustrado — novelo, agulhas, coraçõezinhos — e só lê
      inteiro a partir de ~50px de altura. Com o cabeçalho a 80px o lockup ficava
      com 1px de folga, violando a área de proteção da identidade (§6.3). */
-  --spacing-cabecalho:    5rem;     /* 80 — cabeçalho rolado, barra sticky */
-  --spacing-cabecalho-lg: 6.5rem;   /* 104 — cabeçalho desktop, no topo */
+  /* O logotipo da Raquel é empilhado e quase quadrado — símbolo sobre o
+     nome —, então o cabeçalho precisa de mais altura que uma assinatura
+     deitada. Nestes valores a escrita fica com 28px no topo e 23px
+     rolado; abaixo disso o script dela deixa de ser legível. */
+  --spacing-cabecalho:    6rem;     /* 96 — cabeçalho rolado, barra sticky */
+  --spacing-cabecalho-lg: 7rem;     /* 112 — cabeçalho desktop, no topo */
   --spacing-zap-flutua:   3.5rem;   /* 56 — botão flutuante (identidade 7.3) */
   /* 112 — folga no fim da página no mobile, para a barra fixa de WhatsApp da
      página de produto não cobrir o rodapé. A barra mede 87px (botão de 54 +

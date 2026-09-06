@@ -524,14 +524,34 @@ texto — e a margem é **dividida pelo corpo dele**, porque `em` numa margem
 resolve contra a `font-size` do próprio elemento e não a do pai. Sem isso ele
 sobe e vira expoente (aconteceu, e apareceu na prova visual).
 
-**"com" é a única palavra em tipografia.** A escrita é ligada: não dá para
-recortar letras e compor outra coisa, e "com" não existe na arte dela. Como as
-duas palavras são peças independentes, a ordem é a do site — "Crochê com Raquel"
-— e não a da etiqueta, sem perder a letra dela em nenhuma delas.
+**Terceira volta: é "Raquel Crochê", e o desenho anda junto com o nome.** Eu tinha
+montado "Crochê com Raquel" numa linha — símbolo à esquerda, as duas palavras à
+direita, "com" em Karla no meio. O Bruno cortou: *"o certo é Raquel Crochê e
+precisa estar coligado o desenho com texto"*. Olhando a arte inteira dela, ele
+está certo nas duas coisas — o logotipo é **empilhado**: símbolo em cima, "Raquel
+Crochê" embaixo, centrados e quase se encostando. Não era para eu compor um
+logotipo novo; era para reproduzir o que ela já tem.
 
-Conferido no cabeçalho (1280, 768 e 390px), no rodapé invertido e na entrada do
-painel. O `/estilo` ganhou o card da letra e teve corrigidas as descrições que
-ainda falavam do laço.
+Agora o lockup é **um `<svg>` só**. Montado com flex, símbolo e texto liam como
+duas coisas lado a lado; num SVG único a relação vira geometria, e não há
+entrelinha, `gap` ou arredondamento de subpixel que descole os dois em nenhum
+tamanho. As proporções são medidas na arte, não escolhidas: símbolo com 49,8% da
+largura das palavras, 181,1% da altura, vão de 9,1% e centro 2,9% à direita — o
+desalinhamento é dela e fica, porque a entrada do `R` avança muito para a
+esquerda. Prova de que a medição fecha: a proporção do símbolo deduzida dessas
+medidas dá 0,8855, contra 0,885 do símbolo vetorizado à parte.
+
+Some o "com": a marca dela é "Raquel Crochê" e veio antes do domínio. O nome do
+site continua no `<title>`, no texto e no `aria-label` do logotipo.
+
+**O cabeçalho cresceu por causa disso**, e é um custo real: 5→6rem rolado e
+6,5→7rem no topo. Um logotipo empilhado quase quadrado não cabe numa barra fina —
+nos valores antigos a escrita ficava com 20px de altura e o script dela deixava
+de ser legível. Agora fica com 28px no topo e 23px rolado.
+
+Conferido no cabeçalho a 1280 e 390px, no topo e rolado, no rodapé invertido, no
+menu do mobile e na entrada do painel. O `/estilo` foi reescrito para descrever a
+marca empilhada e teve corrigidas as descrições que ainda falavam do laço.
 
 *Dois achados de carona:* a legenda da tela de entrada ainda prometia "os textos
 do site", que saíram do painel na Etapa 15; e os PNGs de `public/marca/` — a

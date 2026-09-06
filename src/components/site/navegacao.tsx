@@ -117,7 +117,7 @@ export function Navegacao({
           <Link href="/" aria-label="Crochê com Raquel — início" className="shrink-0">
             <motion.span
               className="block text-primaria"
-              animate={{ fontSize: rolou ? "1.7rem" : "2.1rem" }}
+              animate={{ fontSize: rolou ? "1.45rem" : "1.75rem" }}
               transition={{ duration: semMovimento ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
             >
               <Logo />

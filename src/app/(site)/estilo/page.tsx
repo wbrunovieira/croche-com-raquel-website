@@ -134,7 +134,7 @@ export default async function EstiloPage() {
 
       <Secao
         titulo="Logotipo"
-        descricao="Símbolo à esquerda e, à direita, o nome numa linha: &ldquo;Crochê&rdquo; e &ldquo;Raquel&rdquo; com a letra da própria Raquel, tirados da arte das etiquetas de couro. Só o &ldquo;com&rdquo; é tipografia — é a única palavra que a arte dela não tem."
+        descricao="Não é um logotipo desenhado para o site: é o logotipo que a Raquel já tinha, reproduzido. Símbolo em cima, &ldquo;Raquel Crochê&rdquo; embaixo, centrados e quase se encostando — como está costurado nas etiquetas de couro. As proporções são medidas na arte dela, não escolhidas."
       >
         <div className="grid gap-x-grade-col gap-y-grade-linha lg:grid-cols-2">
           <div className="rounded-card border border-borda bg-superficie p-painel">
@@ -156,7 +156,7 @@ export default async function EstiloPage() {
           <div className="rounded-card border border-borda bg-superficie p-painel">
             <Etiqueta>Símbolo isolado · o novelo</Etiqueta>
             <p className="mt-2 text-apoio text-conteudo-suave">
-              Abaixo de 120px de largura, a assinatura completa sai e fica só ele.
+              Abaixo de 120px de largura o nome deixa de ser legível e fica só ele.
             </p>
             <div className="mt-6 flex items-end gap-8">
               <Simbolo className="h-20 w-auto text-primaria" />
@@ -187,15 +187,17 @@ export default async function EstiloPage() {
           <div className="rounded-card border border-borda bg-superficie p-painel lg:col-span-2">
             <Etiqueta>A letra da Raquel</Etiqueta>
             <p className="mt-2 max-w-texto text-apoio text-conteudo-suave">
-              Não é fonte: é o desenho dela, vetorizado da mesma arte das etiquetas
-              de couro. Testei 38 scripts conhecidos antes e nenhum bate. Existem
-              só estas duas palavras — a escrita é ligada, não dá para recortar
-              letras e escrever outra coisa. Por isso o &ldquo;com&rdquo; do
-              logotipo é o único pedaço em tipografia.
+              Não é fonte: é o desenho dela, vetorizado da arte das etiquetas de
+              couro. Testei 38 scripts conhecidos antes e nenhum bate — o traço é
+              de caneta de assinatura, provavelmente fonte comercial. Existem só
+              estas duas palavras: a escrita é ligada, não dá para recortar letras
+              e escrever outra coisa.
             </p>
             <p className="mt-3 max-w-texto text-apoio text-conteudo-suave">
-              As duas saem do mesmo recorte e dividem a caixa vertical: na mesma
-              altura, as linhas de base coincidem sem ajuste.
+              É por isso que a marca diz <strong>Raquel Crochê</strong> e não
+              &ldquo;Crochê com Raquel&rdquo;. O logotipo dela veio antes do
+              domínio; o nome do site segue no título, no texto e no que o leitor
+              de tela anuncia.
             </p>
             <div className="mt-6 flex flex-wrap items-start gap-x-6 gap-y-4 text-primaria">
               <PalavraCroche className="h-16 w-auto" />
