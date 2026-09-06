@@ -12,6 +12,7 @@ export const listarCategorias = cache(async function listarCategorias(): Promise
   CategoriaResumo[]
 > {
   const linhas = await db.category.findMany({
+    where: { active: true },
     orderBy: { position: "asc" },
     select: {
       id: true,

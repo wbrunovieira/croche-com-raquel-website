@@ -56,6 +56,9 @@ model Category {
   /// parágrafos separados por linha em branco, `## ` vira subtítulo.
   longDescription String?
   position    Int     @default(0)
+  /// Desligar tira a categoria do site sem apagar nada. É o que ela usa quando
+  /// a categoria tem peça: apagar levaria as peças junto, desativar não.
+  active      Boolean @default(true)
 
   subcategories Subcategory[]
   products      Product[]

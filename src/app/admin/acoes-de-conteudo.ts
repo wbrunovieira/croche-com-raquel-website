@@ -136,6 +136,65 @@ export async function apagarFotoDoQuemFaz(): Promise<void> {
 
 // --------------------------------------------------------------- categorias
 
+/**
+ * Reordena as categorias a partir da lista inteira, na ordem em que ela ficou.
+ *
+ * Recebe todos os ids, e não "mova este para lá": arrastar produz uma ordem
+ * nova por completo, e reconstruir isso a partir de movimentos individuais
+ * abriria espaço para o servidor e a tela discordarem no meio do caminho.
+ */
+export async function reordenarCategorias(ids: string[]): Promise<void> {
+  await exigirSessao();
+  if (ids.length === 0) return;
+  await db.$transaction(
+    ids.map((id, i) => db.category.update({ where: { id }, data: { position: i } }))
+  );
+  revalidarCatalogo();
+}
+
+/** Desligar tira a categoria do site sem apagar peça nenhuma. */
+export async function alternarCategoria(id: string, ativa: boolean): Promise<void> {
+  await exigirSessao();
+  await db.category.update({ where: { id }, data: { active: ativa } });
+  revalidarCatalogo();
+}
+
+/**
+ * Apagar só vale para categoria vazia.
+ *
+ * Com peça dentro, apagar levaria as peças junto — e a mensagem manda desativar,
+ * que é o que ela quer em praticamente todos os casos.
+ */
+export async function apagarCategoria(id: string): Promise<Resultado> {
+  await exigirSessao();
+
+  const categoria = await db.category.findUnique({
+    where: { id },
+    select: {
+      name: true,
+      _count: { select: { products: true, subcategories: true } },
+    },
+  });
+  if (!categoria) return { erro: "Categoria não encontrada." };
+
+  if (categoria._count.products > 0) {
+    return {
+      erro: `"${categoria.name}" tem ${categoria._count.products} ${
+        categoria._count.products === 1 ? "peça" : "peças"
+      }. Apagar levaria as peças junto — desative em vez de apagar.`,
+    };
+  }
+  if (categoria._count.subcategories > 0) {
+    return {
+      erro: `"${categoria.name}" tem subcategorias. Apague as subcategorias antes.`,
+    };
+  }
+
+  await db.category.delete({ where: { id } });
+  revalidarCatalogo();
+  return { ok: "Categoria apagada." };
+}
+
 export async function salvarCategoria(
   _anterior: unknown,
   dados: FormData
@@ -145,13 +204,15 @@ export async function salvarCategoria(
   const nome = String(dados.get("name") ?? "").trim();
   if (!id || nome.length < 2) return { erro: "Dê um nome à categoria." };
 
+  // A ordem NÃO entra aqui. Ela é mudada arrastando ou pelas setas, e o
+  // formulário não tem mais o campo — ler `position` de um FormData que não o
+  // traz devolveria 0 e jogaria a categoria para o topo a cada gravação.
   await db.category.update({
     where: { id },
     data: {
       name: nome,
       description: String(dados.get("description") ?? "").trim() || null,
       longDescription: String(dados.get("longDescription") ?? "").trim() || null,
-      position: Number(dados.get("position") ?? 0) || 0,
     },
   });
   revalidarCatalogo();
