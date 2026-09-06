@@ -221,16 +221,22 @@ export default async function EstiloPage() {
               dos dois lados fazia o buraco parecer maior à direita.
             </p>
             <p className="mt-3 max-w-texto text-apoio text-conteudo-suave">
-              <strong>O símbolo tem dois pesos.</strong> Na arte, símbolo e escrita
+              <strong>O símbolo tem três pesos.</strong> Na arte, símbolo e escrita
               têm a mesma caneta de 5px — mas ela desenhou o símbolo com 259px de
               altura e o nome com 143px. Em escala de logotipo o traço dele caía
               para 49% do da escrita e os dois deixavam de conversar. Engrossar
               tudo por igual corrigiu isso e criou outro problema: o novelo virou
-              mancha. Então o contorno é dilatado 2,2px e a trama interna só 0,8px
-              — quem carrega a forma é o contorno, as voltas do fio são textura. A
-              separação sai da geometria: preenchendo os buracos e medindo a
-              distância até a borda, o contorno fica na beirada e as tramas no
-              meio. Dá 59% de contorno para 41% de trama.
+              mancha, e as agulhas ficaram mais pesadas que o próprio coração.
+              Agora o <strong>contorno do coração</strong> é dilatado 2,6px, as{" "}
+              <strong>agulhas e o fio</strong> só 0,8px e a <strong>trama
+              interna</strong> é erodida — vira textura, não desenho.
+            </p>
+            <p className="mt-3 max-w-texto text-apoio text-conteudo-suave">
+              As três fatias saem da geometria, não do olho. Uma abertura
+              morfológica separa o miolo das saliências finas (as agulhas e o fio
+              solto); e preenchendo os buracos e medindo a distância de cada pixel
+              até a borda, o contorno cai na beirada e as tramas ficam no meio. Dá
+              51% de coração, 7% de agulha e fio, 41% de trama.
             </p>
             <p className="mt-3 max-w-texto text-apoio text-conteudo-suave">
               <strong>Os dois fios.</strong> O novelo dela já terminava numa ponta

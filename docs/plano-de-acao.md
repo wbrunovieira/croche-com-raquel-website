@@ -552,15 +552,24 @@ Três coisas vieram junto, e as três saíram de observação dele:
   de Crochê, e um segundo fio sai do `l` de Raquel e entra no novelo. Lidos juntos
   são um fio só atravessando a marca. As pontas foram medidas na arte, não
   escolhidas no olho.
-- **O símbolo passou a ter dois pesos.** Na arte, símbolo e escrita têm a mesma
-  caneta de 5px, mas ela desenhou o símbolo com 259px de altura e o nome com 143px:
-  em escala de logotipo o traço dele cai para **49% do da escrita** e os dois deixam
-  de conversar. Engrossar tudo por igual corrigiu isso e virou mancha — também
-  apontado por ele. Agora o **contorno** é dilatado 2,2px e a **trama interna** só
-  0,8px. A separação sai da geometria: preenchendo os buracos de cada componente e
-  medindo a distância de cada pixel até a borda, o contorno fica na beirada e as
-  tramas no meio. Dá 59% de contorno para 41% de trama, sem perder nenhum dos 24
-  contornos.
+- **O símbolo passou a ter três pesos**, em duas rodadas de crítica dele. Na arte,
+  símbolo e escrita têm a mesma caneta de 5px, mas ela desenhou o símbolo com 259px
+  de altura e o nome com 143px: em escala de logotipo o traço dele cai para **49% do
+  da escrita** e os dois deixam de conversar. Engrossar tudo por igual corrigiu isso
+  e virou mancha (*"agora está muito forte, talvez apenas alguns traços assim,
+  outros mais suaves"*); e com a trama aliviada, as agulhas passaram a pesar mais
+  que o próprio coração (*"as agulhas espetadas no novelo não estão muito
+  fortes?"*). Ele estava certo nas duas. Ficou: **contorno do coração** dilatado
+  2,6px, **agulhas e fio solto** 0,8px, **trama interna erodida**.
+
+  As três fatias saem da geometria, não do olho. Uma abertura morfológica de raio 20
+  separa o miolo das saliências finas — as agulhas e o fio —, e a distância de cada
+  pixel de tinta até a borda do preenchimento separa contorno de trama. Dá 51% de
+  coração, 7% de agulha e fio, 41% de trama.
+
+  *Os coraçõezinhos ficaram.* Eu tinha proposto tirá-los do lockup — são o elemento
+  que mais lê como artesanato caseiro — e ele pediu para manter no mesmo lugar. Com
+  os três pesos eles param de brigar do jeito que brigavam.
 
 A assinatura de lugar usa `textLength` com `lengthAdjust="spacing"`: a entreletra é
 calculada para a linha medir exatamente 72% da largura do logotipo, então a

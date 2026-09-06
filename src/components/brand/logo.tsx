@@ -1,5 +1,10 @@
 import type { SVGProps } from "react";
-import { SIMBOLO_PATH, SIMBOLO_VIEWBOX } from "./simbolo";
+import {
+  SIMBOLO_BORDA_ESQ,
+  SIMBOLO_PATH,
+  SIMBOLO_PONTA_FIO,
+  SIMBOLO_VIEWBOX,
+} from "./simbolo";
 import { CROCHE_PATH, CROCHE_VIEWBOX, RAQUEL_PATH } from "./assinatura";
 
 /**
@@ -103,11 +108,14 @@ const BASE_LINHA = Math.max(100, SIMBOLO_Y + SIMBOLO_ALT);
 
 /* -- Os fios: do `l` para o novelo, e do novelo para o `C` ------------------ */
 
-/** Ponta do fio solto do novelo, nas coordenadas próprias do símbolo. */
-const PONTA_X = SIMBOLO_X + 20.31 * SIMBOLO_ESC;
-const PONTA_Y = SIMBOLO_Y + 25.07 * SIMBOLO_ESC;
-/** Onde o fio entra na silhueta esquerda do novelo. */
-const ENTRADA_X = SIMBOLO_X + 2.4 * SIMBOLO_ESC;
+/**
+ * Ponta do fio solto e borda esquerda do novelo, trazidas de `simbolo.tsx` para
+ * o sistema do logotipo. Vêm da vetorização, não do olho: mudou o peso do
+ * símbolo, os fios acompanham.
+ */
+const PONTA_X = SIMBOLO_X + SIMBOLO_PONTA_FIO.x * SIMBOLO_ESC;
+const PONTA_Y = SIMBOLO_Y + SIMBOLO_PONTA_FIO.y * SIMBOLO_ESC;
+const ENTRADA_X = SIMBOLO_X + SIMBOLO_BORDA_ESQ * SIMBOLO_ESC;
 const ENTRADA_Y = 59;
 /** Saída do `l` de Raquel e extremo esquerdo do `C` de Crochê, medidos na arte. */
 const SAIDA_L = { x: 161, y: 60.5 };
