@@ -552,13 +552,15 @@ Três coisas vieram junto, e as três saíram de observação dele:
   de Crochê, e um segundo fio sai do `l` de Raquel e entra no novelo. Lidos juntos
   são um fio só atravessando a marca. As pontas foram medidas na arte, não
   escolhidas no olho — e a do fio solto vem da própria vetorização do símbolo, então
-  acompanha se o peso dele mudar. **O fio da direita sobe direto para o `C`**, e
-  chegou lá em três tentativas: descer-e-subir fazia duas voltas seguidas com a
-  volta em S da ponta dela e lia como nó (*"poderia fazer um trajeto mais
-  simples"*); um arco só ainda tinha barriga (*"ainda está uma curva"*). Ficou uma
-  reta com um sopro de curvatura — alças a 30% e 22% do desnível —, o suficiente
-  para sair e chegar na tangente. Reta pura emenda em bico com a volta curva dela e
-  vira filete.
+  acompanha se o peso dele mudar. **O fio da direita custou três tentativas, e a
+  causa não era o meu trajeto.** Descer-e-subir lia como nó (*"poderia fazer um
+  trajeto mais simples"*); um arco só ainda tinha barriga (*"ainda está uma
+  curva"*); e a reta ficou inorgânica. Foi o Bruno quem nomeou o problema: *"o
+  problema era o S antes"* — o fio dela termina numa volta sobre si mesmo, e
+  qualquer emenda depois dela lê como nó. **A volta saiu do símbolo.** O fio fica
+  cortado no fim do trecho reto, ainda em movimento, e a continuação sai dali na
+  tangente e sobe para o `C` numa curva só. É a única coisa removida do desenho
+  dela — o resto foi só redistribuição de peso.
 - **O peso do símbolo levou quatro rodadas de crítica dele, e o aprendizado é
   medível.** Na arte, símbolo e escrita têm a mesma caneta de 5px, mas ela desenhou
   o símbolo com 259px de altura e o nome com 143px: encolhido para caber ao lado das

@@ -248,12 +248,12 @@ export default async function EstiloPage() {
               solta; ela agora vai até o <strong>C</strong> de Crochê, e um segundo
               fio sai do <strong>l</strong> de Raquel e entra no novelo. Lidos
               juntos são um fio só, que atravessa a marca inteira.{" "}
-              <strong>O da direita sobe direto para o C.</strong> Duas versões
-              caíram antes: descer e subir fazia duas voltas seguidas com a volta em
-              S da ponta dela — lia como nó; e um arco só, mesmo simples, ainda tem
-              barriga, e barriga é desvio. Ficou uma reta com um sopro de curvatura,
-              o suficiente para sair e chegar na tangente. Reta pura emenda em bico
-              com a volta curva dela e vira filete.
+              <strong>A volta em S da ponta do fio dela saiu.</strong> Era ela o
+              problema: o fio corria reto e então voltava sobre si mesmo, e qualquer
+              continuação depois dessa volta lia como nó — endireitar o trajeto para
+              compensar só trocava o nó por um filete. Sem a volta, o fio fica
+              cortado ainda em movimento e a continuação sai dali na tangente: sobe
+              para o <strong>C</strong> numa curva só, orgânica.
             </p>
           </div>
 
