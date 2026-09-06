@@ -42,10 +42,11 @@ import { CROCHE_PATH, CROCHE_VIEWBOX, RAQUEL_PATH } from "./assinatura";
  * enrola no novelo e vira o começo do segundo. É o que faz as três peças serem
  * uma coisa, não três coisas alinhadas.
  *
- * As pontas não são escolhidas no olho. Foram medidas na arte: a saída do `l`
- * em (161; 60,5), o extremo esquerdo do `C` em (289; 63,5) e a ponta do fio
- * solto em (20,31; 25,07) nas coordenadas próprias do símbolo. A espessura, 3,4,
- * fica entre a da escrita (3,5) e a do símbolo já engrossado (3,27).
+ * As pontas não são escolhidas no olho: a saída do `l` e o extremo esquerdo do
+ * `C` foram medidos na arte, e a ponta do fio solto vem da própria vetorização
+ * do símbolo (`SIMBOLO_PONTA_FIO`), então acompanha se o peso dele mudar.
+ *
+ * **Cada fio é uma curva só.** Ver `FIO_DIREITO`.
  *
  * A assinatura em caixa alta espaçada é o que dá o tom de casa estabelecida — e
  * é verdade, não enfeite. Ela usa `textLength` com `lengthAdjust="spacing"`:
@@ -128,11 +129,15 @@ const FIO_ESQUERDO =
   `${n(ENTRADA_X - 7)} ${n(ENTRADA_Y + 2.4)} ` +
   `C ${n(ENTRADA_X - 3.5)} ${n(ENTRADA_Y + 1.1)} ${n(ENTRADA_X - 1.4)} ${n(ENTRADA_Y + 0.4)} ` +
   `${n(ENTRADA_X)} ${ENTRADA_Y}`;
+/**
+ * **Uma curva só.** A primeira versão descia e subia — duas cúbicas —, e o fio
+ * dela já termina numa volta em S: eram duas voltas seguidas, e o encontro lia
+ * como nó. Uma reta pura também não serve: emenda em bico com a volta curva dela
+ * e deixa de parecer fio. Um arco, com a folga que um fio teria.
+ */
 const FIO_DIREITO =
   `M ${n(PONTA_X)} ${n(PONTA_Y)} ` +
-  `C ${n(PONTA_X + 9)} ${n(PONTA_Y + 2)} ${n(PONTA_X + 16)} ${n(PONTA_Y - 2)} ` +
-  `${n(PONTA_X + 21)} ${n(PONTA_Y - 9)} ` +
-  `C ${n(ENTRADA_C.x - 7)} ${n(ENTRADA_C.y + 11)} ${n(ENTRADA_C.x - 3.5)} ${n(ENTRADA_C.y + 4.5)} ` +
+  `C ${n(PONTA_X + 14)} ${n(PONTA_Y + 1)} ${n(ENTRADA_C.x - 14)} ${n(ENTRADA_C.y + 14)} ` +
   `${n(ENTRADA_C.x)} ${ENTRADA_C.y}`;
 const FIO_ESPESSURA = 3.0;
 

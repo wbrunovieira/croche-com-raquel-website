@@ -551,7 +551,12 @@ Três coisas vieram junto, e as três saíram de observação dele:
 - **Os dois fios.** O novelo já terminava numa ponta solta; ela agora vai até o `C`
   de Crochê, e um segundo fio sai do `l` de Raquel e entra no novelo. Lidos juntos
   são um fio só atravessando a marca. As pontas foram medidas na arte, não
-  escolhidas no olho.
+  escolhidas no olho — e a do fio solto vem da própria vetorização do símbolo, então
+  acompanha se o peso dele mudar. **Cada fio é uma curva só:** a primeira versão do
+  fio da direita descia e subia, e como a ponta dela já termina numa volta em S eram
+  duas voltas seguidas — o encontro lia como nó (*"poderia fazer um trajeto mais
+  simples"*). Reta pura também não serve: emenda em bico com a volta curva dela e
+  deixa de parecer fio.
 - **O peso do símbolo levou quatro rodadas de crítica dele, e o aprendizado é
   medível.** Na arte, símbolo e escrita têm a mesma caneta de 5px, mas ela desenhou
   o símbolo com 259px de altura e o nome com 143px: encolhido para caber ao lado das

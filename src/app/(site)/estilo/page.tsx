@@ -247,7 +247,12 @@ export default async function EstiloPage() {
               <strong>Os dois fios.</strong> O novelo dela já terminava numa ponta
               solta; ela agora vai até o <strong>C</strong> de Crochê, e um segundo
               fio sai do <strong>l</strong> de Raquel e entra no novelo. Lidos
-              juntos são um fio só, que atravessa a marca inteira.
+              juntos são um fio só, que atravessa a marca inteira.{" "}
+              <strong>Cada um é uma curva só.</strong> A primeira versão do fio da
+              direita descia e subia, e como a ponta dela já termina numa volta em
+              S, eram duas voltas seguidas: o encontro lia como nó. Uma reta pura
+              também não serve — emenda em bico com a volta curva dela e deixa de
+              parecer fio.
             </p>
           </div>
 
