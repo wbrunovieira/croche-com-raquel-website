@@ -35,7 +35,7 @@ export default async function PaginaDeEntrada({
   return (
     <main className="grid flex-1 place-items-center px-borda-pagina py-secao">
       <div className="w-full max-w-sm">
-        <Logo className="text-t3 text-primaria" />
+        <Logo className="h-20 text-primaria" />
         <h1 className="mt-respiro font-display text-t2">Entrar no painel</h1>
         <p className="mt-3 text-apoio text-conteudo-suave">
           Aqui você cadastra as peças e as cores.

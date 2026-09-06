@@ -29,7 +29,7 @@ export default async function LayoutDoAdmin({ children }: LayoutProps<"/admin">)
       <header className="border-b border-borda bg-superficie">
         <div className="container-site flex h-cabecalho items-center justify-between gap-6">
           <Link href="/admin" aria-label="Painel">
-            <Logo className="text-t3 text-primaria" />
+            <Logo variante="linha" className="h-9 text-primaria" />
           </Link>
           <div className="flex items-center gap-4">
             <Link

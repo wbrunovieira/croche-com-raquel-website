@@ -32,11 +32,12 @@ export async function Rodape() {
       <div className="container-site secao pb-barra-fixa sm:pb-0">
         <div className="grid gap-x-coluna gap-y-grade-linha sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <Logo className="text-t3" />
+            <Logo className="h-16" />
+            {/* "Feito à mão em Petrópolis" já está na assinatura do logotipo:
+                repetir as duas coisas aqui embaixo fazia a coluna dizer a mesma
+                frase duas vezes seguidas. Sobrou o que o logotipo não diz. */}
             <p className="mt-4 text-apoio text-inv-suave">
-              Peças de crochê e macramê feitas à mão, sob encomenda.
-              <br />
-              {config.cidade}
+              Bolsas, mesa posta e decoração em crochê e macramê, sob encomenda.
             </p>
             <div className="mt-bloco flex flex-wrap gap-4">
               <a

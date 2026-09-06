@@ -115,12 +115,16 @@ export function Navegacao({
       >
         <div className="container-site flex h-full items-center justify-between gap-8">
           <Link href="/" aria-label="Crochê com Raquel — início" className="shrink-0">
+            {/* A assinatura de lugar sai aqui: no cabeçalho ela mediria 5px.
+                O corpo animado vira a altura do logotipo (`h-[1em]`). */}
             <motion.span
               className="block text-primaria"
-              animate={{ fontSize: rolou ? "1.45rem" : "1.75rem" }}
+              animate={{
+                fontSize: rolou ? "var(--corpo-logo-rolado)" : "var(--corpo-logo)",
+              }}
               transition={{ duration: semMovimento ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
             >
-              <Logo />
+              <Logo variante="linha" className="h-[1em]" />
             </motion.span>
           </Link>
 
@@ -354,7 +358,7 @@ function Gaveta({
             className="trama fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col bg-inv-fundo text-inv-conteudo lg:hidden"
           >
             <div className="flex items-center justify-between p-painel">
-              <Logo className="text-t3" />
+              <Logo className="h-14" />
               <button
                 type="button"
                 onClick={aoFechar}

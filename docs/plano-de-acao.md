@@ -525,39 +525,53 @@ resolve contra a `font-size` do próprio elemento e não a do pai. Sem isso ele
 sobe e vira expoente (aconteceu, e apareceu na prova visual).
 
 **Terceira volta: é "Raquel Crochê", e o desenho anda junto com o nome.** Eu tinha
-montado "Crochê com Raquel" numa linha — símbolo à esquerda, as duas palavras à
-direita, "com" em Karla no meio. O Bruno cortou: *"o certo é Raquel Crochê e
-precisa estar coligado o desenho com texto"*. Olhando a arte inteira dela, ele
-está certo nas duas coisas — o logotipo é **empilhado**: símbolo em cima, "Raquel
-Crochê" embaixo, centrados e quase se encostando. Não era para eu compor um
-logotipo novo; era para reproduzir o que ela já tem.
+montado "Crochê com Raquel" numa linha, com "com" em Karla no meio. O Bruno cortou:
+*"o certo é Raquel Crochê e precisa estar coligado o desenho com texto"*. Olhando a
+arte inteira dela, o logotipo é empilhado — símbolo em cima, nome embaixo. Não era
+para eu compor um logotipo novo; era para reproduzir o que ela já tem.
 
-Agora o lockup é **um `<svg>` só**. Montado com flex, símbolo e texto liam como
-duas coisas lado a lado; num SVG único a relação vira geometria, e não há
-entrelinha, `gap` ou arredondamento de subpixel que descole os dois em nenhum
-tamanho. As proporções são medidas na arte, não escolhidas: símbolo com 49,8% da
-largura das palavras, 181,1% da altura, vão de 9,1% e centro 2,9% à direita — o
-desalinhamento é dela e fica, porque a entrada do `R` avança muito para a
-esquerda. Prova de que a medição fecha: a proporção do símbolo deduzida dessas
-medidas dá 0,8855, contra 0,885 do símbolo vetorizado à parte.
+**Quarta volta, e a que valeu: hierarquia.** Reproduzido fielmente, o empilhado
+continuava parecendo caseiro — *"ainda parece um pouco amador"* —, e ele deu a
+direção: o desenho no meio de "Raquel Crochê". Eu montei seis direções (símbolo
+entre as palavras em dois pesos, nome-herói com brasão, selo, casa de moda) e
+comparei nos tamanhos reais. A escolhida foi **`Raquel · novelo · Crochê`, com
+"FEITO À MÃO EM PETRÓPOLIS" embaixo**.
 
-Some o "com": a marca dela é "Raquel Crochê" e veio antes do domínio. O nome do
-site continua no `<title>`, no texto e no `aria-label` do logotipo.
+O diagnóstico do "amador" era de proporção, não de arranjo: no empilhado o símbolo
+tinha **181% da altura do nome**. Uma ilustração cheia de detalhe nesse tamanho não
+convive com um script fino — ela vence e o nome vira legenda. Deitado, o símbolo
+deixa de competir e passa a costurar as duas palavras.
 
-**O cabeçalho cresceu por causa disso**, e é um custo real: 5→6rem rolado e
-6,5→7rem no topo. Um logotipo empilhado quase quadrado não cabe numa barra fina —
-nos valores antigos a escrita ficava com 20px de altura e o script dela deixava
-de ser legível. Agora fica com 28px no topo e 23px rolado.
+Três coisas vieram junto, e as três saíram de observação dele:
 
-Conferido no cabeçalho a 1280 e 390px, no topo e rolado, no rodapé invertido, no
-menu do mobile e na entrada do painel. O `/estilo` foi reescrito para descrever a
-marca empilhada e teve corrigidas as descrições que ainda falavam do laço.
+- **O tamanho se resolveu sozinho.** Deitado o logotipo cabe numa barra fina: a
+  escrita sai a **54px** no cabeçalho contra 36px do empilhado — e o cabeçalho
+  voltou aos 5/6,5rem originais. A forma vertical estava custando altura de página
+  *e* entregando um nome menor.
+- **Os dois fios.** O novelo já terminava numa ponta solta; ela agora vai até o `C`
+  de Crochê, e um segundo fio sai do `l` de Raquel e entra no novelo. Lidos juntos
+  são um fio só atravessando a marca. As pontas foram medidas na arte, não
+  escolhidas no olho.
+- **O símbolo passou a ter dois pesos.** Na arte, símbolo e escrita têm a mesma
+  caneta de 5px, mas ela desenhou o símbolo com 259px de altura e o nome com 143px:
+  em escala de logotipo o traço dele cai para **49% do da escrita** e os dois deixam
+  de conversar. Engrossar tudo por igual corrigiu isso e virou mancha — também
+  apontado por ele. Agora o **contorno** é dilatado 2,2px e a **trama interna** só
+  0,8px. A separação sai da geometria: preenchendo os buracos de cada componente e
+  medindo a distância de cada pixel até a borda, o contorno fica na beirada e as
+  tramas no meio. Dá 59% de contorno para 41% de trama, sem perder nenhum dos 24
+  contornos.
 
-*Dois achados de carona:* a legenda da tela de entrada ainda prometia "os textos
-do site", que saíram do painel na Etapa 15; e os PNGs de `public/marca/` — a
-demonstração de favicon em pixel real do `/estilo` — ainda mostravam **o laço**,
-reprovado duas etapas antes. Regerados a partir de `src/app/icon.svg`, que é o
-favicon de verdade.
+A assinatura de lugar usa `textLength` com `lengthAdjust="spacing"`: a entreletra é
+calculada para a linha medir exatamente 72% da largura do logotipo, então a
+justificação óptica é a mesma com a Karla carregada ou na fonte de reserva. Ela sai
+na variante `linha` do cabeçalho, onde mediria 5px.
+
+Conferido no cabeçalho a 1280 e 390px (topo e rolado), no rodapé invertido, no menu
+do mobile, na entrada do painel e no `/estilo`, que foi reescrito. *De carona:* os
+PNGs de `public/marca/` ainda mostravam o laço reprovado duas etapas antes —
+regerados de `src/app/icon.svg`; e o rodapé repetia "feito à mão / Petrópolis", que
+agora está na assinatura do logotipo.
 
 ## Decisões em aberto
 

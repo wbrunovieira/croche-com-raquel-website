@@ -148,12 +148,14 @@
   /* O símbolo da marca é ilustrado — novelo, agulhas, coraçõezinhos — e só lê
      inteiro a partir de ~50px de altura. Com o cabeçalho a 80px o lockup ficava
      com 1px de folga, violando a área de proteção da identidade (§6.3). */
-  /* O logotipo da Raquel é empilhado e quase quadrado — símbolo sobre o
-     nome —, então o cabeçalho precisa de mais altura que uma assinatura
-     deitada. Nestes valores a escrita fica com 28px no topo e 23px
-     rolado; abaixo disso o script dela deixa de ser legível. */
-  --spacing-cabecalho:    6rem;     /* 96 — cabeçalho rolado, barra sticky */
-  --spacing-cabecalho-lg: 7rem;     /* 112 — cabeçalho desktop, no topo */
+  --spacing-cabecalho:    5rem;     /* 80 — cabeçalho rolado, barra sticky */
+  --spacing-cabecalho-lg: 6.5rem;   /* 104 — cabeçalho desktop, no topo */
+  /* Altura do logotipo no cabeçalho — na variante deitada ela É a altura da
+     escrita da Raquel. Foi por aqui que a barra voltou a 5/6,5rem: empilhado o
+     logotipo pedia 8rem de barra e ainda entregava um nome de 36px; deitado,
+     entrega 54px numa barra menor. */
+  --corpo-logo:           3.75rem;  /* caixa 60, escrita 54, na barra de 104 */
+  --corpo-logo-rolado:    2.85rem;  /* caixa 46, escrita 42, na barra de  80 */
   --spacing-zap-flutua:   3.5rem;   /* 56 — botão flutuante (identidade 7.3) */
   /* 112 — folga no fim da página no mobile, para a barra fixa de WhatsApp da
      página de produto não cobrir o rodapé. A barra mede 87px (botão de 54 +
@@ -164,6 +166,15 @@
   /* ==================== GRADE E PROPORÇÃO ==================== */
   --aspect-peca: 4 / 5;             /* foto de produto — identidade 5.4 */
   --container-produto: 60rem;       /* 960 — coluna dupla da página de produto */
+}
+
+/* No celular o logotipo deitado tem menos largura para ocupar — ao lado ainda
+   fica o botão do menu. Só o corpo encolhe; a barra continua a mesma. */
+@media (width < 48rem) {
+  :root {
+    --corpo-logo:        2.95rem;
+    --corpo-logo-rolado: 2.4rem;
+  }
 }
 
 /* ---------- Base ---------- */

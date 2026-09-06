@@ -134,13 +134,13 @@ export default async function EstiloPage() {
 
       <Secao
         titulo="Logotipo"
-        descricao="Não é um logotipo desenhado para o site: é o logotipo que a Raquel já tinha, reproduzido. Símbolo em cima, &ldquo;Raquel Crochê&rdquo; embaixo, centrados e quase se encostando — como está costurado nas etiquetas de couro. As proporções são medidas na arte dela, não escolhidas."
+        descricao="&ldquo;Raquel · novelo · Crochê&rdquo;, com a assinatura de lugar embaixo. As peças são todas dela; o que foi feito aqui é hierarquia e peso — o nome manda, o símbolo entra entre as palavras e é costurado a elas por um fio que sai do l, enrola no novelo e vira o C."
       >
         <div className="grid gap-x-grade-col gap-y-grade-linha lg:grid-cols-2">
           <div className="rounded-card border border-borda bg-superficie p-painel">
             <Etiqueta>Versão principal</Etiqueta>
             <div className="mt-6">
-              <Logo className="text-t1 text-primaria" />
+              <Logo className="h-20 text-primaria" />
             </div>
           </div>
 
@@ -149,7 +149,7 @@ export default async function EstiloPage() {
               Versão invertida
             </span>
             <div className="mt-6 text-inv-conteudo">
-              <Logo className="text-t1" />
+              <Logo className="h-20" />
             </div>
           </div>
 
@@ -205,6 +205,39 @@ export default async function EstiloPage() {
               <PalavraCroche className="h-9 w-auto" />
               <PalavraRaquel className="h-9 w-auto" />
             </div>
+          </div>
+
+          <div className="rounded-card border border-borda bg-superficie p-painel lg:col-span-2">
+            <Etiqueta>Por que ele deixou de parecer amador</Etiqueta>
+            <p className="mt-2 max-w-texto text-apoio text-conteudo-suave">
+              A primeira montagem repetia a arte dela: símbolo empilhado sobre o
+              nome, com 181% da altura da escrita. Uma ilustração cheia de detalhe
+              nesse tamanho não convive com um script fino — ela vence, o nome
+              vira legenda. Deitado, o símbolo deixa de competir e passa a costurar
+              as duas palavras. De quebra o nome ficou maior: 54px de escrita no
+              cabeçalho contra 36px do empilhado, e numa barra menor. Os vãos são
+              diferentes dos dois lados — 26 à esquerda, 16 à direita — porque o
+              <strong>C</strong> abre com uma barriga larga e vazia, e o mesmo vão
+              dos dois lados fazia o buraco parecer maior à direita.
+            </p>
+            <p className="mt-3 max-w-texto text-apoio text-conteudo-suave">
+              <strong>O símbolo tem dois pesos.</strong> Na arte, símbolo e escrita
+              têm a mesma caneta de 5px — mas ela desenhou o símbolo com 259px de
+              altura e o nome com 143px. Em escala de logotipo o traço dele caía
+              para 49% do da escrita e os dois deixavam de conversar. Engrossar
+              tudo por igual corrigiu isso e criou outro problema: o novelo virou
+              mancha. Então o contorno é dilatado 2,2px e a trama interna só 0,8px
+              — quem carrega a forma é o contorno, as voltas do fio são textura. A
+              separação sai da geometria: preenchendo os buracos e medindo a
+              distância até a borda, o contorno fica na beirada e as tramas no
+              meio. Dá 59% de contorno para 41% de trama.
+            </p>
+            <p className="mt-3 max-w-texto text-apoio text-conteudo-suave">
+              <strong>Os dois fios.</strong> O novelo dela já terminava numa ponta
+              solta; ela agora vai até o <strong>C</strong> de Crochê, e um segundo
+              fio sai do <strong>l</strong> de Raquel e entra no novelo. Lidos
+              juntos são um fio só, que atravessa a marca inteira.
+            </p>
           </div>
 
           <div className="rounded-card border border-borda bg-superficie p-painel lg:col-span-2">
