@@ -67,7 +67,9 @@ provisória e a amostra em `/estilo`.
 **Logotipo** (adicionado a pedido do Bruno): assinatura em duas linhas — "crochê" em
 Fraunces caixa baixa sobre "COM RAQUEL" em Karla espaçada — com o **laço** como
 símbolo isolado, em `src/components/brand/`. Favicon (`icon.svg`) e apple touch icon
-gerados a partir do mesmo traçado.
+gerados a partir do mesmo traçado. *(Nada disso sobreviveu: a Raquel reprovou o laço,
+substituído pelo novelo-coração dela, e na Etapa 16 a hierarquia inverteu — hoje o
+elemento maior é o nome dela, com a letra dela.)*
 
 *Mudanças em relação ao planejado:* a amostra ficou mais completa que o previsto e já
 inclui card de produto e seção invertida, que eram da Etapa 4 — a Etapa 4 fica menor.
@@ -88,10 +90,10 @@ arbitrário de espaçamento. O `/estilo` foi refatorado pela auditoria do docume
 21 valores distintos viraram 11 degraus + 9 tokens, e caíram a zero os arbitrários, os
 degraus fracionários e as violações da regra tipográfica.
 
-*Pendência do logotipo:* a direção pede que o laço nasça do prolongamento do terminal
-do `ê` de "crochê". Isso exige lettering customizado (desenhar o contorno da letra),
-não dá para fazer com a fonte viva. Hoje o laço é um elemento do lockup, ao lado da
-palavra. Se o Bruno quiser a versão desenhada, é trabalho de vetor à parte.
+*Pendência do logotipo — resolvida na Etapa 16.* A direção pedia que o laço nascesse
+do prolongamento do terminal do `ê` de "crochê", o que exigiria lettering customizado.
+A pendência morreu por outro caminho: o laço saiu, e o lettering que entrou é o da
+própria Raquel.
 
 ### ✅ Etapa 2 — Modelagem de dados
 Schema Prisma: `Product`, `Category`, `Subcategory`, `Collection`, `OptionGroup`,
@@ -486,6 +488,46 @@ encomenda sob medida e contato.
 `pnpm check:seo` cobre os redirecionamentos e a existência de cada âncora — um
 redirecionamento apontando para uma âncora que não existe cai no vazio em
 silêncio.
+
+### ✅ Etapa 16 — A letra da Raquel no logotipo *(pedido do Bruno)*
+
+Ela já tem um logotipo próprio, nas etiquetas de couro costuradas nas peças:
+"Raquel Crochê" num script de assinatura. O nome no site estava em Karla caixa
+alta — tipografia de sistema onde ela já tem letra.
+
+**Primeiro tentei identificar a fonte, como o Bruno pediu.** Recortei "Raquel
+Crochê" da arte dela, limiarizei e comparei contra **38 scripts conhecidos** do
+Google Fonts (Sacramento, Allura, Alex Brush, Parisienne, Great Vibes, Corinthia,
+Zeyada, Kristi, La Belle Aurore, Meddon…), renderizados lado a lado com a
+referência. **Nenhum bate.** O traço é de caneta de assinatura — monolinear, com
+borda irregular, `R` e `C` de barriga muito aberta e minúsculas pequenas quase
+soltas —, provavelmente uma fonte comercial fora do Google Fonts. Numa assinatura
+de marca, "parecido" é pior que idêntico: ficou o desenho dela.
+
+**Vetorizado** em `src/components/brand/assinatura.tsx`, mesmo pipeline do
+símbolo: canal verde do JPEG, ampliação 8×, limiar, contornos por marching squares
+com tolerância 1.0. Um só `path` com `fillRule="evenodd"` — 9,4 kB, ~3 kB no
+gzip —, legível até 56px de largura (medido).
+
+**Só a palavra "Raquel".** A arte diz "Raquel Crochê" e o site se chama "Crochê
+com Raquel"; a escrita é ligada, não dá para recortar letras e recompor, e "com"
+não existe na fonte original. Então o nome vem da mão dela e o resto continua na
+tipografia da marca.
+
+**A hierarquia inverteu, e isso é a mudança de verdade.** Antes "crochê" vinha
+grande em Fraunces e "COM RAQUEL" era a legenda; o nome dela era a menor coisa da
+marca. Agora "CROCHÊ COM" é a sobrancelha pequena e "Raquel" é o elemento maior —
+que é o que a etiqueta dela faz. Mantê-lo como legenda de 0,345em deixaria a
+assinatura ilegível no cabeçalho (testado antes de decidir) além de contar a
+história errada. A sobrancelha é justificada oticamente à largura da assinatura:
+248,2px contra 249,2px num corpo de 100px.
+
+Conferido no cabeçalho (desktop e mobile), no rodapé invertido e na entrada do
+painel. O `/estilo` ganhou o card da assinatura com o mínimo de 56px e teve
+corrigidas as descrições que ainda falavam do laço.
+
+*De carona:* a legenda da tela de entrada ainda prometia "os textos do site", que
+saíram do painel na Etapa 15.
 
 ## Decisões em aberto
 

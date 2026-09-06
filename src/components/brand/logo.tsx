@@ -1,12 +1,24 @@
 import { Simbolo } from "./simbolo";
+import { Assinatura } from "./assinatura";
 
 /**
  * Assinatura da marca.
  *
- * Duas linhas alinhadas à esquerda: "crochê" em Fraunces caixa baixa (os eixos
- * SOFT/WONK amolecem e desalinham a letra) e "COM RAQUEL" em Karla caixa alta,
- * espaçada, a ~38% do corpo da primeira linha. O contraste de escala e de eixo
- * já dá a hierarquia — sem ornamento, sem moldura.
+ * Símbolo à esquerda; à direita, duas linhas: "CROCHÊ COM" em Karla caixa alta
+ * espaçada, pequena, e embaixo **"Raquel" com a letra da própria Raquel** —
+ * vetorizada da arte dela, a mesma escrita das etiquetas de couro das peças
+ * (ver `assinatura.tsx`).
+ *
+ * A hierarquia inverteu de propósito. Antes "crochê" vinha grande em Fraunces e
+ * "COM RAQUEL" era a linha de apoio; o nome dela era a menor coisa da marca. Nas
+ * etiquetas é o contrário: quem assina a peça é a Raquel, e o nome ocupa a peça
+ * inteira. Com a letra dela no site, mantê-la como legenda de 0,345em deixaria a
+ * assinatura ilegível no cabeçalho — testado — além de contar a história errada.
+ *
+ * A sobrancelha é justificada oticamente à largura da assinatura: a 0,30em com
+ * 0,21em de entreletra ela mede 248,2px contra 249,2px do "Raquel" (corpo de
+ * 100px). A margem negativa mata o espaço que a entreletra deixa depois da
+ * última letra — sem ela a linha parece deslocada para a direita.
  *
  * Abaixo de 120px de largura, use apenas o símbolo (`variante="simbolo"`).
  *
@@ -35,43 +47,29 @@ export function Logo({
 
   return (
     <span
-      className={`inline-flex items-start gap-[0.30em] ${className}`}
+      className={`inline-flex items-start gap-[0.32em] ${className}`}
       role="img"
       aria-label={titulo}
     >
-      {/* A tinta das duas linhas ocupa 1,30em de altura. O laço era igualado a
-          isso, mas o novelo é 43% mais largo na mesma altura (0,885:1 contra
-          0,62:1) e a essa escala dominava a assinatura. Recuado para 1,15em, a
-          mancha do símbolo volta a pesar como a do texto. */}
-      <Simbolo className="mt-[0.06em] h-[1.75em] w-auto shrink-0" />
+      {/* O símbolo é vazado — coração de novelo com agulhas e ar em volta —,
+          então ele pode passar da altura do bloco de texto (1,76em de tinta)
+          sem dominar: a mancha continua parecida. */}
+      <Simbolo className="mt-[0.02em] h-[2.15em] w-auto shrink-0" />
       <span className="flex flex-col leading-none">
-        <span
-          className="font-display lowercase"
-          style={{
-            fontSize: "1em",
-            fontWeight: 500,
-            fontVariationSettings: '"opsz" 144, "SOFT" 60, "WONK" 1',
-            letterSpacing: "-0.005em",
-          }}
-        >
-          crochê
-        </span>
-        {/* Justificada oticamente à largura de "crochê": a 0,38em ela media 146,9px
-            contra 137,1px da palavra. A margem negativa mata o espaço que o
-            tracking deixa depois da última letra — sem ela a linha parece
-            deslocada para a direita mesmo com a largura certa. */}
         <span
           className="font-texto uppercase"
           style={{
-            fontSize: "0.345em",
+            fontSize: "0.30em",
             fontWeight: 500,
-            letterSpacing: "0.16em",
-            marginRight: "-0.16em",
-            marginTop: "0.26em",
+            letterSpacing: "0.21em",
+            marginRight: "-0.21em",
+            marginBottom: "0.14em",
+            whiteSpace: "nowrap",
           }}
         >
-          com Raquel
+          crochê com
         </span>
+        <Assinatura className="h-[1.4em] w-auto" />
       </span>
     </span>
   );

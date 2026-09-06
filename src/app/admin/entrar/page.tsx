@@ -38,7 +38,7 @@ export default async function PaginaDeEntrada({
         <Logo className="text-t3 text-primaria" />
         <h1 className="mt-respiro font-display text-t2">Entrar no painel</h1>
         <p className="mt-3 text-apoio text-conteudo-suave">
-          Aqui você cadastra as peças, as cores e os textos do site.
+          Aqui você cadastra as peças e as cores.
         </p>
 
         <div className="mt-bloco">
