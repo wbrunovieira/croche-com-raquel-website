@@ -8,10 +8,21 @@
  *
  * Precisa do servidor de pé:  pnpm dev
  * Depois:                     pnpm check:hospedagem
+ *
+ * Contra o que já está no ar, onde esta verificação mais importa:
+ *   URL_BASE=https://crochecomraquel.com.br pnpm check:hospedagem
  */
-import { request } from "node:http";
+import { request as requisicaoHttp } from "node:http";
+import { request as requisicaoHttps } from "node:https";
 
 const BASE = process.env.URL_BASE ?? "http://localhost:3000";
+/**
+ * Contra produção o esquema é https, e mandar http rende um 301 do redirecionamento
+ * em toda rota — oito falsos negativos, que foi exatamente o que aconteceu na
+ * primeira vez que rodei isto contra o ar. O cliente segue o `URL_BASE`.
+ */
+const seguro = new URL(BASE).protocol === "https:";
+const request = seguro ? requisicaoHttps : requisicaoHttp;
 
 let falhas = 0;
 const ok = (nome, condicao, detalhe = "") => {
@@ -30,7 +41,11 @@ function pegar(caminho, host) {
     const req = request(
       {
         hostname: url.hostname,
-        port: url.port,
+        port: url.port || (seguro ? 443 : 80),
+        // Contra produção o host de teste tem de viajar também no SNI e no
+        // `servername`, senão o TLS fecha com o certificado do host da URL e a
+        // borda roteia pelo host errado.
+        ...(seguro && host ? { servername: host } : {}),
         path: url.pathname + url.search,
         method: "GET",
         headers: host ? { Host: host } : {},
@@ -80,13 +95,17 @@ ok(
 // O gate do admin é o que mais dói quebrar em silêncio: o proxy passa um
 // middleware próprio ao next-auth, e nesse caminho o callback `authorized`
 // é ignorado. Se alguém devolver o gate para lá, isto reprova.
-const semSessao = await pegar("/admin/produtos");
+// Estes dois vão com o host do PREVIEW de propósito. Sem host eles herdavam o
+// da URL_BASE, o que passava no localhost (que vê o site inteiro) e reprovava
+// contra o ar: no domínio /admin cai na obra, e é isso que tem de acontecer. O
+// gate do painel só existe onde o site existe.
+const semSessao = await pegar("/admin/produtos", PREVIEW);
 ok(
   "/admin sem sessão redireciona para a entrada",
   semSessao.status === 307 && (semSessao.cabecalhos.location ?? "").includes("/admin/entrar"),
   `status ${semSessao.status}`
 );
-const entrada = await pegar("/admin/entrar");
+const entrada = await pegar("/admin/entrar", PREVIEW);
 ok("e a própria tela de entrada responde 200", entrada.status === 200, `status ${entrada.status}`);
 
 console.log(falhas === 0 ? "\n✓ hospedagem ok" : `\n✗ ${falhas} falha(s)`);

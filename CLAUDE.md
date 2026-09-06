@@ -55,7 +55,9 @@ Antes de fechar uma etapa: `pnpm build`, `pnpm lint`, `pnpm check:espaco`,
 para exercitar também o envio ao Blob), `pnpm check:telas` (abre todas as telas do
 painel — duas ficaram quebradas em silêncio antes dele existir), `pnpm check:seo`
 (o que o buscador encontra em cada página) e `pnpm check:hospedagem` (quem vê a
-obra e quem vê o site).
+obra e quem vê o site). Os dois últimos aceitam `URL_BASE=https://…` e valem
+mais rodados **contra o que está no ar** — é lá que o roteamento por host pode
+quebrar em silêncio.
 
 Depois de `pnpm db:migrate`, **reinicie o `pnpm dev`** — ele guarda o cliente Prisma
 antigo em memória e a rota quebra com "Unknown field".
