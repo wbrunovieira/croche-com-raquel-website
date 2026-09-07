@@ -73,32 +73,30 @@ export function SecaoQuemFaz({
         </div>
       </div>
 
-      {/* A história continua na MESMA coluna em que a fala dela parou dentro da
-          faixa verde. Solta na largura do container, ela começava 400px à
-          esquerda do texto de cima: a leitura saltava de lugar no meio da voz
-          da Raquel. Alinhar resolveu o salto e criou o problema seguinte —
-          metade da largura virava vazio à esquerda, e o bloco continuava sem
-          nada que dissesse o que ele é: começava em "Comecei fazendo peças"
-          do nada.
+      {/* A história é uma SEÇÃO, não um rabo da faixa verde — e o que a fazia
+          parecer texto vazado não era o alinhamento, era não se anunciar:
+          começava em "Comecei fazendo peças" sem título, sem etiqueta, sem
+          nada. Alinhei à coluna de cima primeiro, o que só trocou o problema
+          por meia largura de vazio. O cabeçalho resolve a causa, e aí ela pode
+          voltar a ser uma seção de texto igual às outras do site — mesma
+          etiqueta, mesmo `h2`, mesma medida de leitura.
 
-          A etiqueta na coluna vazia resolve os dois de uma vez. Ela é `sticky`
-          porque o texto é longo: acompanhando a leitura, continua respondendo
-          "de quem é esta voz" na altura em que a pessoa está — e a coluna deixa
-          de ser ar e passa a ser margem, como numa página impressa. */}
+          O título e a chamada do banco não servem aqui: são "Quem faz" e "Sou a
+          Raquel…", que já estão na faixa verde logo acima. Duplicar faria a
+          seção parecer um eco. */}
       {historia ? (
         <div className="container-site secao">
-          <div className="grid gap-x-coluna gap-y-bloco lg:grid-cols-[minmax(0,22rem)_1fr]">
-            <Revelar as="div" className="lg:sticky lg:top-cabecalho-lg lg:self-start">
-              <Etiqueta>A história</Etiqueta>
-            </Revelar>
+          <Revelar entrada="ponto" className="max-w-texto">
+            <Etiqueta>A história</Etiqueta>
+            <h2 className="mt-2 font-display text-t2">Como começou</h2>
+          </Revelar>
 
-            {/* E é leitura, não vitrine: assenta devagar e quase não se
-                desloca. Um bloco de texto que chega com energia atrapalha a
-                própria leitura. */}
-            <Revelar entrada="texto" className="max-w-texto">
-              <TextoLongo texto={historia.corpo} />
-            </Revelar>
-          </div>
+          {/* O corpo é leitura, não vitrine: assenta devagar e quase não se
+              desloca. Um bloco de texto que chega com energia atrapalha a
+              própria leitura. */}
+          <Revelar entrada="texto" atraso={0.08} className="mt-bloco max-w-texto">
+            <TextoLongo texto={historia.corpo} />
+          </Revelar>
         </div>
       ) : null}
     </section>

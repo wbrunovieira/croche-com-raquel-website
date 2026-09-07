@@ -77,7 +77,11 @@ export function Hero({
 
   return (
     <section ref={secao} className="trama relative overflow-hidden bg-inv-fundo text-inv-conteudo">
-      <div className="container-site secao-ampla">
+      {/* `secao--ampla`, com dois traços. Estava escrito com um só, e a classe
+          simplesmente não existia: o hero rodou sem padding vertical nenhum, com
+          a foto encostando no cabeçalho em cima e na corrente embaixo. O CSS
+          definia a classe e ninguém a consumia. */}
+      <div className="container-site secao--ampla">
         <div className="grid items-center gap-x-coluna gap-y-grade-linha lg:grid-cols-[1fr_minmax(0,21rem)]">
           <div>
             {/* A cascata é CSS puro (`.surgir`), não framer-motion. O `initial`
