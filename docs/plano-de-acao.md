@@ -622,6 +622,77 @@ só, a batida jogaria o novelo para fora do lockup.
 
 Acessibilidade sai de graça: o bloco global de `prefers-reduced-motion` do
 `globals.css` já desliga a animação.
+### ✅ Etapa 18 — Os defeitos de movimento *(auditoria + pedido do Bruno)*
+
+O Bruno pediu um especialista em movimento para elevar a experiência. A auditoria
+achou coisas melhores que ideias novas: **quatro defeitos reais, dois deles no ar**.
+Esta etapa fecha só os defeitos; o acabamento (galeria da peça, card ao toque,
+filtro com estado pendente) ficou para depois.
+
+**1. O site saía do servidor invisível.** O `initial` do framer-motion vira `style`
+inline já no SSR. A home era servida com **31 elementos em `opacity: 0`**, incluindo
+o `<h1>` do hero — o candidato a LCP. Ele só aparecia depois de baixar, parsear e
+hidratar o bundle: para quem vem do Instagram, em webview, é tela verde por tempo
+que não precisa existir. Não era estética, era a métrica que decide quem volta para
+o feed.
+
+A entrada virou CSS (`@keyframes surgir`, classes `.surgir`/`.surgir-2..6`), e o
+`Revelar` foi reescrito sem framer-motion: quem esconde é o CSS, e só atrás da
+classe `.js` que o `layout.tsx` marca na raiz antes da primeira pintura. **Sem
+JavaScript o site inteiro continua legível** — conferido com o JS desligado.
+Resultado medido: de 31 elementos invisíveis para **zero**.
+
+De carona, o arco do hero ganhou o `clip-path` que a identidade especificou em §4.6
+e nunca tinha recebido — a peça cresce de baixo para cima, como sendo tricotada. Ele
+substitui o `scale: .96 → 1`, que reamostrava uma foto de 640×800 e borrava
+justamente a textura do ponto.
+
+*Pré-requisito que quase passou batido:* o bloco global de `prefers-reduced-motion`
+zerava `animation-duration` mas **não** `animation-delay`. Com `fill: both`, quem
+pede menos movimento ficaria olhando `opacity: 0` pelo tempo do atraso. Corrigido no
+mesmo commit — sem isso a mudança **pioraria** a acessibilidade.
+
+**2. O indicador do menu nunca funcionou.** O `layoutId` está no código desde a
+Etapa 7, com comentário dizendo que é "o detalhe que separa 'tem indicador' de
+'parece feito'". Mas `ativo()` comparava `caminho.startsWith(href)` e os itens
+viraram âncoras na Etapa 14: `"/"` nunca começa com `"/#catalogo"`. **Na home nenhum
+item ficava ativo e o traço nunca chegou a renderizar.** Quebrou em silêncio e
+ninguém viu porque o defeito é a ausência de uma coisa.
+
+Agora um `IntersectionObserver` com faixa fina no meio da tela (`-40%` em cima,
+`-55%` embaixo) diz qual seção está sendo lida, e o traço desliza. Os filhos de
+"Bolsas" são filtros (`/?categoria=…#catalogo`) e compartilham a âncora com
+"Catálogo" — acendiam junto, e por isso links com `?` são excluídos.
+Varredura da página inteira: Início → Catálogo → Sob medida, nas alturas certas.
+
+**3. O grão passava por cima de tudo.** `z-index: 60`, acima do cabeçalho, da gaveta
+e da **foto ampliada** — a cliente abria a peça para ver a textura do crochê e via
+através de ruído. Foi para `z-index: 0`. Saiu junto o `mix-blend-mode: multiply`:
+blend numa camada fixa de tela cheia obriga o compositor a remisturar a área inteira
+a cada repintura embaixo. Comparado lado a lado, a diferença é de 1,4% na média — a
+textura de papel se mantém, o verde escuro fica um respiro mais claro. Reversível
+numa linha se a direção preferir o anterior.
+
+**4. Dois desperdícios de cinco minutos.** O `<pre>` do briefing tinha
+`key={mensagem}`: desmontava e remontava **a cada tecla digitada**, piscando de 0,4
+para 1 — quem escrevia "Bolsa transversal" via o painel piscar dezoito vezes, e num
+Android médio era um remount de nó de texto por keystroke. E o `backdrop-blur` do
+cabeçalho ficava ligado 100% do tempo, inclusive antes de rolar, quando o fundo é
+transparente e ele não produz efeito visível nenhum. O gatilho do cabeçalho também
+ganhou histerese (desce a 32, sobe a 8): com limiar único, o rubber-band do iOS
+oscilava em torno dele e o cabeçalho animava `height` — que é layout — em loop.
+
+*O que a auditoria recomendou NÃO fazer, e eu concordo:* zoom na foto no hover (as
+fotos têm marca-d'água; ampliar revela artefato, não ponto), View Transitions para
+`/produtos/[slug]` (é a página que ela cola no WhatsApp, quase sempre a primeira da
+visita), cascata nos cards do catálogo (a grade se montando na frente de quem está
+comparando atrasa a tarefa real) e botão de WhatsApp pulsando.
+
+*Regra de ritmo que ficou:* **um ciclo periódico por vez na tela, e ele é da marca.**
+A batida do logotipo vale ~2px de amplitude; uma segunda animação ociosa teria de ser
+menor que isso para não roubar atenção — e abaixo de 2px, num celular, não se vê
+nada. Todo o resto tem de ser disparado por evento. Nenhuma mudança desta etapa
+acrescenta um ciclo.
 
 ## Decisões em aberto
 

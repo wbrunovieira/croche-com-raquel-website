@@ -76,36 +76,29 @@ export function Hero({
     return () => clearInterval(relogio);
   }, [semMovimento, pausado, capas.length, avancar]);
 
-  const entrada = (atraso: number) => ({
-    initial: semMovimento ? { opacity: 0 } : { opacity: 0, y: 24 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.7, delay: semMovimento ? 0 : atraso, ease: SUAVE },
-  });
-
   return (
     <section ref={secao} className="trama relative overflow-hidden bg-inv-fundo text-inv-conteudo">
       <div className="container-site secao-ampla">
         <div className="grid items-center gap-x-coluna gap-y-grade-linha lg:grid-cols-[1fr_minmax(0,21rem)]">
           <div>
-            <motion.p
-              {...entrada(0)}
-              className="font-texto text-etiqueta uppercase text-inv-suave"
-            >
+            {/* A cascata é CSS puro (`.surgir`), não framer-motion. O `initial`
+                do motion vira `style` inline no SSR, e o `<h1>` abaixo é o
+                candidato a LCP: ele saía do servidor com `opacity: 0` e só
+                aparecia depois da hidratação. Em keyframes, pinta no primeiro
+                quadro. Ver `globals.css`. */}
+            <p className="surgir font-texto text-etiqueta uppercase text-inv-suave">
               {cidade} · feito à mão
-            </motion.p>
+            </p>
 
-            <motion.h1 {...entrada(0.08)} className="mt-4 max-w-[14ch] font-display text-display">
+            <h1 className="surgir surgir-2 mt-4 max-w-[14ch] font-display text-display">
               {titulo}
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              {...entrada(0.16)}
-              className="mt-6 max-w-texto text-leitura text-inv-suave"
-            >
+            <p className="surgir surgir-3 mt-6 max-w-texto text-leitura text-inv-suave">
               {subtitulo}
-            </motion.p>
+            </p>
 
-            <motion.div {...entrada(0.24)} className="mt-bloco flex flex-wrap gap-4">
+            <div className="surgir surgir-4 mt-bloco flex flex-wrap gap-4">
               <Link
                 href="/bolsas"
                 className="inline-flex items-center gap-btn-icone rounded-fio bg-cru px-btn-x py-btn-y font-medium text-verde-cristal transition-colors hover:bg-papel"
@@ -121,12 +114,9 @@ export function Hero({
                 <IconeZap className="size-5" />
                 Falar com a Raquel
               </a>
-            </motion.div>
+            </div>
 
-            <motion.ul
-              {...entrada(0.32)}
-              className="mt-respiro flex flex-wrap gap-x-8 gap-y-3 text-apoio text-inv-suave"
-            >
+            <ul className="surgir surgir-5 mt-respiro flex flex-wrap gap-x-8 gap-y-3 text-apoio text-inv-suave">
               {[
                 { Icone: Hand, texto: "Feito à mão, peça por peça" },
                 { Icone: Sparkles, texto: "Cor e tamanho à sua escolha" },
@@ -137,15 +127,14 @@ export function Hero({
                   {texto}
                 </li>
               ))}
-            </motion.ul>
+            </ul>
           </div>
 
-          <motion.div
-            initial={semMovimento ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9, delay: semMovimento ? 0 : 0.12, ease: SUAVE }}
-            className="lg:mb-bloco"
-          >
+          {/* `tricotar`: o arco cresce de baixo para cima, como a peça sendo
+              feita — é o que a identidade pediu (§4.6) e nunca tinha ganhado.
+              Substitui o `scale: .96 → 1`, que reamostrava uma foto de 640×800
+              e borrava justamente a textura do ponto. */}
+          <div className="tricotar lg:mb-bloco">
             <div
               role="group"
               aria-roledescription="carrossel"
@@ -197,10 +186,7 @@ export function Hero({
                           controle que estas bolinhas não são. E "algumas"
                           porque a faixa mostra no máximo 8 das cadastradas. */}
                       {cores.length > 0 ? (
-                        <motion.div
-                          {...entrada(0.5)}
-                          className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/45 to-transparent px-5 pb-5 pt-16"
-                        >
+                        <div className="surgir surgir-6 absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/45 to-transparent px-5 pb-5 pt-16">
                           <p className="font-texto text-etiqueta uppercase text-cru/90">
                             Algumas cores disponíveis
                           </p>
@@ -216,7 +202,7 @@ export function Hero({
                               </li>
                             ))}
                           </ul>
-                        </motion.div>
+                        </div>
                       ) : null}
                     </div>
                   )}
@@ -259,7 +245,7 @@ export function Hero({
                 </div>
               ) : null}
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
 

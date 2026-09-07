@@ -25,6 +25,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="pt-BR"
       className={`${fraunces.variable} ${karla.variable} h-full`}
     >
+      <head>
+        {/* Marca que há JavaScript, antes da primeira pintura.
+            É o que autoriza o `.revelar` a esconder o conteúdo: o estado
+            escondido só pode existir se existir quem o desfaça. Sem script, ou
+            com script lento, nada some — a regra em `globals.css` está atrás
+            de `.js`. Precisa ser inline e síncrono no `head`; num efeito, o
+            conteúdo piscaria. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.classList.add("js")`,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

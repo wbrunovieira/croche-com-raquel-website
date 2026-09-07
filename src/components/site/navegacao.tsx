@@ -41,7 +41,12 @@ export function Navegacao({
   const [gaveta, setGaveta] = useState(false);
   const [avisoVisivel, setAvisoVisivel] = useState(Boolean(aviso));
 
-  useMotionValueEvent(scrollY, "change", (y) => setRolou(y > 24));
+  // Histerese: desce a 32, sobe a 8. Com um limiar único, o rubber-band do iOS
+  // faz o valor oscilar em torno dele e o cabeçalho anima `height` — que é
+  // layout — repetidamente, forçando reflow do documento a cada quadro.
+  useMotionValueEvent(scrollY, "change", (y) =>
+    setRolou((estava) => (estava ? y > 8 : y > 32))
+  );
 
   // Trocar de página fecha a gaveta — senão ela fica aberta por cima da rota
   // nova. Ajustado durante a renderização, não por efeito: um efeito aqui
@@ -70,8 +75,58 @@ export function Navegacao({
     return () => document.removeEventListener("keydown", aoTeclar);
   }, [gaveta]);
 
-  const ativo = (href: string) =>
-    href === "/" ? caminho === "/" : caminho.startsWith(href);
+  /**
+   * Qual seção da home está sendo lida.
+   *
+   * Existe porque o indicador do menu estava quebrado em silêncio desde que o
+   * site virou página única: `ativo()` comparava `caminho.startsWith(href)`, e
+   * os itens viraram âncoras — `"/"` nunca começa com `"/#catalogo"`. Resultado:
+   * na home NENHUM item ficava ativo, e o `layoutId` logo abaixo, escrito para
+   * fazer o traço deslizar de um item para o outro, nunca chegou a renderizar.
+   *
+   * A faixa de decisão é fina e fica no meio da tela (`-40%` em cima, `-55%`
+   * embaixo): assim a seção ativa troca quando ela passa pelo centro do olhar,
+   * e não quando encosta na borda — que faria o traço pular cedo demais.
+   */
+  const [secaoAtiva, setSecaoAtiva] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Fora da home não há âncora para observar. Não é preciso limpar o estado:
+    // `ativo()` só olha `secaoAtiva` quando `caminho === "/"`, então um valor
+    // velho aqui não pinta nada — e zerar em efeito dispara render em cascata.
+    if (caminho !== "/") return;
+
+    // Só os itens de primeiro nível que apontam para uma seção. Os filhos de
+    // "Bolsas" são filtros (`/?categoria=…#catalogo`): compartilham a âncora
+    // `#catalogo` com o item "Catálogo" e acenderiam o traço junto com ele.
+    const alvos = itens
+      .filter((i) => !i.href.includes("?"))
+      .map((i) => i.href.split("#")[1])
+      .filter((id): id is string => Boolean(id))
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => Boolean(el));
+
+    if (alvos.length === 0) return;
+
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        const visivel = entradas
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (visivel) setSecaoAtiva(visivel.target.id);
+      },
+      { rootMargin: "-40% 0px -55% 0px" }
+    );
+    alvos.forEach((el) => observador.observe(el));
+    return () => observador.disconnect();
+  }, [caminho, itens]);
+
+  const ativo = (href: string) => {
+    // Link com `?` é filtro de catálogo, não seção — nunca acende pela rolagem.
+    const ancora = href.includes("?") ? undefined : href.split("#")[1];
+    if (ancora) return caminho === "/" && secaoAtiva === ancora;
+    return href === "/" ? caminho === "/" : caminho.startsWith(href);
+  };
 
   return (
     <>
@@ -111,7 +166,11 @@ export function Navegacao({
           boxShadow: rolou ? "var(--shadow-peca)" : "0 0 0 rgba(0,0,0,0)",
         }}
         transition={{ duration: semMovimento ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
-        className="sticky top-0 z-50 border-b backdrop-blur-sm"
+        // O blur só entra junto com o fundo. Antes de rolar o fundo é
+        // transparente e o `backdrop-filter` não produz efeito visível nenhum —
+        // ficava ligado 100% do tempo por nada, e é dos filtros mais caros no
+        // celular.
+        className={`sticky top-0 z-50 border-b ${rolou ? "backdrop-blur-sm" : ""}`}
       >
         <div className="container-site flex h-full items-center justify-between gap-8">
           <Link href="/" aria-label="Crochê com Raquel — início" className="shrink-0">

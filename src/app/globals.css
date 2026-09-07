@@ -267,11 +267,56 @@
   .pilha > * + * { margin-block-start: var(--spacing-bloco); }
 }
 
-/* grão de papel global */
+/* Grão de papel global.
+   `z-index: 0`, e não 60: em 60 ele passava por cima do cabeçalho, da gaveta do
+   mobile e — o que dói — da FOTO AMPLIADA. A cliente abre a peça justamente
+   para ver a textura do crochê e estava vendo através de ruído.
+   Sem `mix-blend-mode`: blend numa camada fixa de tela cheia obriga o
+   compositor a remisturar a área inteira sempre que qualquer coisa embaixo
+   repinta. Sobre o creme, multiply a 5% e ruído escuro a 4,5% são
+   indistinguíveis — conferido lado a lado. */
 body::after {
-  content: ""; position: fixed; inset: 0; z-index: 60;
-  pointer-events: none; opacity: .05; mix-blend-mode: multiply;
+  content: ""; position: fixed; inset: 0; z-index: 0;
+  pointer-events: none; opacity: .045;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+/* ---------- Entradas ----------
+   Em CSS, e não no framer-motion, por um motivo de performance e não de gosto:
+   o `initial` do motion vira `style` inline JÁ NO SSR, então o `<h1>` do hero —
+   candidato a LCP — saía do servidor com `opacity: 0` e só aparecia depois de
+   baixar, fazer parse e hidratar o bundle. Eram 31 elementos servidos
+   invisíveis. Em keyframes, o navegador pinta no primeiro quadro e a animação
+   roda na GPU, sem esperar JavaScript nenhum. */
+@keyframes surgir {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* A peça sendo tricotada: o arco cresce de baixo para cima (identidade §4.6).
+   Substitui o `scale: .96 → 1`, que reamostrava uma foto já pequena e
+   borrava justamente a textura do ponto. */
+@keyframes tricotar {
+  from { clip-path: inset(100% 0 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+@layer components {
+  .surgir   { animation: surgir .7s var(--ease-fio) both; }
+  .surgir-2 { animation-delay: .08s; }
+  .surgir-3 { animation-delay: .16s; }
+  .surgir-4 { animation-delay: .24s; }
+  .surgir-5 { animation-delay: .32s; }
+  /* O card de cores entra depois da foto, não junto: ele mora SOBRE a peça, e
+     aparecer ao mesmo tempo esconde a bolsa no instante em que ela chega. */
+  .surgir-6 { animation-delay: .5s; }
+  .tricotar { animation: tricotar .9s var(--ease-fio) both; }
+
+  /* Revelação na rolagem. O estado escondido só existe se houver JS para
+     desfazê-lo — daí o `.js` na raiz, marcado antes da pintura. Sem script,
+     ou com script lento, o site inteiro continua legível. */
+  .js .revelar { opacity: 0; }
+  .js .revelar[data-revelado] { animation: surgir .55s var(--ease-fio) both; }
 }
 
 /* ---------- Batida do coração do logotipo ---------- */
@@ -304,6 +349,10 @@ body::after {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+    /* O atraso também: com `animation-fill-mode: both`, zerar só a duração
+       deixaria quem pediu menos movimento olhando `opacity: 0` pelo tempo do
+       delay antes de a animação "acabar". */
+    animation-delay: 0ms !important;
     transition-duration: .01ms !important; scroll-behavior: auto !important;
   }
 }

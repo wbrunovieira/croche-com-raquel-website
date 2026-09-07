@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
 import { classesDeBotao } from "@/components/ui/botao";
 import { Etiqueta } from "@/components/ui/etiqueta";
 import { IconeZap } from "@/components/ui/icone-zap";
@@ -45,7 +44,6 @@ const CAMPOS: {
  */
 export function Briefing({ numeroDoWhatsapp }: { numeroDoWhatsapp: string }) {
   const [dados, setDados] = useState<BriefingDeEncomenda>(VAZIO);
-  const semMovimento = useReducedMotion();
 
   const mensagem = montarMensagemDeEncomenda(dados);
   const link = montarLinkWhatsApp(numeroDoWhatsapp, mensagem);
@@ -105,15 +103,14 @@ export function Briefing({ numeroDoWhatsapp }: { numeroDoWhatsapp: string }) {
       <div className="lg:sticky lg:top-cabecalho-lg lg:self-start">
         <div className="trama rounded-card bg-inv-fundo p-painel">
           <Etiqueta tom="invertido">A mensagem que vai</Etiqueta>
-          <motion.pre
-            key={mensagem}
-            initial={semMovimento ? false : { opacity: 0.4 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.2 }}
-            className="mt-bloco overflow-x-auto rounded-fio bg-verde-musgo p-4 font-texto text-apoio leading-relaxed whitespace-pre-wrap text-inv-conteudo"
-          >
+          {/* `<pre>` comum, sem animação: com `key={mensagem}` isto desmontava e
+              remontava a cada TECLA digitada, piscando de 0,4 para 1 de
+              opacidade. Quem escreve "Bolsa transversal" via o painel piscar
+              dezoito vezes — e num Android médio era um remount de nó de texto
+              por keystroke. O texto já muda; não precisa se anunciar. */}
+          <pre className="mt-bloco overflow-x-auto rounded-fio bg-verde-musgo p-4 font-texto text-apoio leading-relaxed whitespace-pre-wrap text-inv-conteudo">
             {mensagem}
-          </motion.pre>
+          </pre>
           {!algoPreenchido ? (
             <p className="mt-4 text-legenda text-inv-suave">
               Preencha o que souber. Campo em branco não vira linha vazia na
