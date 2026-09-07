@@ -75,17 +75,27 @@ export function SecaoQuemFaz({
 
       {/* A história continua na MESMA coluna em que a fala dela parou dentro da
           faixa verde. Solta na largura do container, ela começava 400px à
-          esquerda do texto de cima: a leitura saltava de lugar no meio da voz da
-          Raquel e o bloco lia como conteúdo que tinha vazado da seção. Por isso
-          a grade se repete aqui, com a mesma primeira coluna de 22rem — se ela
-          mudar, os dois blocos andam juntos. */}
+          esquerda do texto de cima: a leitura saltava de lugar no meio da voz
+          da Raquel. Alinhar resolveu o salto e criou o problema seguinte —
+          metade da largura virava vazio à esquerda, e o bloco continuava sem
+          nada que dissesse o que ele é: começava em "Comecei fazendo peças"
+          do nada.
+
+          A etiqueta na coluna vazia resolve os dois de uma vez. Ela é `sticky`
+          porque o texto é longo: acompanhando a leitura, continua respondendo
+          "de quem é esta voz" na altura em que a pessoa está — e a coluna deixa
+          de ser ar e passa a ser margem, como numa página impressa. */}
       {historia ? (
         <div className="container-site secao">
-          {/* E é leitura, não vitrine: assenta devagar e quase não se desloca.
-              Um bloco de texto que chega com energia atrapalha a própria
-              leitura. */}
-          <div className="grid gap-x-coluna lg:grid-cols-[minmax(0,22rem)_1fr]">
-            <Revelar entrada="texto" className="max-w-texto lg:col-start-2">
+          <div className="grid gap-x-coluna gap-y-bloco lg:grid-cols-[minmax(0,22rem)_1fr]">
+            <Revelar as="div" className="lg:sticky lg:top-cabecalho-lg lg:self-start">
+              <Etiqueta>A história</Etiqueta>
+            </Revelar>
+
+            {/* E é leitura, não vitrine: assenta devagar e quase não se
+                desloca. Um bloco de texto que chega com energia atrapalha a
+                própria leitura. */}
+            <Revelar entrada="texto" className="max-w-texto">
               <TextoLongo texto={historia.corpo} />
             </Revelar>
           </div>
