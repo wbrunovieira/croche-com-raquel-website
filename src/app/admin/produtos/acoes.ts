@@ -10,10 +10,6 @@ import { revalidarCatalogo, revalidarProduto } from "@/lib/revalidar";
 
 /** Campo de número que aceita vazio — "" vira null, não 0. */
 
-const textoOpcional = z
-  .string()
-  .trim()
-  .transform((v) => (v === "" ? null : v));
 
 const esquemaDeProduto = z.object({
   name: z.string().trim().min(2, "O nome precisa de pelo menos 2 letras."),
@@ -27,7 +23,6 @@ const esquemaDeProduto = z.object({
       message: "Preço inválido. Deixe em branco para “sob consulta”.",
     }),
   categoryId: z.string().min(1, "Escolha a categoria."),
-  subcategoryId: textoOpcional,
   status: z.enum(["DRAFT", "PUBLISHED"]),
   featured: z.coerce.boolean(),
 });
@@ -116,7 +111,6 @@ export async function salvarProduto(
     description: texto("description"),
     price: texto("price"),
     categoryId: texto("categoryId"),
-    subcategoryId: texto("subcategoryId"),
     status: texto("status"),
     featured: dados.get("featured") === "on",
   });
@@ -155,7 +149,6 @@ export async function salvarProduto(
     where: { id },
     data: {
       ...v,
-      subcategoryId: v.subcategoryId || null,
       // Sem campo de ordem no formulário, quem decide a posição é o código:
       // peça marcada que ainda não tinha lugar entra no fim da fila da home;
       // desmarcada, sai. Ela nunca precisa pensar em número.

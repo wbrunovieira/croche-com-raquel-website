@@ -2,9 +2,8 @@
 
 import Image from "next/image";
 import { useActionState, useRef, useState, useTransition } from "react";
-import { ArrowLeft, ArrowRight, Trash2, Upload, UserRound } from "lucide-react";
+import { ArrowLeft, ArrowRight, Trash2, Upload } from "lucide-react";
 import {
-  alternarEscalaHumana,
   apagarImagem,
   enviarImagem,
   moverImagem,
@@ -16,7 +15,6 @@ export type ImagemDoAdmin = {
   id: string;
   url: string;
   alt: string;
-  temEscalaHumana: boolean;
 };
 
 /**
@@ -32,11 +30,9 @@ export type ImagemDoAdmin = {
 export function ImagensDoProduto({
   productId,
   imagens,
-  ehBolsa,
 }: {
   productId: string;
   imagens: ImagemDoAdmin[];
-  ehBolsa: boolean;
 }) {
   const [estado, acaoDeEnvio, enviando] = useActionState(enviarImagem, null);
   const [preparando, setPreparando] = useState(false);
@@ -44,7 +40,6 @@ export function ImagensDoProduto({
   const formulario = useRef<HTMLFormElement>(null);
   const [nomeDoArquivo, setNomeDoArquivo] = useState<string | null>(null);
 
-  const faltaEscalaHumana = ehBolsa && !imagens.some((i) => i.temEscalaHumana);
 
   return (
     <div>
@@ -95,30 +90,10 @@ export function ImagensDoProduto({
                 </BotaoDeIcone>
               </div>
 
-              <label className="mt-3 flex cursor-pointer items-start gap-2 text-legenda">
-                <input
-                  type="checkbox"
-                  checked={img.temEscalaHumana}
-                  disabled={pendente}
-                  onChange={(e) =>
-                    iniciar(() => alternarEscalaHumana(img.id, e.target.checked))
-                  }
-                  className="mt-0.5 size-4 shrink-0 accent-verde-cristal"
-                />
-                <span className="text-conteudo-suave">Alguém usando a peça</span>
-              </label>
             </li>
           ))}
         </ul>
       )}
-
-      {faltaEscalaHumana ? (
-        <p className="mt-bloco flex items-start gap-2 rounded-fio bg-goiaba-clara px-4 py-3 text-apoio">
-          <UserRound className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-          Falta uma foto com alguém usando a bolsa. Foto de bolsa solta não
-          mostra o tamanho, e é a pergunta que mais chega no WhatsApp.
-        </p>
-      ) : null}
 
       <form ref={formulario} action={acaoDeEnvio} className="mt-bloco">
         <input type="hidden" name="productId" value={productId} />

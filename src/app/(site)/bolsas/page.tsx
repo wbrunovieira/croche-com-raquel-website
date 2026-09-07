@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { Etiqueta } from "@/components/ui/etiqueta";
-import { Foto } from "@/components/ui/foto";
 import { Revelar } from "@/components/ui/revelar";
 import { TextoLongo } from "@/components/ui/texto-longo";
 import { GradeDeProdutos } from "@/components/produto/card-de-produto";
-import { buscarCategoriaPorSlug, listarTiposDeBolsa } from "@/lib/queries/categorias";
+import { buscarCategoriaPorSlug } from "@/lib/queries/categorias";
 import { listarProdutos } from "@/lib/queries/produtos";
 import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
 import { IconeZap } from "@/components/ui/icone-zap";
@@ -26,9 +23,8 @@ export const metadata: Metadata = {
 };
 
 export default async function PaginaDeBolsas() {
-  const [categoria, tipos, produtos, config] = await Promise.all([
+  const [categoria, produtos, config] = await Promise.all([
     buscarCategoriaPorSlug("bolsas"),
-    listarTiposDeBolsa(),
     listarProdutos({ categoria: "bolsas" }),
     buscarConfiguracoes(),
   ]);
@@ -49,37 +45,6 @@ export default async function PaginaDeBolsas() {
         </div>
       </section>
 
-      {tipos.length > 0 ? (
-        <section className="container-site secao">
-          <Revelar entrada="ponto">
-            <h2 className="font-display text-t2">Por tipo</h2>
-          </Revelar>
-          <ul className="mt-bloco grid gap-x-grade-col gap-y-grade-linha sm:grid-cols-2 lg:grid-cols-4">
-            {tipos.map((t, i) => (
-              <Revelar as="li" key={t.slug} atraso={0.05 * i}>
-                {/* Sobe ao passar e afunda sob o dedo, como o card de peça.
-                    Sem sombra: a máscara em arco é recortada, e uma sombra de
-                    caixa desenharia um retângulo atrás da curva. */}
-                <Link
-                  href={`/bolsas/${t.slug}`}
-                  className="group block transition-transform duration-200 ease-fio hover:-translate-y-0.5 active:translate-y-0"
-                >
-                  <Foto imagem={null} arco />
-                  <h3 className="mt-3 font-display text-t3">{t.nome}</h3>
-                  <span className="mt-1 inline-flex items-center gap-2 text-apoio text-conteudo-suave">
-                    {t.totalDeProdutos}{" "}
-                    {t.totalDeProdutos === 1 ? "peça" : "peças"}
-                    <ArrowRight
-                      className="size-4 transition-transform group-hover:translate-x-1"
-                      aria-hidden="true"
-                    />
-                  </span>
-                </Link>
-              </Revelar>
-            ))}
-          </ul>
-        </section>
-      ) : null}
 
       <section className="container-site secao--densa">
         <div className="flex flex-wrap items-end justify-between gap-4">

@@ -1,4 +1,4 @@
-import { listarCategorias, listarTiposDeBolsa } from "@/lib/queries/categorias";
+import { listarCategorias } from "@/lib/queries/categorias";
 import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
 import { SLUG_BOLSAS } from "@/lib/queries/tipos";
 import { Navegacao, type ItemDeMenu } from "./navegacao";
@@ -9,9 +9,8 @@ import { Navegacao, type ItemDeMenu } from "./navegacao";
  * navegação piscando depois da hidratação.
  */
 export async function Cabecalho() {
-  const [categorias, tiposDeBolsa, config] = await Promise.all([
+  const [categorias, config] = await Promise.all([
     listarCategorias(),
-    listarTiposDeBolsa(),
     buscarConfiguracoes(),
   ]);
 
@@ -24,16 +23,11 @@ export async function Cabecalho() {
   const itens: ItemDeMenu[] = [{ rotulo: "Início", href: "/#topo" }];
   itens.push(
     ...categorias.map((c) =>
+      // Bolsas tem página própria; as demais categorias são filtro do catálogo.
+      // O submenu por tipo saiu junto com o campo "Tipo" do cadastro: menu que
+      // aponta para lista que ninguém alimenta é promessa que envelhece.
       c.slug === SLUG_BOLSAS
-        ? {
-            rotulo: c.nome,
-            href: "/bolsas",
-            filhos: tiposDeBolsa.map((t) => ({
-              rotulo: t.nome,
-              href: `/bolsas/${t.slug}`,
-              total: t.totalDeProdutos,
-            })),
-          }
+        ? { rotulo: c.nome, href: "/bolsas" }
         : { rotulo: c.nome, href: `/?categoria=${c.slug}#catalogo` }
     )
   );

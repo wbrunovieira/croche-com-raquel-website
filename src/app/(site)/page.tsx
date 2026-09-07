@@ -16,7 +16,7 @@ import {
   DadosEstruturados,
   perguntasEstruturadas,
 } from "@/components/seo/dados-estruturados";
-import { listarCategorias, listarTiposDeBolsa } from "@/lib/queries/categorias";
+import { listarCategorias } from "@/lib/queries/categorias";
 import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
 import { buscarPagina, listarPerguntas, listarPerguntasPlanas } from "@/lib/queries/paginas";
 import { listarDestaques } from "@/lib/queries/produtos";
@@ -48,7 +48,6 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const [
     config,
     destaques,
-    tiposDeBolsa,
     categorias,
     historia,
     cuidados,
@@ -57,7 +56,6 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   ] = await Promise.all([
     buscarConfiguracoes(),
     listarDestaques(8),
-    listarTiposDeBolsa(),
     listarCategorias(),
     buscarPagina("sobre"),
     buscarPagina("cuidados"),
@@ -131,32 +129,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         </div>
       </section>
 
-      {tiposDeBolsa.length > 0 ? (
-        <section className="container-site secao--densa">
-          <Revelar entrada="ponto">
-            <Etiqueta>Navegar por tipo</Etiqueta>
-            <h2 className="mt-2 font-display text-t2">Que bolsa você procura?</h2>
-          </Revelar>
-          <Revelar atraso={0.08} className="mt-bloco">
-            <ul className="flex flex-wrap gap-3">
-              {tiposDeBolsa.map((t) => (
-                <li key={t.slug}>
-                  <Link
-                    href={`/bolsas/${t.slug}`}
-                    className="group inline-flex items-center gap-3 rounded-fio border border-borda-forte px-btn-x py-btn-y transition-colors hover:bg-primaria hover:text-sobre-primaria"
-                  >
-                    {t.nome}
-                    <span className="tabular text-legenda text-conteudo-suave transition-colors group-hover:text-sobre-primaria/70">
-                      {t.totalDeProdutos}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </Revelar>
-        </section>
-      ) : null}
-
+      
       {outrasCategorias.length > 0 ? (
         <section className="container-site secao--densa">
           <Revelar entrada="ponto">

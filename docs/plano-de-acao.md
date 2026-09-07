@@ -926,6 +926,33 @@ chegar no WhatsApp da cliente.
 
 *Schema do Prisma e migrações intocados:* as tabelas de opção ficam onde estão, com
 os dados dentro. Apagar isso é decisão do Bruno, não consequência automática.
+### ✅ Etapa 23 — Sai o "Tipo", saem as páginas de tipo *(pedido do Bruno)*
+
+Duas remoções pedidas juntas, e a primeira tinha uma consequência que valia
+levantar antes: era a subcategoria que alimentava `/bolsas/transversal`,
+`/bolsas/ombro-tote` e o submenu "Bolsas ▾".
+
+**Sem quem alimente, lista vira mentira aos poucos** — bolsa nova nunca apareceria
+lá. Com isso na mesa ele escolheu **aposentar as páginas de tipo**, e não deixá-las
+apodrecendo. Ficou `/bolsas` como hub único, com todas.
+
+O que saiu: o campo `Tipo` do cadastro, a rota `/bolsas/[tipo]`, o submenu do
+cabeçalho, a seção "Que bolsa você procura?" da home, a lista de tipos dentro do
+hub e as URLs de tipo do sitemap.
+
+**As URLs antigas redirecionam (308) para `/bolsas`, não somem.** Já foram
+compartilhadas, e link que vira 404 é confiança perdida — mesma regra da Etapa 14.
+Conferido nos três tipos.
+
+**E saiu a cobrança por mais de uma foto.** A marcação "alguém usando a peça" e o
+aviso *"falta uma foto com alguém usando a bolsa"* eram uma boa ideia de catálogo e
+uma má ideia de vitrine: cobravam da Raquel um trabalho de produção fotográfica que
+ela não vai fazer para cada peça. A dica agora diz o contrário — *"uma foto já basta
+para a peça ir ao ar"*. A coluna `hasHumanScale` fica no banco; o site nunca a
+renderizou de forma diferente, era pressão só de painel.
+
+O cadastro fechou em **sete campos**: nome, fotos, descrição, preço, categoria,
+destaque e situação.
 
 ## Decisões em aberto
 

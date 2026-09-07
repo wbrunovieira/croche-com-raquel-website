@@ -14,7 +14,6 @@ export type ProdutoParaFormulario = {
   descricao: string;
   preco: string;
   categoriaId: string;
-  subcategoriaId: string;
   status: "DRAFT" | "PUBLISHED";
   destaque: boolean;
 };
@@ -22,20 +21,14 @@ export type ProdutoParaFormulario = {
 export function FormularioDeProduto({
   produto,
   categorias,
-  subcategorias,
 }: {
   produto: ProdutoParaFormulario;
   categorias: { id: string; nome: string }[];
-  subcategorias: { id: string; nome: string; categoriaId: string }[];
 }) {
   const [estado, acao, salvando] = useActionState(salvarProduto, null);
   const [pendente, iniciar] = useTransition();
-  const [categoriaId, setCategoriaId] = useState(produto.categoriaId);
   const [destaque, setDestaque] = useState(produto.destaque);
 
-  const subcategoriasDaCategoria = subcategorias.filter(
-    (s) => s.categoriaId === categoriaId
-  );
 
   return (
     <form action={acao}>
@@ -75,8 +68,7 @@ export function FormularioDeProduto({
         <Selecao
           id="categoryId"
           rotulo="Categoria"
-          value={categoriaId}
-          onChange={(e) => setCategoriaId(e.target.value)}
+          defaultValue={produto.categoriaId}
           required
         >
           {categorias.map((c) => (
@@ -85,24 +77,6 @@ export function FormularioDeProduto({
             </option>
           ))}
         </Selecao>
-
-        {subcategoriasDaCategoria.length > 0 ? (
-          <Selecao
-            id="subcategoryId"
-            rotulo="Tipo"
-            dica="Só as bolsas usam isto."
-            defaultValue={produto.subcategoriaId}
-          >
-            <option value="">Nenhum</option>
-            {subcategoriasDaCategoria.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.nome}
-              </option>
-            ))}
-          </Selecao>
-        ) : (
-          <input type="hidden" name="subcategoryId" value="" />
-        )}
 
       </Secao>
 

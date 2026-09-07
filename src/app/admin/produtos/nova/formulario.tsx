@@ -95,8 +95,8 @@ export function FormularioDeNovaPeca({
       <div className="mt-bloco">
         <span className="block text-apoio font-medium">Fotos</span>
         <span className="mt-1 block text-legenda text-conteudo-suave">
-          Pode escolher várias de uma vez. A primeira vira a capa — e a ordem
-          você ajusta depois.
+          Uma foto já basta para a peça ir ao ar. Se escolher mais de uma, a
+          primeira é a capa — e a ordem você ajusta depois.
         </span>
 
         <label className={`${classesDeBotao("secundaria", "sm")} mt-3 cursor-pointer`}>

@@ -26,6 +26,11 @@ const nextConfig: NextConfig = {
       paraAncora("/encomendas", "encomendas"),
       paraAncora("/contato", "contato"),
       paraAncora("/catalogo", "catalogo"),
+      // Os tipos de bolsa deixaram de ter página própria: o "Tipo" saiu do
+      // cadastro, e lista que ninguém alimenta vira mentira aos poucos —
+      // bolsa nova nunca apareceria em /bolsas/transversal. Quem tem o link
+      // antigo cai no hub, que tem todas.
+      { source: "/bolsas/:tipo", destination: "/bolsas", permanent: true },
       // Categoria deixou de ser página e virou filtro do catálogo.
       {
         source: "/categorias/:slug",

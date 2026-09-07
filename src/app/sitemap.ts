@@ -10,13 +10,9 @@ import { urlDoSite } from "@/lib/site";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = urlDoSite();
 
-  const [produtos, subcategorias, paginas] = await Promise.all([
+  const [produtos, paginas] = await Promise.all([
     db.product.findMany({
       where: { status: "PUBLISHED" },
-      select: { slug: true, updatedAt: true },
-    }),
-    db.subcategory.findMany({
-      where: { products: { some: { status: "PUBLISHED" } } },
       select: { slug: true, updatedAt: true },
     }),
     db.page.findMany({
@@ -41,12 +37,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: p.updatedAt,
       changeFrequency: "weekly" as const,
       priority: 0.8,
-    })),
-    ...subcategorias.map((s) => ({
-      url: `${base}/bolsas/${s.slug}`,
-      lastModified: s.updatedAt,
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
     })),
     ...paginas
       .filter((p) => POLITICAS.includes(p.slug))
