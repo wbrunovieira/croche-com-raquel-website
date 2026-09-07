@@ -953,6 +953,44 @@ renderizou de forma diferente, era pressão só de painel.
 
 O cadastro fechou em **sete campos**: nome, fotos, descrição, preço, categoria,
 destaque e situação.
+### ✅ Etapa 24 — Cadastro numa tela só *(pedido do Bruno)*
+
+*"Está ruim a criação em duas etapas. Coloque tudo no primeiro formulário e, quando
+fizer o upload das fotos, mostre o preview antes de salvar. Criar o produto ficou
+simples, não precisamos ter duas etapas — estamos apenas dificultando o processo.
+Lembre UX sempre."*
+
+As duas etapas existiam por um motivo que deixou de valer: o cadastro tinha dezoito
+campos, e criar primeiro era uma forma de não assustar. Com sete, dividir só fazia a
+peça parecer inacabada — dois formulários, duas confirmações.
+
+Agora é uma submissão: nome, categoria, descrição, preço, fotos com prévia, destaque
+e situação. Ao fim volta para a **lista**, e não para uma segunda tela — ir para
+outro formulário era justamente o que dava a sensação de que faltava algo.
+
+Duas travas são conferidas **antes** de criar qualquer coisa: para nascer no ar, a
+peça precisa de foto e de descrição. Página publicada sem foto é pior que peça que
+ainda não estreou, e recusar depois de criar deixaria peça pela metade no banco.
+
+**Dois defeitos de UX que só apareceram por causa disto, e valiam por si:**
+
+1. **O formulário se apagava depois de um aviso.** O React 19 limpa os campos quando
+   uma ação passada em `<form action>` termina — inclusive em erro. Ela digitava
+   tudo, esbarrava numa regra e recebia o formulário **vazio** com o aviso em cima.
+   Perder o que se escreveu por causa de um aviso é o tipo de coisa que faz alguém
+   desistir do painel.
+2. **Controlar os campos não bastou.** O reset mexe no DOM, e num `<select>` cujo
+   valor de estado não mudou o React não reescreve o elemento: nome, descrição e
+   preço voltavam, mas categoria e situação continuavam em branco — o pior dos
+   mundos, porque o formulário *parecia* preenchido. A correção foi enviar por
+   `onSubmit` com `preventDefault`, que não dispara reset nenhum.
+
+O mesmo conserto foi aplicado à tela de edição, que tinha o defeito idêntico: editar
+um preço, esbarrar num aviso e ver os campos voltarem ao que estava salvo.
+
+A verificação do painel foi reescrita para o fluxo novo e ganhou asserções: que a
+recusa acontece **sem criar nada pela metade**, que a prévia aparece antes de salvar,
+e que a peça nasce no ar numa submissão só.
 
 ## Decisões em aberto
 

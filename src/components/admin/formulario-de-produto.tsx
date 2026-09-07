@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState, useTransition } from "react";
+import { startTransition, useActionState, useState, useTransition } from "react";
 import Link from "next/link";
 import { ExternalLink, Copy, Trash2 } from "lucide-react";
 import { apagarProduto, duplicarProduto, salvarProduto } from "@/app/admin/produtos/acoes";
@@ -31,7 +31,18 @@ export function FormularioDeProduto({
 
 
   return (
-    <form action={acao}>
+    <form
+      // `onSubmit` em vez de `action`: uma ação passada em `<form action>` faz
+      // o React 19 limpar o formulário quando ela termina, inclusive em erro.
+      // Aqui isso significava ela corrigir um preço, esbarrar num aviso e ver
+      // os campos voltarem ao que estava salvo — perdendo o que acabou de
+      // escrever. Mesmo conserto da tela de nova peça.
+      onSubmit={(e) => {
+        e.preventDefault();
+        const dados = new FormData(e.currentTarget);
+        startTransition(() => acao(dados));
+      }}
+    >
       <input type="hidden" name="id" value={produto.id} />
 
       {estado?.erro ? (

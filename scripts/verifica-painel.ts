@@ -72,39 +72,52 @@ async function main() {
     await p.click('button[type="submit"]');
     await p.waitForURL("**/admin", { timeout: 20000 });
 
-    // cria a peça
+    // A criação é de UMA etapa: tudo neste formulário, e ao fim volta para a
+    // lista. Antes eram duas telas, e o check esperava cair na edição.
     await p.goto(`${BASE}/admin/produtos/nova`, { waitUntil: "networkidle" });
     await p.fill("#name", NOME_DA_PECA);
     await p.selectOption("#categoryId", { label: "Bolsas" });
-    await p.click('button[type="submit"]');
-    // O padrão exige um id de verdade: `[a-z0-9]+` casaria com a própria
-    // página /admin/produtos/nova e o wait resolveria antes de criar nada.
-    await p.waitForURL(/\/admin\/produtos\/c[a-z0-9]{15,}$/, { timeout: 20000 });
-    conferir("cria a peça e abre a edição", /\/produtos\/c[a-z0-9]{15,}$/.test(p.url()));
-
-    const criada = await db.product.findFirst({ where: { name: NOME_DA_PECA } });
-    conferir("e ela nasce fora do ar", criada?.status === "DRAFT", criada?.status);
-
-    // tenta publicar sem foto
     await p.fill("#description", "Descrição de verificação automática do painel.");
+
+    // Primeiro a trava: pôr no ar sem foto tem de ser recusado ANTES de criar
+    // qualquer coisa. Página publicada sem foto é pior que peça que não estreou.
     await p.selectOption("#status", "PUBLISHED");
-    await p.click('button:has-text("Salvar")');
+    await p.click('button[type="submit"]');
     const alerta = await p
       .locator('form [role="alert"]')
       .first()
       .textContent({ timeout: 15000 })
       .catch(() => null);
     conferir(
-      "recusa colocar no ar sem foto",
-      (alerta ?? "").includes("não tem foto"),
+      "recusa criar no ar sem foto",
+      (alerta ?? "").includes("pelo menos uma foto"),
       alerta ?? "(sem alerta)"
     );
+    const aindaNao = await db.product.count({ where: { name: NOME_DA_PECA } });
+    conferir("e não cria nada pela metade", aindaNao === 0, `${aindaNao} peça(s)`);
 
-    // envia a foto
+    // Agora com foto, e já no ar — numa submissão só.
     {
-      await p.setInputFiles("#arquivo", FOTO);
-      // Espera mais que o normal: o navegador ainda reduz a foto antes de subir.
-      await p.waitForTimeout(9000);
+      await p.setInputFiles('input[name="fotos"]', FOTO);
+      await p.waitForSelector("form li img", { timeout: 25000 });
+      // O botão fica desabilitado enquanto o navegador reduz a foto; clicar
+      // antes disso não envia nada e o teste passaria sem testar.
+      await p.waitForFunction(
+        () => {
+          const b = document.querySelector<HTMLButtonElement>('form button[type="submit"]');
+          return Boolean(b && !b.disabled);
+        },
+        { timeout: 25000 }
+      );
+      conferir("mostra a prévia da foto antes de salvar", (await p.locator("form li img").count()) === 1);
+
+      await p.click('button[type="submit"]');
+      await p.waitForURL(`${BASE}/admin/produtos`, { timeout: 60000 });
+      conferir("cria em uma etapa e volta para a lista", p.url().endsWith("/admin/produtos"));
+
+      const criada = await db.product.findFirst({ where: { name: NOME_DA_PECA } });
+      conferir("e ela já nasce no ar", criada?.status === "PUBLISHED", criada?.status);
+
       const guardadas = await db.productImage.findMany({
         where: { productId: criada!.id },
         select: { url: true },
@@ -134,19 +147,8 @@ async function main() {
         );
       }
 
-      // Agora publica. A descrição precisa ser digitada de novo: a tentativa
-      // anterior foi recusada por falta de foto, então nada foi salvo, e o
-      // reload devolve o formulário como estava no banco.
-      await p.reload({ waitUntil: "networkidle" });
-      await p.fill("#description", "Descrição de verificação automática do painel.");
-      await p.selectOption("#status", "PUBLISHED");
-      await p.click('button:has-text("Salvar")');
-      await p.waitForTimeout(3000);
-      const publicada = await db.product.findUnique({ where: { id: criada!.id } });
-      conferir("publica depois que a foto existe", publicada?.status === "PUBLISHED", publicada?.status);
-
-      // e o site já mostra
-      const resposta = await p.goto(`${BASE}/produtos/${publicada!.slug}`, {
+      // e o site já mostra, sem passar por segunda tela nenhuma
+      const resposta = await p.goto(`${BASE}/produtos/${criada!.slug}`, {
         waitUntil: "networkidle",
       });
       conferir("e a peça aparece no site", resposta?.status() === 200, `status ${resposta?.status()}`);

@@ -1,10 +1,10 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import { startTransition, useActionState, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { criarProduto } from "../acoes";
 import { ImagePlus, X } from "lucide-react";
-import { Campo, Selecao } from "@/components/admin/campos";
+import { AreaDeTexto, Campo, Marcador, Selecao } from "@/components/admin/campos";
 import { classesDeBotao } from "@/components/ui/botao";
 import { emMB, prepararFoto, type FotoPreparada } from "@/lib/imagem";
 
@@ -15,6 +15,29 @@ export function FormularioDeNovaPeca({
 }) {
   const [estado, acao, pendente] = useActionState(criarProduto, null);
   const [fotos, setFotos] = useState<FotoPreparada[]>([]);
+
+  /**
+   * Os campos são controlados de propósito.
+   *
+   * O React 19 **limpa o formulário sozinho** quando uma ação passada em
+   * `<form action>` termina — inclusive quando ela termina em erro. Ela
+   * digitava nome, categoria, descrição e preço, esbarrava numa regra ("para
+   * entrar no ar, escolha uma foto") e recebia de volta o formulário VAZIO,
+   * com o aviso em cima. Perder o que se escreveu por causa de um aviso é o
+   * tipo de coisa que faz alguém desistir do painel.
+   *
+   * Controlar os campos sozinho não bastava: o reset mexe no DOM, e num
+   * `<select>` cujo valor de estado não mudou o React não reescreve o
+   * elemento — a categoria voltava em branco mesmo com o estado certo. Por
+   * isso o envio também deixou de usar `action` e passa por `onSubmit`, que
+   * não dispara reset nenhum.
+   */
+  const [nome, setNome] = useState("");
+  const [categoria, setCategoria] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [preco, setPreco] = useState("");
+  const [destaque, setDestaque] = useState(false);
+  const [situacao, setSituacao] = useState("DRAFT");
   const [preparando, setPreparando] = useState(false);
   const [aviso, setAviso] = useState<string | null>(null);
   const entrada = useRef<HTMLInputElement>(null);
@@ -67,16 +90,39 @@ export function FormularioDeNovaPeca({
   const economizou = fotos.reduce((s, f) => s + (f.antes - f.depois), 0);
 
   return (
-    <form action={acao}>
+    <form
+      // `onSubmit` em vez de `action`: é o que impede o React de limpar o
+      // formulário quando a ação volta com aviso. O `FormData` sai do próprio
+      // formulário, então o `input` de arquivo entra junto sem trabalho extra.
+      onSubmit={(e) => {
+        e.preventDefault();
+        const dados = new FormData(e.currentTarget);
+        startTransition(() => acao(dados));
+      }}
+    >
       {estado?.erro ? (
         <p role="alert" className="mb-bloco rounded-fio bg-goiaba-clara px-4 py-3 text-apoio">
           {estado.erro}
         </p>
       ) : null}
 
-      <Campo id="name" rotulo="Nome da peça" placeholder="Bolsa Serra" required autoFocus />
+      <Campo
+        id="name"
+        rotulo="Nome da peça"
+        placeholder="Bolsa Serra"
+        required
+        autoFocus
+        value={nome}
+        onChange={(e) => setNome(e.target.value)}
+      />
 
-      <Selecao id="categoryId" rotulo="Categoria" required defaultValue="">
+      <Selecao
+        id="categoryId"
+        rotulo="Categoria"
+        required
+        value={categoria}
+        onChange={(e) => setCategoria(e.target.value)}
+      >
         <option value="" disabled>
           Escolha…
         </option>
@@ -87,11 +133,28 @@ export function FormularioDeNovaPeca({
         ))}
       </Selecao>
 
-      {/* Foto já aqui: para quem cadastra, a foto é parte de criar a peça, não
-          um segundo passo. Por dentro continua sendo criar-depois-subir — a
-          foto vai para `produtos/<slug>/` e precisa do id —, mas ela envia uma
-          vez só. Opcional: dá para criar sem foto e adicionar depois; o que
-          não dá é ir ao ar sem nenhuma. */}
+      <AreaDeTexto
+        id="description"
+        rotulo="Descrição"
+        dica="É o texto que aparece na página da peça. Escreva como você contaria para uma cliente."
+        rows={4}
+        value={descricao}
+        onChange={(e) => setDescricao(e.target.value)}
+      />
+
+      <Campo
+        id="price"
+        rotulo="Preço"
+        dica="Deixe em branco para a peça aparecer como “sob consulta”. Nunca coloque 0."
+        inputMode="decimal"
+        value={preco}
+        onChange={(e) => setPreco(e.target.value)}
+      />
+
+      {/* A foto vem no mesmo formulário: era ela que sobrava na segunda tela, e
+          uma peça sem foto não vai ao ar. Por dentro continua sendo
+          criar-depois-subir — o arquivo vai para `produtos/<slug>/` e o caminho
+          precisa do slug —, mas para ela é um botão só. */}
       <div className="mt-bloco">
         <span className="block text-apoio font-medium">Fotos</span>
         <span className="mt-1 block text-legenda text-conteudo-suave">
@@ -169,12 +232,32 @@ export function FormularioDeNovaPeca({
         ) : null}
       </div>
 
+      <div className="mt-bloco">
+        <Marcador
+          id="featured"
+          rotulo="Mostrar em destaque na home"
+          checked={destaque}
+          onChange={(e) => setDestaque(e.target.checked)}
+        />
+      </div>
+
+      <Selecao
+        id="status"
+        rotulo="Situação"
+        dica="Fora do ar, a peça fica só aqui no painel. Para entrar no ar já, ela precisa de foto e descrição."
+        value={situacao}
+        onChange={(e) => setSituacao(e.target.value)}
+      >
+        <option value="DRAFT">Fora do ar</option>
+        <option value="PUBLISHED">No ar</option>
+      </Selecao>
+
       <button
         type="submit"
         disabled={pendente || preparando}
         className={`${classesDeBotao()} mt-bloco`}
       >
-        {pendente ? (fotos.length > 0 ? "Enviando as fotos…" : "Criando…") : "Criar peça"}
+        {pendente ? (fotos.length > 0 ? "Enviando as fotos…" : "Salvando…") : "Criar peça"}
       </button>
     </form>
   );
