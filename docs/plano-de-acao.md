@@ -637,10 +637,21 @@ que não precisa existir. Não era estética, era a métrica que decide quem vol
 o feed.
 
 A entrada virou CSS (`@keyframes surgir`, classes `.surgir`/`.surgir-2..6`), e o
-`Revelar` foi reescrito sem framer-motion: quem esconde é o CSS, e só atrás da
-classe `.js` que o `layout.tsx` marca na raiz antes da primeira pintura. **Sem
-JavaScript o site inteiro continua legível** — conferido com o JS desligado.
-Resultado medido: de 31 elementos invisíveis para **zero**.
+`Revelar` foi reescrito sem framer-motion: quem esconde é o CSS, e só onde há
+script para desfazer. **Sem JavaScript o site inteiro continua legível** —
+conferido com o JS desligado. Resultado medido: de 31 elementos invisíveis para
+**zero**.
+
+*Correção depois da Etapa 19:* a primeira versão perguntava "tem script?" com uma
+classe `.js` posta na raiz por um `<script>` inline. Custava caro por dois
+motivos, e o primeiro apareceu no console do Bruno: mexer no `className` do
+`<html>` antes da hidratação faz o React acusar **mismatch de hidratação** a cada
+navegação; e um script inline vira pedra no sapato no dia que entrar CSP. Quem
+pergunta agora é o próprio CSS, com **`@media (scripting: enabled)`** — sem
+script nenhum. Onde a consulta não existir, nada se aplica e o conteúdo aparece
+inteiro sem animação, que é o lado certo para errar. Verificado: com JS a
+consulta casa e 18 dos 23 blocos abaixo da dobra esperam escondidos; sem JS ela
+não casa e **zero** ficam invisíveis.
 
 De carona, o arco do hero ganhou o `clip-path` que a identidade especificou em §4.6
 e nunca tinha recebido — a peça cresce de baixo para cima, como sendo tricotada. Ele

@@ -361,42 +361,51 @@ body::after {
   .surgir-6 { animation-delay: .5s; }
   .tricotar { animation: tricotar .9s var(--ease-fio) both; }
 
-  /* Revelação na rolagem. O estado escondido só existe se houver JS para
-     desfazê-lo — daí o `.js` na raiz, marcado antes da pintura. Sem script,
-     ou com script lento, o site inteiro continua legível. */
-  .js .revelar { opacity: 0; }
-  .js .revelar[data-revelado] { animation: surgir .55s var(--ease-fio) both; }
+  /* Revelação na rolagem.
+     O estado escondido só pode existir se houver quem o desfaça: sem script,
+     `[data-revelado]` nunca chega e o conteúdo ficaria invisível para sempre.
 
-  /* Catálogo: a grade não se move, só aparece. */
-  .js .revelar--grade[data-revelado] { animation: aparecer .5s var(--ease-fio) both; }
+     Quem pergunta isso é o CSS, com `scripting: enabled` — não mais uma classe
+     `.js` posta por script inline na raiz. Aquela versão custava caro por dois
+     motivos: mexer no `className` do `<html>` antes da hidratação fazia o React
+     acusar mismatch em toda navegação, e um `<script>` inline vira pedra no
+     sapato no dia que entrar CSP. Onde a consulta não existir (navegador
+     antigo), nada aqui se aplica: o conteúdo aparece inteiro, sem animação —
+     que é o lado certo para errar. */
+  @media (scripting: enabled) {
+    .revelar { opacity: 0; }
+    .revelar[data-revelado] { animation: surgir .55s var(--ease-fio) both; }
 
-  /* Seção verde. Mais longa que as outras de propósito: é o momento editorial
-     da página, onde a pessoa lê em vez de escolher. */
-  .js .revelar--trama[data-revelado] { animation: atravessar-ida .75s var(--ease-fio) both; }
-  .js .revelar--trama-inversa[data-revelado] { animation: atravessar-volta .75s var(--ease-fio) both; }
+    /* Catálogo: a grade não se move, só aparece. */
+    .revelar--grade[data-revelado] { animation: aparecer .5s var(--ease-fio) both; }
 
-  /* Texto corrido: assenta devagar e quase não se desloca. Um bloco de leitura
-     que chega com energia é um bloco que atrapalha a leitura. */
-  .js .revelar--texto[data-revelado] { animation: assentar .85s var(--ease-fio) both; }
+    /* Seção verde. Mais longa que as outras de propósito: é o momento editorial
+       da página, onde a pessoa lê em vez de escolher. */
+    .revelar--trama[data-revelado] { animation: atravessar-ida .75s var(--ease-fio) both; }
+    .revelar--trama-inversa[data-revelado] { animation: atravessar-volta .75s var(--ease-fio) both; }
 
-  /* Cabeçalho de seção: quem entra em cascata são os FILHOS — etiqueta, título,
-     linha de apoio —, e não a caixa. Três a quatro itens, que é o limite em que
-     cascata ainda lê como intenção e não como espera.
+    /* Texto corrido: assenta devagar e quase não se desloca. Um bloco de leitura
+       que chega com energia é um bloco que atrapalha a leitura. */
+    .revelar--texto[data-revelado] { animation: assentar .85s var(--ease-fio) both; }
 
-     O contêiner precisa desfazer o que a regra base fez nele: `.revelar` o
-     escondeu e `[data-revelado]` ia animá-lo por cima da cascata dos filhos. */
-  .js .revelar--ponto { opacity: 1; }
-  .js .revelar--ponto[data-revelado] { animation: none; }
-  .js .revelar--ponto > * { opacity: 0; }
-  .js .revelar--ponto[data-revelado] > * { animation: assentar .5s var(--ease-fio) both; }
-  .js .revelar--ponto[data-revelado] > :nth-child(2)   { animation-delay: .07s; }
-  .js .revelar--ponto[data-revelado] > :nth-child(3)   { animation-delay: .14s; }
-  .js .revelar--ponto[data-revelado] > :nth-child(n+4) { animation-delay: .21s; }
+    /* Cabeçalho de seção: quem entra em cascata são os FILHOS — etiqueta, título,
+       linha de apoio —, e não a caixa. Três a quatro itens, que é o limite em que
+       cascata ainda lê como intenção e não como espera.
 
-  /* A corrente que se costura quando a seção entra. Mesma regra do `.js`: sem
-     script ela já está inteira na tela. */
-  .js .corrente.revelar { opacity: 1; }
-  .js .corrente.revelar[data-revelado] { animation: costurar .9s var(--ease-fio) both; }
+       O contêiner precisa desfazer o que a regra base fez nele: `.revelar` o
+       escondeu e `[data-revelado]` ia animá-lo por cima da cascata dos filhos. */
+    .revelar--ponto { opacity: 1; }
+    .revelar--ponto[data-revelado] { animation: none; }
+    .revelar--ponto > * { opacity: 0; }
+    .revelar--ponto[data-revelado] > * { animation: assentar .5s var(--ease-fio) both; }
+    .revelar--ponto[data-revelado] > :nth-child(2)   { animation-delay: .07s; }
+    .revelar--ponto[data-revelado] > :nth-child(3)   { animation-delay: .14s; }
+    .revelar--ponto[data-revelado] > :nth-child(n+4) { animation-delay: .21s; }
+
+    /* A corrente que se costura quando a seção entra. */
+    .corrente.revelar { opacity: 1; }
+    .corrente.revelar[data-revelado] { animation: costurar .9s var(--ease-fio) both; }
+  }
 }
 
 /* ---------- Card de peça ----------

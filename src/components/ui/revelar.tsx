@@ -12,10 +12,11 @@ import { useEffect, useRef } from "react";
  * depois de baixar, parsear e hidratar o bundle. Num celular vindo do
  * Instagram, isso é tela vazia por tempo que não precisa existir.
  *
- * Agora quem esconde é o CSS, e só atrás da classe `.js` que o `layout.tsx`
- * marca na raiz antes da primeira pintura. Sem JavaScript, ou com JavaScript
- * lento, o site inteiro continua legível — o conteúdo nunca depende de um
- * script para existir.
+ * Agora quem esconde é o CSS, e só dentro de `@media (scripting: enabled)`.
+ * Sem JavaScript, ou com JavaScript lento, o site inteiro continua legível — o
+ * conteúdo nunca depende de um script para existir. A pergunta é feita pelo
+ * próprio CSS, sem classe posta por script inline na raiz: aquela versão fazia
+ * o React acusar mismatch de hidratação no `<html>` a cada navegação.
  *
  * `once` continua proposital: reanimar a cada rolagem cansa e faz o site
  * parecer inquieto. Por isso o observador se desconecta na primeira aparição.
