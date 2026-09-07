@@ -23,10 +23,6 @@ import type { ImagemDeProduto } from "@/lib/queries/tipos";
  * peça saltar. A foto entra na máscara em arco, que no site inteiro é
  * exclusiva de bolsa — e bolsa é o carro-chefe, então ela abre a página.
  *
- * As bolinhas de cor flutuando sobre a foto são as cores que o catálogo
- * realmente oferece, vindas do banco. Enfeite com cor que a Raquel não tem
- * seria promessa falsa na primeira dobra.
- *
  * A foto passa sozinha entre as bolsas em destaque: uma peça só na primeira
  * dobra vende uma peça, o rodízio vende o ateliê. Quem não quiser esperar
  * adianta pelo chevron.
@@ -34,14 +30,12 @@ import type { ImagemDeProduto } from "@/lib/queries/tipos";
 export function Hero({
   titulo,
   subtitulo,
-  cores,
   capas,
   whatsappNumero,
   cidade,
 }: {
   titulo: string;
   subtitulo: string;
-  cores: { id: string; nome: string; hex: string }[];
   capas: ImagemDeProduto[];
   whatsappNumero: string;
   cidade: string;
@@ -147,9 +141,6 @@ export function Hero({
               onFocusCapture={() => setPausado(true)}
               onBlurCapture={() => setPausado(false)}
             >
-              {/* Âncora do card de cores: ele se posiciona pela foto, não pelo
-                  conjunto — senão os controles logo abaixo o empurram para
-                  cima e ele cobre a peça. */}
               <div className="relative">
                 <motion.div style={semMovimento ? undefined : { y: deslocamento }}>
                   {capas.length === 0 ? (
@@ -177,43 +168,11 @@ export function Hero({
                           />
                         </motion.div>
                       </AnimatePresence>
-
-                      {/* As cores moram sobre a foto, mas sem painel: um bloco
-                          opaco aqui cobre justamente o corpo da bolsa. O que
-                          sustenta a leitura é uma sombra curta na base, que
-                          funciona tanto na peça clara quanto na escura.
-
-                          O rótulo é descritivo, e não "escolha a cor": aqui
-                          não se escolhe nada — quem escolhe é o seletor da
-                          página da peça. Verbo no imperativo prometia um
-                          controle que estas bolinhas não são. E "algumas"
-                          porque a faixa mostra no máximo 8 das cadastradas. */}
-                      {cores.length > 0 ? (
-                        <div className="surgir surgir-6 absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/45 to-transparent px-5 pb-5 pt-16">
-                          <p className="font-texto text-etiqueta uppercase text-cru/90">
-                            Algumas cores disponíveis
-                          </p>
-                          <ul className="mt-2 flex flex-wrap gap-1.5">
-                            {cores.map((c) => (
-                              <li
-                                key={c.id}
-                                title={c.nome}
-                                className="size-5 rounded-pilula ring-1 ring-cru/30"
-                                style={{ backgroundColor: c.hex }}
-                              >
-                                <span className="sr-only">{c.nome}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ) : null}
                     </div>
                   )}
                 </motion.div>
               </div>
 
-              {/* Fora da foto: o card de cores ocupa justamente o canto de
-                  baixo e engoliria os controles. */}
               {capas.length > 1 ? (
                 <div className="mt-3 flex items-center justify-end gap-2">
                   <ul className="flex items-center gap-1.5">

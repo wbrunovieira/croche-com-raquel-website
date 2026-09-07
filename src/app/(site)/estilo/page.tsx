@@ -9,9 +9,7 @@ import { Etiqueta } from "@/components/ui/etiqueta";
 import { Foto } from "@/components/ui/foto";
 import { IconeZap } from "@/components/ui/icone-zap";
 import { GradeDeProdutos } from "@/components/produto/card-de-produto";
-import { buscarProdutoPorSlug, listarDestaques } from "@/lib/queries/produtos";
-import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
-import { DemoCadastroDeCor, DemoInterativa } from "./demo-interativa";
+import { listarDestaques } from "@/lib/queries/produtos";
 
 export const metadata: Metadata = {
   title: "Amostra da identidade",
@@ -114,11 +112,7 @@ function Secao({
 }
 
 export default async function EstiloPage() {
-  const [produto, destaques, config] = await Promise.all([
-    buscarProdutoPorSlug("bolsa-serra"),
-    listarDestaques(4),
-    buscarConfiguracoes(),
-  ]);
+  const destaques = await listarDestaques(4);
 
   return (
     <main className="container-site pb-secao">
@@ -527,31 +521,6 @@ export default async function EstiloPage() {
         descricao="Vindo do banco. Bolsa recebe a máscara em arco; as outras categorias, card reto. Preço nulo aparece como “sob consulta” — nunca como R$ 0,00."
       >
         <GradeDeProdutos produtos={destaques} />
-      </Secao>
-
-      <Secao
-        titulo="Controles do produto"
-        descricao="Os seletores da página de produto, ligados a uma peça real do catálogo. A mensagem ao lado é montada de verdade pelo template do admin."
-      >
-        {produto ? (
-          <DemoInterativa
-            grupos={produto.grupos}
-            nomeDoProduto={produto.nome}
-            slugDoProduto={produto.slug}
-            template={config.whatsappTemplate}
-          />
-        ) : (
-          <p className="text-conteudo-suave">
-            Produto de exemplo não encontrado. Rode <code>pnpm db:seed</code>.
-          </p>
-        )}
-      </Secao>
-
-      <Secao
-        titulo="Cadastro de cor (admin)"
-        descricao="Três informações com papéis diferentes: o hex desenha a bolinha no site; a linha e o código do fio são o que a Raquel usa para recomprar. Desabilitar tira a cor do ar sem apagá-la — apagar removeria a cor de todos os produtos que já a usavam."
-      >
-        <DemoCadastroDeCor />
       </Secao>
 
     </main>

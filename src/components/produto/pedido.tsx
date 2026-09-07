@@ -3,136 +3,52 @@
 import { useMemo, useState } from "react";
 import { classesDeBotao } from "@/components/ui/botao";
 import { CampoQuantidade } from "@/components/ui/campo-quantidade";
-import { CampoTexto } from "@/components/ui/campo-texto";
 import { IconeZap } from "@/components/ui/icone-zap";
-import { SeletorDeCor } from "@/components/ui/seletor-de-cor";
-import { SeletorDeOpcao } from "@/components/ui/seletor-de-opcao";
 import { codigoDoProduto, montarLinkWhatsApp, montarMensagem } from "@/lib/whatsapp";
-import type { GrupoDeOpcao } from "@/lib/queries/tipos";
 
 /**
  * O bloco de pedido — é aqui que o site converte.
  *
- * Tudo que a cliente escolhe entra na mensagem do WhatsApp junto com o nome da
- * peça e o link da página. Sem isso a Raquel recebe um "oi, quero uma bolsa" e
- * precisa perguntar tudo de novo, que é exatamente o atrito que o site existe
- * para remover.
+ * O site é a vitrine da Raquel: ele diz QUAL peça a cliente está olhando e abre
+ * a conversa. Cor, tamanho e acabamento saíram daqui de propósito — ela
+ * esclarece isso no atendimento, e um formulário de escolhas entre a peça e o
+ * botão só atrasava quem já tinha decidido falar com ela.
  *
- * O botão fica desabilitado enquanto falta escolha obrigatória, e diz o que
- * falta — em vez de deixar a pessoa clicar e mandar um pedido incompleto.
+ * A quantidade fica: é a única informação que a cliente tem e a Raquel não, e
+ * ela muda o orçamento.
  *
- * **E marca o instante em que o pedido fica completo.** Antes o `<button
- * disabled>` virava `<a>` e a única diferença visível era o cinza sair: a
- * pessoa escolhia a última opção e nada dizia "pronto, agora dá". O botão
- * assenta uma vez e um anel se abre em volta dele — 550ms, uma vez só, no
- * próprio botão. Nada disputa a atenção dele: o movimento é DELE.
+ * **O botão é sempre um `<a>` com `href` pronto no primeiro quadro.** Sem
+ * estado pendente, sem `aria-disabled`, sem handler de clique: nada roda entre
+ * o toque e o WhatsApp abrindo.
  */
 export function Pedido({
   nomeDoProduto,
   slugDoProduto,
-  grupos,
   numeroDoWhatsapp,
   template,
   urlDaPagina,
 }: {
   nomeDoProduto: string;
   slugDoProduto: string;
-  grupos: GrupoDeOpcao[];
   numeroDoWhatsapp: string;
   template: string;
   urlDaPagina: string;
 }) {
-  const [escolhas, setEscolhas] = useState<Record<string, string>>({});
   const [quantidade, setQuantidade] = useState(1);
-
-  const faltando = grupos.filter((g) => g.obrigatorio && !escolhas[g.slug]?.trim());
-  const completo = faltando.length === 0;
-
-  // Só comemora a VIRADA, não o estado. Numa peça sem escolha obrigatória o
-  // botão já nasce liberado, e animar isso no carregamento seria celebrar algo
-  // que a pessoa não fez. Derivado durante a renderização, e não num efeito,
-  // para o botão nascer já com a classe em vez de piscar sem ela.
-  const [antes, setAntes] = useState(completo);
-  const [celebrar, setCelebrar] = useState(false);
-  if (completo !== antes) {
-    setAntes(completo);
-    setCelebrar(completo);
-  }
 
   const link = useMemo(() => {
     const mensagem = montarMensagem(template, {
       produto: nomeDoProduto,
       codigo: codigoDoProduto(slugDoProduto),
-      escolhas: grupos
-        .map((g) => {
-          const bruto = escolhas[g.slug]?.trim() ?? "";
-          if (bruto === "") return null;
-          const rotulo =
-            g.tipo === "TEXT"
-              ? bruto
-              : (g.valores.find((v) => v.slug === bruto)?.nome ?? bruto);
-          return { grupo: g.nome, valor: rotulo };
-        })
-        .filter((e): e is { grupo: string; valor: string } => e !== null),
       quantidade,
       link: urlDaPagina,
     });
     return montarLinkWhatsApp(numeroDoWhatsapp, mensagem);
-  }, [escolhas, grupos, nomeDoProduto, numeroDoWhatsapp, quantidade, slugDoProduto, template, urlDaPagina]);
-
-  function definir(slug: string, valor: string) {
-    setEscolhas((e) => ({ ...e, [slug]: valor }));
-  }
+  }, [nomeDoProduto, numeroDoWhatsapp, quantidade, slugDoProduto, template, urlDaPagina]);
 
   return (
     <div>
-      {grupos.map((g) => (
-        <div key={g.id} className="mt-bloco first:mt-0">
-          {g.tipo === "TEXT" ? (
-            <>
-              <label htmlFor={`opcao-${g.slug}`} className="text-apoio font-medium">
-                {g.nome}
-                {g.obrigatorio ? <span className="text-destaque-texto"> *</span> : null}
-              </label>
-              <div className="mt-3">
-                <CampoTexto
-                  id={`opcao-${g.slug}`}
-                  valor={escolhas[g.slug] ?? ""}
-                  aoMudar={(v) => definir(g.slug, v)}
-                  placeholder="Nome ou monograma"
-                  ajuda={g.obrigatorio ? undefined : "Opcional"}
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              <p className="text-apoio font-medium">
-                {g.nome}
-                {g.obrigatorio ? <span className="text-destaque-texto"> *</span> : null}
-              </p>
-              <div className="mt-3">
-                {g.slug === "cor" ? (
-                  <SeletorDeCor
-                    valores={g.valores}
-                    selecionado={escolhas[g.slug] ?? null}
-                    aoSelecionar={(v) => definir(g.slug, v)}
-                    nomeDoGrupo={g.nome}
-                  />
-                ) : (
-                  <SeletorDeOpcao
-                    valores={g.valores}
-                    selecionado={escolhas[g.slug] ?? null}
-                    aoSelecionar={(v) => definir(g.slug, v)}
-                    nomeDoGrupo={g.nome}
-                  />
-                )}
-              </div>
-            </>
-          )}
-        </div>
-      ))}
-
-      <div className="mt-bloco">
+      <div>
         <p className="text-apoio font-medium">Quantidade</p>
         <div className="mt-3">
           <CampoQuantidade valor={quantidade} aoMudar={setQuantidade} />
@@ -142,67 +58,27 @@ export function Pedido({
       {/* No desktop o botão fica no fluxo; no mobile ele também vira barra fixa
           no rodapé, porque a página é longa e o CTA não pode ficar para trás. */}
       <div className="mt-bloco hidden sm:block">
-        <BotaoPedir
-          link={link}
-          completo={completo}
-          celebrar={celebrar}
-          aoTerminar={() => setCelebrar(false)}
-        />
-        <EstadoDoPedido grupos={faltando} />
+        <BotaoPedir link={link} />
       </div>
 
-      <div className="mt-bloco sm:hidden">
-        <EstadoDoPedido grupos={faltando} />
-      </div>
+      <p className="mt-3 text-apoio text-conteudo-suave">
+        Cor, tamanho e acabamento a Raquel combina com você na conversa.
+      </p>
 
       {/* A barra fixa cobre o fim da página; quem reserva o espaço dela é o
           rodapé (`pb-zap-flutua sm:pb-0`), porque ele é o último elemento do
           documento — um espaçador aqui dentro ficaria no meio da página. */}
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-borda bg-superficie/95 p-4 backdrop-blur sm:hidden">
-        <BotaoPedir
-          link={link}
-          completo={completo}
-          celebrar={celebrar}
-          aoTerminar={() => setCelebrar(false)}
-          bloco
-        />
+        <BotaoPedir link={link} bloco />
       </div>
     </div>
   );
 }
 
-function BotaoPedir({
-  link,
-  completo,
-  celebrar,
-  aoTerminar,
-  bloco = false,
-}: {
-  link: string;
-  completo: boolean;
-  celebrar: boolean;
-  aoTerminar: () => void;
-  bloco?: boolean;
-}) {
-  const classes = `${classesDeBotao("primaria")} ${bloco ? "w-full" : ""}`;
-
-  if (!completo) {
-    return (
-      <button type="button" className={classes} disabled aria-disabled="true">
-        <IconeZap className="size-5" />
-        Pedir pelo WhatsApp
-      </button>
-    );
-  }
-
+function BotaoPedir({ link, bloco = false }: { link: string; bloco?: boolean }) {
   return (
-    // O `href` já está aqui no primeiro quadro em que o botão existe: a
-    // animação é decoração de CSS por cima de um link pronto, e o clique não
-    // espera nada. `onAnimationEnd` só tira a classe depois — se ficasse, o
-    // anel voltaria a cada nova renderização do bloco.
     <a
-      className={`${classes} ${celebrar ? "pedido-pronto" : ""}`}
-      onAnimationEnd={aoTerminar}
+      className={`${classesDeBotao("primaria")} ${bloco ? "w-full" : ""}`}
       href={link}
       target="_blank"
       rel="noopener noreferrer"
@@ -210,22 +86,5 @@ function BotaoPedir({
       <IconeZap className="size-5" />
       Pedir pelo WhatsApp
     </a>
-  );
-}
-
-/**
- * O que ainda falta — ou a confirmação de que não falta nada.
- *
- * O `role="status"` já existia para o "Falta escolher"; a linha de confirmação
- * entra pelo mesmo canal, então quem usa leitor de tela ouve a virada em vez de
- * ter que sair procurando se o botão liberou.
- */
-function EstadoDoPedido({ grupos }: { grupos: GrupoDeOpcao[] }) {
-  return (
-    <p className="mt-3 text-apoio text-conteudo-suave" role="status">
-      {grupos.length > 0
-        ? `Falta escolher: ${grupos.map((g) => g.nome).join(", ")}.`
-        : "Tudo escolhido. É só mandar."}
-    </p>
   );
 }

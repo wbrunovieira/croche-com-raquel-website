@@ -3,17 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
-import {
-  Home,
-  Palette,
-  ShoppingBag,
-  } from "lucide-react";
+import { Home, ShoppingBag } from "lucide-react";
 import { DURACAO, transicao } from "@/lib/movimento";
 
+// Duas telas, e só. "Cores e opções" saiu junto com os grupos de opção: o site
+// virou vitrine, e o que a cliente escolhe se combina na conversa.
 const ITENS = [
   { href: "/admin", rotulo: "Início", Icone: Home },
   { href: "/admin/produtos", rotulo: "Peças", Icone: ShoppingBag },
-  { href: "/admin/opcoes", rotulo: "Cores e opções", Icone: Palette },
 ];
 
 export function NavegacaoDoAdmin() {

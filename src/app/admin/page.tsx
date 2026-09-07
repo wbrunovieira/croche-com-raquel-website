@@ -7,20 +7,15 @@ import { Etiqueta } from "@/components/ui/etiqueta";
 export default async function PaginaDoAdmin() {
   const usuario = await exigirSessao();
 
-  const [publicados, foraDoAr, semFoto, cores, coresDesligadas] =
-    await Promise.all([
-      db.product.count({ where: { status: "PUBLISHED" } }),
-      db.product.count({ where: { status: "DRAFT" } }),
-      db.product.count({ where: { images: { none: {} } } }),
-      db.optionValue.count({ where: { group: { slug: "cor" }, active: true } }),
-      db.optionValue.count({ where: { group: { slug: "cor" }, active: false } }),
-    ]);
+  const [publicados, foraDoAr, semFoto] = await Promise.all([
+    db.product.count({ where: { status: "PUBLISHED" } }),
+    db.product.count({ where: { status: "DRAFT" } }),
+    db.product.count({ where: { images: { none: {} } } }),
+  ]);
 
   const numeros = [
     { rotulo: "Peças no ar", valor: publicados, href: "/admin/produtos" },
     { rotulo: "Fora do ar", valor: foraDoAr, href: "/admin/produtos?status=DRAFT" },
-    { rotulo: "Cores ativas", valor: cores, href: "/admin/opcoes" },
-    { rotulo: "Cores desligadas", valor: coresDesligadas, href: "/admin/opcoes" },
   ];
 
   return (

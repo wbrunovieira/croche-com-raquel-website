@@ -8,10 +8,10 @@ import { formatarPreco, formatarPrazo } from "@/lib/formatar";
  * A imagem que aparece quando a Raquel manda o link da peça no WhatsApp.
  *
  * **A foto ocupa quase metade da arte, e isso é o ponto.** A primeira versão
- * era só texto sobre verde: o nome da bolsa, o preço e as bolinhas de cor. Quem
- * recebe um link de bolsa quer ver a bolsa — o nome não vende, a peça vende. A
- * versão sem foto existia porque, quando ela foi feita, nenhuma peça tinha
- * foto; o catálogo real só entrou depois.
+ * era só texto sobre verde: o nome da bolsa e o preço. Quem recebe um link de
+ * bolsa quer ver a bolsa — o nome não vende, a peça vende. A versão sem foto
+ * existia porque, quando ela foi feita, nenhuma peça tinha foto; o catálogo
+ * real só entrou depois.
  *
  * Sem foto, cai no texto sozinho ocupando a largura toda. Peça sem foto não vai
  * ao ar, mas a arte não pode quebrar por causa disso.
@@ -31,12 +31,6 @@ export default async function Imagem({ params }: { params: Promise<{ slug: strin
   const categoria = produto?.subcategoria?.nome ?? produto?.categoria.nome ?? "";
   const prazo = produto ? formatarPrazo(produto.prazoMinDias, produto.prazoMaxDias) : null;
   const foto = produto?.imagens[0]?.url ?? null;
-  const cores =
-    produto?.grupos
-      .find((g) => g.slug === "cor")
-      ?.valores.map((v) => v.hex)
-      .filter((h): h is string => Boolean(h))
-      .slice(0, 8) ?? [];
 
   return new ImageResponse(
     (
@@ -87,17 +81,6 @@ export default async function Imagem({ params }: { params: Promise<{ slug: strin
               </div>
               {prazo ? <div style={{ display: "flex" }}>{`· ${prazo}`}</div> : null}
             </div>
-
-            {cores.length > 0 ? (
-              <div style={{ display: "flex", gap: 10, marginTop: 26 }}>
-                {cores.map((hex) => (
-                  <div
-                    key={hex}
-                    style={{ width: 34, height: 34, borderRadius: 999, background: hex }}
-                  />
-                ))}
-              </div>
-            ) : null}
           </div>
         </div>
 

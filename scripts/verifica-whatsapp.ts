@@ -28,22 +28,20 @@ conferir(
   montarMensagem(TEMPLATE, {
     produto: "Bolsa Serra",
     codigo: codigoDoProduto("bolsa-serra"),
-    escolhas: [
-      { grupo: "Cor", valor: "Terracota" },
-      { grupo: "Alça", valor: "Transversal ajustável" },
-    ],
     quantidade: 1,
     link: "https://crochecomraquel.com.br/produtos/bolsa-serra",
   }),
-  "Oi Raquel! Vi no site e me interessei 💛\n\n*Bolsa Serra* (BOLSA-SERRA)\nCor: Terracota\nAlça: Transversal ajustável\nQuantidade: 1\n\nhttps://crochecomraquel.com.br/produtos/bolsa-serra"
+  "Oi Raquel! Vi no site e me interessei 💛\n\n*Bolsa Serra* (BOLSA-SERRA)\nQuantidade: 1\n\nhttps://crochecomraquel.com.br/produtos/bolsa-serra"
 );
 
+// O template gravado no banco ainda tem `{opcoes}` — os grupos de opção saíram
+// do site, o texto já salvo não. O marcador precisa levar a própria linha
+// embora; se ele vazasse, a cliente mandaria "{opcoes}" para a Raquel.
 conferir(
-  "sem escolhas, nao deixa linha em branco sobrando",
+  "o marcador de opcoes some com a linha dele",
   montarMensagem(TEMPLATE, {
     produto: "Manta Petrópolis",
     codigo: "MANTA-PETROPOLIS",
-    escolhas: [],
     quantidade: 2,
     link: "https://exemplo.com/p/manta",
   }),
@@ -51,18 +49,18 @@ conferir(
 );
 
 conferir(
-  "ignora personalizacao deixada em branco",
-  montarMensagem("{produto}\n{opcoes}", {
-    produto: "Necessaire",
-    codigo: "N",
-    escolhas: [
-      { grupo: "Cor", valor: "Cru" },
-      { grupo: "Personalização", valor: "   " },
-    ],
-    quantidade: 1,
-    link: "",
-  }),
-  "Necessaire\nCor: Cru"
+  "e nao sobra nenhum marcador cru no texto",
+  /\{[a-z]+\}/.test(
+    montarMensagem(TEMPLATE, {
+      produto: "Necessaire",
+      codigo: "N",
+      quantidade: 1,
+      link: "https://exemplo.com/p/necessaire",
+    })
+  )
+    ? "sobrou marcador"
+    : "limpo",
+  "limpo"
 );
 
 const link = montarLinkWhatsApp("+55 (24) 99208-7591", "Oi Raquel! 💛 & tal");

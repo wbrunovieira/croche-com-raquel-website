@@ -19,7 +19,7 @@ import {
 import { listarCategorias, listarTiposDeBolsa } from "@/lib/queries/categorias";
 import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
 import { buscarPagina, listarPerguntas, listarPerguntasPlanas } from "@/lib/queries/paginas";
-import { listarCoresDisponiveis, listarDestaques } from "@/lib/queries/produtos";
+import { listarDestaques } from "@/lib/queries/produtos";
 import { SLUG_BOLSAS, type ImagemDeProduto } from "@/lib/queries/tipos";
 
 /**
@@ -40,14 +40,14 @@ export const metadata: Metadata = {
 };
 
 export default async function Home({ searchParams }: PageProps<"/">) {
-  const { categoria, cor } = await searchParams;
+  // Um `?cor=` antigo na URL simplesmente não é lido: o filtro por cor saiu
+  // junto com os grupos de opção, e link velho da Raquel não pode quebrar.
+  const { categoria } = await searchParams;
   const categoriaAtual = typeof categoria === "string" ? categoria : undefined;
-  const corAtual = typeof cor === "string" ? cor : undefined;
 
   const [
     config,
     destaques,
-    cores,
     tiposDeBolsa,
     categorias,
     historia,
@@ -57,7 +57,6 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   ] = await Promise.all([
     buscarConfiguracoes(),
     listarDestaques(8),
-    listarCoresDisponiveis(),
     listarTiposDeBolsa(),
     listarCategorias(),
     buscarPagina("sobre"),
@@ -91,7 +90,6 @@ export default async function Home({ searchParams }: PageProps<"/">) {
           config.heroSubtitulo ??
           "Peças de crochê feitas à mão, sob encomenda, na cor e no tamanho que você escolher."
         }
-        cores={cores}
         capas={capasDoHero}
         whatsappNumero={config.whatsappNumero}
         cidade={config.cidade}
@@ -191,7 +189,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         </section>
       ) : null}
 
-      <SecaoCatalogo categoria={categoriaAtual} cor={corAtual} />
+      <SecaoCatalogo categoria={categoriaAtual} />
       <SecaoQuemFaz config={config} historia={historia} />
       <SecaoCuidados pagina={cuidados} />
       <SecaoPerguntas grupos={grupos} whatsappNumero={config.whatsappNumero} />

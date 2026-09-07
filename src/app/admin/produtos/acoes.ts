@@ -316,10 +316,7 @@ export async function alternarEscalaHumana(imageId: string, valor: boolean) {
 
 export async function duplicarProduto(id: string) {
   await exigirSessao();
-  const original = await db.product.findUnique({
-    where: { id },
-    include: { optionGroups: { include: { values: true } } },
-  });
+  const original = await db.product.findUnique({ where: { id } });
   if (!original) return;
 
   const slug = await slugUnico(`${original.name} copia`, async (candidato) =>
@@ -348,24 +345,6 @@ export async function duplicarProduto(id: string) {
       featured: false,
     },
   });
-
-  for (const og of original.optionGroups) {
-    const novo = await db.productOptionGroup.create({
-      data: {
-        productId: copia.id,
-        groupId: og.groupId,
-        required: og.required,
-        position: og.position,
-      },
-    });
-    await db.productOptionValue.createMany({
-      data: og.values.map((v) => ({
-        productOptionGroupId: novo.id,
-        optionValueId: v.optionValueId,
-        position: v.position,
-      })),
-    });
-  }
 
   revalidarCatalogo();
   redirect(`/admin/produtos/${copia.id}`);

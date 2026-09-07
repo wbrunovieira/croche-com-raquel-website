@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { Etiqueta } from "@/components/ui/etiqueta";
-import { FiltroDeCor } from "@/components/catalogo/filtro-de-cor";
 import { GradeDeProdutos } from "@/components/produto/card-de-produto";
 import { listarTiposDeBolsa } from "@/lib/queries/categorias";
-import { listarCoresDisponiveis, listarProdutos } from "@/lib/queries/produtos";
+import { listarProdutos } from "@/lib/queries/produtos";
 
 export async function generateStaticParams() {
   const tipos = await listarTiposDeBolsa();
@@ -22,25 +20,20 @@ export async function generateMetadata({
   const nome = encontrado.nome.toLowerCase();
   return {
     title: `Bolsa ${nome} de crochê`,
-    description: `Bolsas ${nome} de crochê feitas à mão sob encomenda em Petrópolis. Escolha a cor, o tamanho e o acabamento.`,
+    description: `Bolsas ${nome} de crochê feitas à mão sob encomenda em Petrópolis. Cor, tamanho e acabamento combinados no atendimento.`,
     alternates: { canonical: `/bolsas/${tipo}` },
   };
 }
 
 export default async function PaginaDeTipoDeBolsa({
   params,
-  searchParams,
 }: PageProps<"/bolsas/[tipo]">) {
-  const [{ tipo }, { cor }] = await Promise.all([params, searchParams]);
-  const corAtual = typeof cor === "string" ? cor : undefined;
+  const { tipo } = await params;
 
   const encontrado = (await listarTiposDeBolsa()).find((t) => t.slug === tipo);
   if (!encontrado) notFound();
 
-  const [produtos, cores] = await Promise.all([
-    listarProdutos({ categoria: "bolsas", subcategoria: tipo, cor: corAtual }),
-    listarCoresDisponiveis(12, { categoria: "bolsas", subcategoria: tipo }),
-  ]);
+  const produtos = await listarProdutos({ categoria: "bolsas", subcategoria: tipo });
 
   return (
     <main className="container-site secao">
@@ -71,15 +64,9 @@ export default async function PaginaDeTipoDeBolsa({
       </div>
 
       <div className="mt-bloco">
-        <Suspense fallback={null}>
-          <FiltroDeCor cores={cores} />
-        </Suspense>
-      </div>
-
-      <div className="mt-bloco">
         <GradeDeProdutos
           produtos={produtos}
-          vazio="Nenhuma peça nessa cor por enquanto. Tente outra, ou peça a sua sob encomenda."
+          vazio="Nenhuma peça desse tipo por enquanto. Peça a sua sob encomenda."
         />
       </div>
     </main>

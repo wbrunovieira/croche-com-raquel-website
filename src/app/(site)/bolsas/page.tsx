@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Suspense } from "react";
 import { ArrowRight } from "lucide-react";
 import { Etiqueta } from "@/components/ui/etiqueta";
 import { Foto } from "@/components/ui/foto";
 import { Revelar } from "@/components/ui/revelar";
 import { TextoLongo } from "@/components/ui/texto-longo";
-import { FiltroDeCor } from "@/components/catalogo/filtro-de-cor";
 import { GradeDeProdutos } from "@/components/produto/card-de-produto";
 import { buscarCategoriaPorSlug, listarTiposDeBolsa } from "@/lib/queries/categorias";
-import { listarCoresDisponiveis, listarProdutos } from "@/lib/queries/produtos";
+import { listarProdutos } from "@/lib/queries/produtos";
 import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
 import { IconeZap } from "@/components/ui/icone-zap";
 
@@ -27,17 +25,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/bolsas" },
 };
 
-export default async function PaginaDeBolsas({
-  searchParams,
-}: PageProps<"/bolsas">) {
-  const { cor } = await searchParams;
-  const corAtual = typeof cor === "string" ? cor : undefined;
-
-  const [categoria, tipos, produtos, cores, config] = await Promise.all([
+export default async function PaginaDeBolsas() {
+  const [categoria, tipos, produtos, config] = await Promise.all([
     buscarCategoriaPorSlug("bolsas"),
     listarTiposDeBolsa(),
-    listarProdutos({ categoria: "bolsas", cor: corAtual }),
-    listarCoresDisponiveis(12, { categoria: "bolsas" }),
+    listarProdutos({ categoria: "bolsas" }),
     buscarConfiguracoes(),
   ]);
 
@@ -97,17 +89,11 @@ export default async function PaginaDeBolsas({
           </p>
         </div>
 
-        <div className="mt-bloco">
-          <Suspense fallback={null}>
-            <FiltroDeCor cores={cores} />
-          </Suspense>
-        </div>
-
         {/* Mesma regra do catálogo da home: a grade só aparece. */}
         <Revelar entrada="grade" className="mt-bloco">
           <GradeDeProdutos
             produtos={produtos}
-            vazio="Nenhuma bolsa nessa cor por enquanto. Tente outra, ou peça a sua sob encomenda."
+            vazio="Nenhuma bolsa no ar por enquanto. Peça a sua sob encomenda."
           />
         </Revelar>
       </section>

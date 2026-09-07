@@ -23,12 +23,9 @@ const BASE = process.env.URL_BASE ?? "http://localhost:3000";
 const USUARIO = "verificacao-telas";
 const SENHA = "Verificacao#2026";
 
-const TELAS = [
-  "/admin",
-  "/admin/produtos",
-  "/admin/produtos/nova",
-  "/admin/opcoes",
-];
+// O painel tem duas telas — Início e Peças. "Cores e opções" saiu junto com os
+// grupos de opção; ela não pode voltar como rota nem como link.
+const TELAS = ["/admin", "/admin/produtos", "/admin/produtos/nova"];
 
 const db = new PrismaClient({
   adapter: new PrismaPg({ connectionString: urlComSslVerificado(process.env.DATABASE_URL) }),
@@ -95,8 +92,24 @@ async function main() {
     const menu = await p.locator("nav a").allInnerTexts();
     ok(
       "o menu não oferece as telas removidas",
-      !menu.some((i) => /Perguntas|Depoimentos|Textos do site|Categorias|Configurações/.test(i)),
+      !menu.some((i) =>
+        /Perguntas|Depoimentos|Textos do site|Categorias|Configurações|Cores e opções/.test(i)
+      ),
       menu.map((i) => i.trim()).join(" · ")
+    );
+    ok(
+      "o menu tem exatamente Início e Peças",
+      menu.map((i) => i.trim()).join(" · ") === "Início · Peças",
+      menu.map((i) => i.trim()).join(" · ")
+    );
+
+    // A rota morta não pode continuar respondendo 200 — se responder, ela
+    // voltou por algum caminho que ninguém pediu.
+    const removida = await p.goto(`${BASE}/admin/opcoes`, { waitUntil: "domcontentloaded" });
+    ok(
+      "/admin/opcoes não existe mais",
+      removida?.status() === 404,
+      `HTTP ${removida?.status()}`
     );
   } finally {
     await navegador.close();

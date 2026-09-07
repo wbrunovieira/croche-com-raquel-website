@@ -64,9 +64,6 @@ export default async function PaginaDeProduto({ params }: PageProps<"/produtos/[
       ? "/bolsas"
       : `/?categoria=${produto.categoria.slug}#catalogo`;
 
-  const cores =
-    produto.grupos.find((g) => g.slug === "cor")?.valores.map((v) => v.nome) ?? [];
-
   return (
     <main className="container-site secao">
       <DadosEstruturados
@@ -78,7 +75,6 @@ export default async function PaginaDeProduto({ params }: PageProps<"/produtos/[
           material: produto.material,
           imagens: produto.imagens.map((i) => i.url),
           categoria: produto.categoria.nome,
-          cores,
         })}
       />
       <DadosEstruturados
@@ -144,7 +140,6 @@ export default async function PaginaDeProduto({ params }: PageProps<"/produtos/[
             <Pedido
               nomeDoProduto={produto.nome}
               slugDoProduto={produto.slug}
-              grupos={produto.grupos}
               numeroDoWhatsapp={config.whatsappNumero}
               template={config.whatsappTemplate}
               urlDaPagina={url}

@@ -879,6 +879,53 @@ reserva o marcador numerado ao "como encomendar" da página de produto, e só a
 ele); uma quarta faixa verde; segunda textura de fundo; e divisória entre as
 seções creme do topo (destaques → tipos → catálogo), que continuam sem fio entre
 elas — vale uma `corrente` acima do "Catálogo" numa próxima passada.
+### ✅ Etapa 22 — Cadastro de vitrine *(pedido do Bruno)*
+
+*"Está muito complicado, reduza os campos para ela criar. É o primeiro site dela,
+não vamos vender por ele, é uma vitrine. Detalhes do produto ela vai esclarecer no
+atendimento."*
+
+O formulário de peça tinha **dezoito campos** e tinha sido desenhado para loja.
+Ficaram **oito**: nome, fotos, descrição, preço, categoria, tipo, destaque e
+situação.
+
+Saíram medidas, material, o que cabe dentro, cuidados, prazo mínimo e máximo, e as
+duas ordens. **As colunas continuam no banco de propósito:** as peças já cadastradas
+guardam o que têm, a página da peça mostra cada bloco só quando ele existe, e o dia
+que fizer sentido pedir isso de volta o dado não precisa ser reconstruído.
+
+**Os grupos de opção saíram inteiros** — Cor, Tamanho, Alça, Forro, Fecho,
+Personalização. Foi decisão dele, tomada com as consequências na mesa: sai o filtro
+por cor do catálogo, saem as bolinhas do hero e da arte de compartilhamento, e a
+mensagem do WhatsApp deixa de vir com a escolha pré-preenchida. No lugar delas, uma
+linha na página da peça: *"Cor, tamanho e acabamento a Raquel combina com você na
+conversa."*
+
+O painel caiu para **duas telas**: Início e Peças. "Cores e opções" perdeu a razão
+de existir e `/admin/opcoes` responde 404 — o que a verificação de telas agora exige.
+
+**Duas armadilhas que a remoção abriu, e as duas já tinham mordido este projeto:**
+
+1. **Campo fora do formulário mas dentro do schema.** `position` tinha `.catch(0)`:
+   salvar uma peça mandaria a ordem dela para zero em silêncio. É o mesmo defeito
+   que apareceu nas categorias na Etapa 15. Os campos saíram do schema junto.
+2. **`deleteMany` com `notIn: []`.** Sem grupos no formulário a lista chega vazia, e
+   `notIn` de lista vazia casa com **tudo** — salvar qualquer peça apagaria os grupos
+   dela. O bloco inteiro saiu, então os dados ficam intactos em vez de sumirem por
+   acidente.
+
+A ordem do destaque, que ela não preenche mais, passou a ser decidida no código:
+peça marcada que ainda não tinha lugar entra no fim da fila. Não dá para deixar em
+nulo — a home ordena por `featuredPosition asc` e no Postgres **nulo vem por
+último**, então a recém-marcada cairia fora das oito que a home mostra.
+
+*Detalhe que evitou um vazamento:* o marcador `{opcoes}` continua na lista de
+substituições do `whatsapp.ts`, sempre vazio. Os modelos de mensagem já gravados no
+banco escrevem esse marcador; tirá-lo da lista faria o texto literal `{opcoes}`
+chegar no WhatsApp da cliente.
+
+*Schema do Prisma e migrações intocados:* as tabelas de opção ficam onde estão, com
+os dados dentro. Apagar isso é decisão do Bruno, não consequência automática.
 
 ## Decisões em aberto
 

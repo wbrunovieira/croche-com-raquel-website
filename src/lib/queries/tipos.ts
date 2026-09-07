@@ -6,29 +6,6 @@
  * é a forma que a tela quer. Tudo que sai daqui é serializável e já traduzido.
  */
 
-export type TipoDeOpcao = "SINGLE" | "MULTIPLE" | "TEXT";
-
-export type ValorDeOpcao = {
-  id: string;
-  slug: string;
-  nome: string;
-  /** #RRGGBB — só no grupo de cor. Desenha a bolinha do seletor. */
-  hex: string | null;
-  /** Linha do fio, como na etiqueta: "Barroco Maxcolor 400g". */
-  linhaDoFio: string | null;
-  /** Código da cor no fabricante: "7684". É por ele que a Raquel recompra. */
-  codigoDaCor: string | null;
-};
-
-export type GrupoDeOpcao = {
-  id: string;
-  slug: string;
-  nome: string;
-  tipo: TipoDeOpcao;
-  obrigatorio: boolean;
-  valores: ValorDeOpcao[];
-};
-
 export type ImagemDeProduto = {
   id: string;
   url: string;
@@ -59,7 +36,6 @@ export type ProdutoDetalhe = ProdutoResumo & {
   prazoMinDias: number | null;
   prazoMaxDias: number | null;
   imagens: ImagemDeProduto[];
-  grupos: GrupoDeOpcao[];
 };
 
 export type CategoriaResumo = {

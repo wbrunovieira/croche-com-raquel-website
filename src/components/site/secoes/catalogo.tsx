@@ -1,43 +1,31 @@
 import Link from "next/link";
-import { Suspense } from "react";
 import { Etiqueta } from "@/components/ui/etiqueta";
 import { Revelar } from "@/components/ui/revelar";
-import { FiltroDeCor } from "@/components/catalogo/filtro-de-cor";
 import { GradeDeProdutos } from "@/components/produto/card-de-produto";
 import { listarCategorias } from "@/lib/queries/categorias";
-import { listarCoresDisponiveis, listarProdutos } from "@/lib/queries/produtos";
+import { listarProdutos } from "@/lib/queries/produtos";
 
 /**
- * O catálogo inteiro, filtrável, como seção da home.
+ * O catálogo inteiro, filtrável por categoria, como seção da home.
  *
  * **O filtro continua morando na URL** — agora como parâmetro da home, e não de
  * `/catalogo`. Era a decisão da etapa 6 e ela sobrevive à página única: o
  * endereço volta certo no botão de voltar e a Raquel consegue mandar para a
- * cliente um link já filtrado ("olha as bolsas em terracota").
+ * cliente um link já filtrado ("olha as bolsas").
  *
  * O preço disso é que a home deixa de ser estática — ler `searchParams` torna a
  * rota dinâmica. Vale a troca: link filtrado é recurso de venda, e a home
  * continua sendo uma consulta ao banco, num site pequeno.
  */
-export async function SecaoCatalogo({
-  categoria,
-  cor,
-}: {
-  categoria?: string;
-  cor?: string;
-}) {
-  const [categorias, produtos, cores] = await Promise.all([
+export async function SecaoCatalogo({ categoria }: { categoria?: string }) {
+  const [categorias, produtos] = await Promise.all([
     listarCategorias(),
-    listarProdutos({ categoria, cor }),
-    listarCoresDisponiveis(12, { categoria }),
+    listarProdutos({ categoria }),
   ]);
 
   // Cada combinação é uma URL, por isso o filtro de categoria é link e não botão.
   const href = (cat?: string) => {
-    const p = new URLSearchParams();
-    if (cat) p.set("categoria", cat);
-    if (cor) p.set("cor", cor);
-    const busca = p.toString();
+    const busca = cat ? `categoria=${encodeURIComponent(cat)}` : "";
     return `${busca ? `/?${busca}` : "/"}#catalogo`;
   };
 
@@ -50,7 +38,7 @@ export async function SecaoCatalogo({
         <h2 className="mt-2 font-display text-t2">Catálogo</h2>
         <p className="mt-3 text-apoio text-conteudo-suave">
           {produtos.length} {produtos.length === 1 ? "peça" : "peças"}
-          {categoria || cor ? " com esse filtro" : ""}
+          {categoria ? " com esse filtro" : ""}
         </p>
       </Revelar>
 
@@ -97,19 +85,13 @@ export async function SecaoCatalogo({
         </ul>
       </nav>
 
-      <div className="mt-bloco">
-        <Suspense fallback={null}>
-          <FiltroDeCor cores={cores} />
-        </Suspense>
-      </div>
-
       {/* A grade do catálogo só aparece. Quem chega aqui está comparando peças,
           e uma grade que se monta na frente da pessoa atrasa a tarefa real —
           por isso `grade` mexe só em opacidade e não tem cascata nenhuma. */}
       <Revelar entrada="grade" className="mt-bloco">
         <GradeDeProdutos
           produtos={produtos}
-          vazio="Nenhuma peça com esse filtro. Tente outra cor ou categoria."
+          vazio="Nenhuma peça nessa categoria. Tente outra."
         />
       </Revelar>
     </section>

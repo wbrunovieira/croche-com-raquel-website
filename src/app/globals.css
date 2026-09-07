@@ -144,7 +144,7 @@
 
   /* ---- Alturas de controle e de cromo ---- */
   --spacing-controle:     3.375rem; /* 54 — botão md e campo, alinhados */
-  --spacing-controle-sm:  2.25rem;  /* 36 — botão sm, seletor de cor */
+  --spacing-controle-sm:  2.25rem;  /* 36 — botão pequeno */
   /* O símbolo da marca é ilustrado — novelo, agulhas, coraçõezinhos — e só lê
      inteiro a partir de ~50px de altura. Com o cabeçalho a 80px o lockup ficava
      com 1px de folga, violando a área de proteção da identidade (§6.3). */
@@ -529,39 +529,6 @@ body::after {
       content-visibility .3s allow-discrete;
   }
   .pergunta[open]::details-content { block-size: auto; }
-}
-
-/* ---------- O pedido ficou completo ----------
-   O botão de WhatsApp passava de `<button disabled>` a `<a>` sem aviso nenhum:
-   a pessoa escolhia a última opção e a única mudança era o cinza sair. Aqui o
-   botão marca o instante — uma vez, curto, e no próprio botão.
-
-   O anel é um pseudo-elemento com `pointer-events: none` justamente porque a
-   regra é que NADA atrapalhe este clique: ele não existe para o hit-testing. */
-@keyframes pedido-assenta {
-  0%   { transform: none; }
-  40%  { transform: translateY(-2px); }
-  100% { transform: none; }
-}
-@keyframes pedido-anel {
-  from { opacity: .85; transform: scale(1); }
-  to   { opacity: 0;   transform: scale(1.06); }
-}
-
-@layer components {
-  .pedido-pronto {
-    position: relative;
-    animation: pedido-assenta .5s var(--ease-fio) both;
-  }
-  .pedido-pronto::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    border: 1px solid var(--color-destaque);
-    pointer-events: none;
-    animation: pedido-anel .5s var(--ease-fio) both;
-  }
 }
 
 /* ---------- Batida do coração do logotipo ---------- */

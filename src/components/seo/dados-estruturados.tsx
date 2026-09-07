@@ -75,7 +75,6 @@ export function produtoEstruturado(p: {
   material: string | null;
   imagens: string[];
   categoria: string;
-  cores: string[];
 }) {
   const base = urlDoSite();
 
@@ -88,7 +87,6 @@ export function produtoEstruturado(p: {
     image: p.imagens.length > 0 ? p.imagens : undefined,
     material: p.material ?? undefined,
     category: p.categoria,
-    color: p.cores.length > 0 ? p.cores : undefined,
     brand: { "@type": "Brand", name: "Crochê com Raquel" },
     // Sem preço fechado não existe oferta a declarar. Inventar um valor aqui
     // para "aparecer melhor" seria mentir para a cliente e para o buscador.

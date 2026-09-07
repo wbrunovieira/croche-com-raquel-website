@@ -9,11 +9,8 @@ import {
 /**
  * Consultas de produto.
  *
- * Duas regras valem em todas elas:
- *  - só produto `PUBLISHED` chega ao site; `DRAFT` — "fora do ar" no
- *    painel — fica só para a Raquel;
- *  - grupo e valor de opção desligados (`active: false`) não aparecem. É assim
- *    que ela tira uma cor do ar quando acaba o fio, sem perder o vínculo.
+ * Uma regra vale em todas elas: só produto `PUBLISHED` chega ao site; `DRAFT`
+ * — "fora do ar" no painel — fica só para a Raquel.
  */
 
 const imagensOrdenadas = {
@@ -66,8 +63,6 @@ export type FiltrosDeCatalogo = {
   categoria?: string;
   subcategoria?: string;
   colecao?: string;
-  /** Slug da cor. Só entram peças que oferecem aquela cor e com ela ativa. */
-  cor?: string;
 };
 
 function condicoes(f: FiltrosDeCatalogo = {}) {
@@ -76,16 +71,6 @@ function condicoes(f: FiltrosDeCatalogo = {}) {
     ...(f.categoria ? { category: { slug: f.categoria } } : {}),
     ...(f.subcategoria ? { subcategory: { slug: f.subcategoria } } : {}),
     ...(f.colecao ? { collections: { some: { slug: f.colecao, active: true } } } : {}),
-    ...(f.cor
-      ? {
-          optionGroups: {
-            some: {
-              group: { slug: "cor", active: true },
-              values: { some: { optionValue: { slug: f.cor, active: true } } },
-            },
-          },
-        }
-      : {}),
   };
 }
 
@@ -126,31 +111,6 @@ export async function buscarProdutoPorSlug(
       careText: true,
       productionDaysMin: true,
       productionDaysMax: true,
-      optionGroups: {
-        where: { group: { active: true } },
-        orderBy: { position: "asc" },
-        select: {
-          required: true,
-          group: { select: { id: true, slug: true, name: true, type: true } },
-          values: {
-            // Valor desligado some do site, mas o vínculo continua no banco.
-            where: { optionValue: { active: true } },
-            orderBy: { position: "asc" },
-            select: {
-              optionValue: {
-                select: {
-                  id: true,
-                  slug: true,
-                  name: true,
-                  hex: true,
-                  yarnLine: true,
-                  yarnColorCode: true,
-                },
-              },
-            },
-          },
-        },
-      },
     },
   });
 
@@ -166,25 +126,6 @@ export async function buscarProdutoPorSlug(
     prazoMinDias: p.productionDaysMin,
     prazoMaxDias: p.productionDaysMax,
     imagens: p.images.map(paraImagem),
-    grupos: p.optionGroups
-      // Um grupo de escolha que ficou sem valor disponível não deve virar um
-      // seletor vazio na tela. Grupo de texto livre nunca tem valores.
-      .filter((og) => og.group.type === "TEXT" || og.values.length > 0)
-      .map((og) => ({
-        id: og.group.id,
-        slug: og.group.slug,
-        nome: og.group.name,
-        tipo: og.group.type,
-        obrigatorio: og.required,
-        valores: og.values.map((v) => ({
-          id: v.optionValue.id,
-          slug: v.optionValue.slug,
-          nome: v.optionValue.name,
-          hex: v.optionValue.hex,
-          linhaDoFio: v.optionValue.yarnLine,
-          codigoDaCor: v.optionValue.yarnColorCode,
-        })),
-      })),
   };
 }
 
@@ -215,28 +156,3 @@ export async function listarSlugsDeProduto(): Promise<string[]> {
   return linhas.map((l) => l.slug);
 }
 
-/**
- * As cores que o catálogo publicado realmente oferece hoje. O hero mostra
- * essas bolinhas — e elas precisam ser as de verdade: uma amostra decorativa
- * de cores que a Raquel não tem seria uma promessa falsa logo na primeira
- * dobra do site.
- */
-export async function listarCoresDisponiveis(
-  limite = 8,
-  escopo?: Omit<FiltrosDeCatalogo, "cor">
-): Promise<{ id: string; slug: string; nome: string; hex: string }[]> {
-  const linhas = await db.optionValue.findMany({
-    where: {
-      active: true,
-      hex: { not: null },
-      group: { slug: "cor", active: true },
-      products: {
-        some: { productOptionGroup: { product: condicoes(escopo) } },
-      },
-    },
-    orderBy: { position: "asc" },
-    take: limite,
-    select: { id: true, slug: true, name: true, hex: true },
-  });
-  return linhas.map((l) => ({ id: l.id, slug: l.slug, nome: l.name, hex: l.hex! }));
-}
