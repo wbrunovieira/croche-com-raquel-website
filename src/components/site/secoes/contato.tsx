@@ -9,7 +9,7 @@ import type { ConfiguracoesDoSite } from "@/lib/queries/tipos";
 export function SecaoContato({ config }: { config: ConfiguracoesDoSite }) {
   return (
     <section id="contato" className="container-site secao scroll-mt-cabecalho-lg">
-      <Revelar>
+      <Revelar entrada="ponto">
         <Etiqueta>Contato</Etiqueta>
         <h2 className="mt-2 font-display text-t2">Vamos conversar</h2>
         <p className="mt-4 max-w-texto text-lead text-conteudo-suave">
@@ -24,7 +24,7 @@ export function SecaoContato({ config }: { config: ConfiguracoesDoSite }) {
             href={`https://wa.me/${config.whatsappNumero}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-btn-icone rounded-fio bg-primaria px-btn-lg-x py-btn-lg-y text-leitura font-medium text-sobre-primaria transition-colors hover:bg-primaria-hover"
+            className="inline-flex items-center gap-btn-icone rounded-fio bg-primaria px-btn-lg-x py-btn-lg-y text-leitura font-medium text-sobre-primaria transition-[background-color,transform] duration-150 ease-fio active:translate-y-px hover:bg-primaria-hover"
           >
             <IconeZap className="size-5" />
             Falar no WhatsApp

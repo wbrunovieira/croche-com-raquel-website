@@ -31,11 +31,17 @@ export function SecaoQuemFaz({
 }) {
   return (
     <section id="quem-faz" className="scroll-mt-cabecalho-lg">
-      <div className="trama bg-inv-fundo text-inv-conteudo">
+      {/* `overflow-x-clip`: as duas metades entram deslocadas na horizontal e,
+          sem o corte, os 20px de deslocamento viram rolagem lateral do corpo no
+          celular. `clip` e não `hidden` — não cria contexto de rolagem. */}
+      <div className="trama overflow-x-clip bg-inv-fundo text-inv-conteudo">
         <div className="container-site secao">
           <div className="grid items-center gap-x-coluna gap-y-grade-linha lg:grid-cols-[minmax(0,22rem)_1fr]">
+            {/* Urdidura e trama: a foto vem de um lado, o texto do outro, e os
+                dois se cruzam no meio. É o desenho que a `.trama` já faz no
+                fundo desta seção, agora em movimento. */}
             {config.sobreFoto ? (
-              <Revelar>
+              <Revelar entrada="trama">
                 <div className="relative aspect-peca w-full overflow-hidden rounded-card">
                   <Image
                     src={config.sobreFoto.url}
@@ -48,7 +54,11 @@ export function SecaoQuemFaz({
               </Revelar>
             ) : null}
 
-            <Revelar atraso={0.08} className={config.sobreFoto ? "" : "max-w-texto"}>
+            <Revelar
+              entrada={config.sobreFoto ? "trama-inversa" : "trama"}
+              atraso={0.08}
+              className={config.sobreFoto ? "" : "max-w-texto"}
+            >
               <Etiqueta tom="invertido">Quem faz</Etiqueta>
               <h2 className="mt-4 max-w-[20ch] font-display text-t2">{ABERTURA}</h2>
               <div className="mt-bloco max-w-texto">
@@ -71,8 +81,11 @@ export function SecaoQuemFaz({
           mudar, os dois blocos andam juntos. */}
       {historia ? (
         <div className="container-site secao">
+          {/* E é leitura, não vitrine: assenta devagar e quase não se desloca.
+              Um bloco de texto que chega com energia atrapalha a própria
+              leitura. */}
           <div className="grid gap-x-coluna lg:grid-cols-[minmax(0,22rem)_1fr]">
-            <Revelar className="max-w-texto lg:col-start-2">
+            <Revelar entrada="texto" className="max-w-texto lg:col-start-2">
               <TextoLongo texto={historia.corpo} />
             </Revelar>
           </div>

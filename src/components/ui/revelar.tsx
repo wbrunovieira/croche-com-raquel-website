@@ -24,14 +24,38 @@ import { useEffect, useRef } from "react";
  * `prefers-reduced-motion` zera duração *e* atraso, então o conteúdo aparece
  * inteiro assim que o observador dispara.
  */
+
+/**
+ * Como a seção entra. O gesto diz que tipo de seção é aquela — antes tudo
+ * entrava igual, e a página inteira parecia uma coisa só.
+ *
+ *  - `fio`   — o padrão: sobe 24px com fade.
+ *  - `ponto` — cabeçalho de seção: a cascata acontece nos FILHOS (etiqueta,
+ *              título, apoio), curta e precisa, como pontos seguidos.
+ *  - `grade` — catálogo: só opacidade. Nada se move na frente de quem compara.
+ *  - `trama` / `trama-inversa` — seção verde: o fio atravessa na horizontal,
+ *              de lados opostos nas duas metades.
+ *  - `texto` — bloco de leitura: assenta devagar, quase sem deslocamento.
+ *
+ * O desenho de cada um mora no `globals.css`, junto dos outros quadros — o
+ * movimento é decisão de identidade, não de componente.
+ */
+export type Entrada = "fio" | "ponto" | "grade" | "trama" | "trama-inversa" | "texto";
+
 export function Revelar({
   children,
   atraso = 0,
+  entrada = "fio",
+  decorativo = false,
   className = "",
   as: Componente = "div",
 }: {
-  children: React.ReactNode;
+  /** Opcional porque a corrente (`.corrente`) é uma faixa vazia e decorativa. */
+  children?: React.ReactNode;
   atraso?: number;
+  entrada?: Entrada;
+  /** Ornamento sem conteúdo: sai do alcance dos leitores de tela. */
+  decorativo?: boolean;
   className?: string;
   as?: "div" | "section" | "li" | "span";
 }) {
@@ -56,11 +80,16 @@ export function Revelar({
     return () => observador.disconnect();
   }, []);
 
+  // O atraso não vale para `ponto`: lá quem anima são os filhos, e cada um já
+  // tem o seu. Empilhar os dois faria a cascata começar depois da seção.
+  const atrasar = atraso > 0 && entrada !== "ponto";
+
   return (
     <Componente
       ref={alvo as never}
-      className={`revelar ${className}`}
-      style={atraso ? { animationDelay: `${atraso}s` } : undefined}
+      aria-hidden={decorativo || undefined}
+      className={`revelar ${entrada === "fio" ? "" : `revelar--${entrada}`} ${className}`}
+      style={atrasar ? { animationDelay: `${atraso}s` } : undefined}
     >
       {children}
     </Componente>

@@ -59,13 +59,19 @@ export default async function PaginaDeBolsas({
 
       {tipos.length > 0 ? (
         <section className="container-site secao">
-          <Revelar>
+          <Revelar entrada="ponto">
             <h2 className="font-display text-t2">Por tipo</h2>
           </Revelar>
           <ul className="mt-bloco grid gap-x-grade-col gap-y-grade-linha sm:grid-cols-2 lg:grid-cols-4">
             {tipos.map((t, i) => (
               <Revelar as="li" key={t.slug} atraso={0.05 * i}>
-                <Link href={`/bolsas/${t.slug}`} className="group block">
+                {/* Sobe ao passar e afunda sob o dedo, como o card de peça.
+                    Sem sombra: a máscara em arco é recortada, e uma sombra de
+                    caixa desenharia um retângulo atrás da curva. */}
+                <Link
+                  href={`/bolsas/${t.slug}`}
+                  className="group block transition-transform duration-200 ease-fio hover:-translate-y-0.5 active:translate-y-0"
+                >
                   <Foto imagem={null} arco />
                   <h3 className="mt-3 font-display text-t3">{t.nome}</h3>
                   <span className="mt-1 inline-flex items-center gap-2 text-apoio text-conteudo-suave">
@@ -97,25 +103,29 @@ export default async function PaginaDeBolsas({
           </Suspense>
         </div>
 
-        <div className="mt-bloco">
+        {/* Mesma regra do catálogo da home: a grade só aparece. */}
+        <Revelar entrada="grade" className="mt-bloco">
           <GradeDeProdutos
             produtos={produtos}
             vazio="Nenhuma bolsa nessa cor por enquanto. Tente outra, ou peça a sua sob encomenda."
           />
-        </div>
+        </Revelar>
       </section>
 
       {categoria?.textoLongo ? (
         <section className="bg-superficie-baixa">
           <div className="container-site secao">
             <TextoLongo texto={categoria.textoLongo} />
-            <div className="corrente mt-respiro" aria-hidden="true" />
+            {/* A corrente se costura da esquerda para a direita quando chega à
+                tela. É o ornamento da marca fazendo o que ele representa — um
+                ponto atrás do outro — em vez de aparecer pronto. */}
+            <Revelar decorativo className="corrente mt-respiro" />
             <div className="mt-bloco">
               <a
                 href={`https://wa.me/${config.whatsappNumero}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-btn-icone rounded-fio bg-primaria px-btn-x py-btn-y font-medium text-sobre-primaria transition-colors hover:bg-primaria-hover"
+                className="inline-flex items-center gap-btn-icone rounded-fio bg-primaria px-btn-x py-btn-y font-medium text-sobre-primaria transition-[background-color,transform] duration-150 ease-fio active:translate-y-px hover:bg-primaria-hover"
               >
                 <IconeZap className="size-5" />
                 Tirar uma dúvida no WhatsApp

@@ -38,7 +38,10 @@ export function SeletorDeCor({
               aria-label={v.nome}
               title={v.nome}
               onClick={() => aoSelecionar(v.slug)}
-              className={`size-controle-sm rounded-pilula border border-borda-forte/40 transition-shadow ${
+              // A bolinha cede sob o dedo. Numa peça de 36px, subir 2px não se
+              // enxerga — encolher, sim; e o anel de selecionado chega junto,
+              // em 200ms, em vez de aparecer de um quadro para o outro.
+              className={`size-controle-sm rounded-pilula border border-borda-forte/40 transition-[box-shadow,transform] duration-200 ease-fio active:scale-90 ${
                 ativo ? "ring-2 ring-conteudo ring-offset-2 ring-offset-fundo" : ""
               }`}
               style={{ backgroundColor: v.hex ?? "transparent" }}

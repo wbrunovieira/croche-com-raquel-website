@@ -43,7 +43,9 @@ export async function SecaoCatalogo({
 
   return (
     <section id="catalogo" className="container-site secao scroll-mt-cabecalho-lg">
-      <Revelar>
+      {/* Etiqueta, título e contagem chegam em cascata curta — três itens, que
+          é o limite em que cascata ainda lê como intenção. */}
+      <Revelar entrada="ponto">
         <Etiqueta>Todas as peças</Etiqueta>
         <h2 className="mt-2 font-display text-t2">Catálogo</h2>
         <p className="mt-3 text-apoio text-conteudo-suave">
@@ -101,12 +103,15 @@ export async function SecaoCatalogo({
         </Suspense>
       </div>
 
-      <div className="mt-bloco">
+      {/* A grade do catálogo só aparece. Quem chega aqui está comparando peças,
+          e uma grade que se monta na frente da pessoa atrasa a tarefa real —
+          por isso `grade` mexe só em opacidade e não tem cascata nenhuma. */}
+      <Revelar entrada="grade" className="mt-bloco">
         <GradeDeProdutos
           produtos={produtos}
           vazio="Nenhuma peça com esse filtro. Tente outra cor ou categoria."
         />
-      </div>
+      </Revelar>
     </section>
   );
 }

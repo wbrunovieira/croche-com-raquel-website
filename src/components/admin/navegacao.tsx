@@ -8,6 +8,7 @@ import {
   Palette,
   ShoppingBag,
   } from "lucide-react";
+import { DURACAO, transicao } from "@/lib/movimento";
 
 const ITENS = [
   { href: "/admin", rotulo: "Início", Icone: Home },
@@ -41,7 +42,7 @@ export function NavegacaoDoAdmin() {
                 <motion.span
                   layoutId="indicador-do-admin"
                   className="absolute inset-x-3 -bottom-0.5 block h-px bg-destaque"
-                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  transition={transicao(DURACAO.media)}
                 />
               ) : null}
             </Link>

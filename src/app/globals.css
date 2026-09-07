@@ -178,7 +178,14 @@
 }
 
 /* ---------- Base ---------- */
-:root { color-scheme: light; }
+:root {
+  color-scheme: light;
+  /* Autoriza o navegador a interpolar `height: auto`. É o que permite a
+     resposta da pergunta frequente abrir em altura animada sem que ninguém
+     precise medir o texto em JavaScript. Onde não houver suporte, a interpolação
+     simplesmente não acontece e o `<details>` abre seco, como sempre abriu. */
+  interpolate-size: allow-keywords;
+}
 
 @layer base {
   /* O site é de uma página: o menu navega por âncora, e o salto seco perde a
@@ -301,6 +308,48 @@ body::after {
   to   { clip-path: inset(0 0 0 0); }
 }
 
+/* ---- O vocabulário de entrada ----
+   Antes toda seção entrava igual: fade mais 24px. Correto e sem caráter — o
+   catálogo, a faixa verde e o texto de leitura chegavam com o mesmo gesto,
+   como se fossem a mesma coisa. Aqui eles passam a chegar como o que são.
+
+   Todos os quadros mexem só em `opacity` e `transform`: entram durante a
+   rolagem, e qualquer outra propriedade obrigaria layout ou pintura a cada
+   quadro num celular que veio do Instagram. */
+
+/* Ponto: rápido e curto, o gesto de quem dá um ponto. Cabeçalho de seção. */
+@keyframes assentar {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Trama: o fio atravessa. Só nas seções verdes, onde a `.trama` já é a
+   textura da superfície — o movimento repete o desenho que está no fundo.
+   Nas duas metades da seção o fio vem de lados opostos, que é o que a trama
+   é: urdidura e trama se cruzando. */
+@keyframes atravessar-ida {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes atravessar-volta {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Só a opacidade. Reservado à grade do catálogo: quem está ali está comparando
+   peças, e uma grade que se monta na frente da pessoa atrasa a tarefa real. */
+@keyframes aparecer {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* A corrente se costura da esquerda para a direita. `clip-path` numa faixa de
+   12px de altura: a área repintada é uma tira, e o gesto é o da marca. */
+@keyframes costurar {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
 @layer components {
   .surgir   { animation: surgir .7s var(--ease-fio) both; }
   .surgir-2 { animation-delay: .08s; }
@@ -317,6 +366,119 @@ body::after {
      ou com script lento, o site inteiro continua legível. */
   .js .revelar { opacity: 0; }
   .js .revelar[data-revelado] { animation: surgir .55s var(--ease-fio) both; }
+
+  /* Catálogo: a grade não se move, só aparece. */
+  .js .revelar--grade[data-revelado] { animation: aparecer .5s var(--ease-fio) both; }
+
+  /* Seção verde. Mais longa que as outras de propósito: é o momento editorial
+     da página, onde a pessoa lê em vez de escolher. */
+  .js .revelar--trama[data-revelado] { animation: atravessar-ida .75s var(--ease-fio) both; }
+  .js .revelar--trama-inversa[data-revelado] { animation: atravessar-volta .75s var(--ease-fio) both; }
+
+  /* Texto corrido: assenta devagar e quase não se desloca. Um bloco de leitura
+     que chega com energia é um bloco que atrapalha a leitura. */
+  .js .revelar--texto[data-revelado] { animation: assentar .85s var(--ease-fio) both; }
+
+  /* Cabeçalho de seção: quem entra em cascata são os FILHOS — etiqueta, título,
+     linha de apoio —, e não a caixa. Três a quatro itens, que é o limite em que
+     cascata ainda lê como intenção e não como espera.
+
+     O contêiner precisa desfazer o que a regra base fez nele: `.revelar` o
+     escondeu e `[data-revelado]` ia animá-lo por cima da cascata dos filhos. */
+  .js .revelar--ponto { opacity: 1; }
+  .js .revelar--ponto[data-revelado] { animation: none; }
+  .js .revelar--ponto > * { opacity: 0; }
+  .js .revelar--ponto[data-revelado] > * { animation: assentar .5s var(--ease-fio) both; }
+  .js .revelar--ponto[data-revelado] > :nth-child(2)   { animation-delay: .07s; }
+  .js .revelar--ponto[data-revelado] > :nth-child(3)   { animation-delay: .14s; }
+  .js .revelar--ponto[data-revelado] > :nth-child(n+4) { animation-delay: .21s; }
+
+  /* A corrente que se costura quando a seção entra. Mesma regra do `.js`: sem
+     script ela já está inteira na tela. */
+  .js .corrente.revelar { opacity: 1; }
+  .js .corrente.revelar[data-revelado] { animation: costurar .9s var(--ease-fio) both; }
+}
+
+/* ---------- Card de peça ----------
+   Identidade §7.1: repouso sem sombra; hover/foco sobem 2px e ganham
+   `--shadow-peca` em 180ms. A foto NÃO dá zoom — são recortes de capa de reel
+   a 640×800 e com marca-d'água; ampliar mostra o artefato e a marca, não o
+   ponto.
+
+   O `:active` não é enfeite: o card é o elemento mais repetido do site e o
+   tráfego vem do Instagram, ou seja, de um dedo. Em celular o `hover:` do
+   Tailwind v4 nem chega a valer (ele mora atrás de `@media (hover: hover)`),
+   então sem isto o card era a única coisa da página que não respondia a nada.
+   O estilo mora no `<a>`, e não no `<article>` em volta: o Safari do iPhone só
+   aplica `:active` de forma confiável em elementos clicáveis. */
+@layer components {
+  .card-peca {
+    transition:
+      transform     .18s var(--ease-fio),
+      box-shadow    .18s var(--ease-fio),
+      border-color  .18s var(--ease-fio);
+  }
+  .card-peca:hover,
+  .card-peca:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-peca);
+    border-color: color-mix(in oklab, var(--color-borda-forte) 45%, transparent);
+  }
+  /* Afundar sob o dedo. Escala mínima e por um instante: é a peça cedendo ao
+     toque, não a foto sendo ampliada. */
+  .card-peca:active {
+    transform: scale(.985);
+    box-shadow: none;
+    transition-duration: .1s;
+  }
+}
+
+/* ---------- Perguntas frequentes ----------
+   A resposta continua no HTML com o item fechado — é o que o buscador lê para
+   o FAQPage. O que muda é só como ela chega à tela. Onde `::details-content`
+   não existir, abre seco como antes: nada depende disto para funcionar. */
+@layer components {
+  .pergunta::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition:
+      block-size .3s var(--ease-fio),
+      content-visibility .3s allow-discrete;
+  }
+  .pergunta[open]::details-content { block-size: auto; }
+}
+
+/* ---------- O pedido ficou completo ----------
+   O botão de WhatsApp passava de `<button disabled>` a `<a>` sem aviso nenhum:
+   a pessoa escolhia a última opção e a única mudança era o cinza sair. Aqui o
+   botão marca o instante — uma vez, curto, e no próprio botão.
+
+   O anel é um pseudo-elemento com `pointer-events: none` justamente porque a
+   regra é que NADA atrapalhe este clique: ele não existe para o hit-testing. */
+@keyframes pedido-assenta {
+  0%   { transform: none; }
+  40%  { transform: translateY(-2px); }
+  100% { transform: none; }
+}
+@keyframes pedido-anel {
+  from { opacity: .85; transform: scale(1); }
+  to   { opacity: 0;   transform: scale(1.06); }
+}
+
+@layer components {
+  .pedido-pronto {
+    position: relative;
+    animation: pedido-assenta .5s var(--ease-fio) both;
+  }
+  .pedido-pronto::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid var(--color-destaque);
+    pointer-events: none;
+    animation: pedido-anel .5s var(--ease-fio) both;
+  }
 }
 
 /* ---------- Batida do coração do logotipo ---------- */

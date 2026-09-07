@@ -20,6 +20,12 @@ import type { GrupoDeOpcao } from "@/lib/queries/tipos";
  *
  * O botão fica desabilitado enquanto falta escolha obrigatória, e diz o que
  * falta — em vez de deixar a pessoa clicar e mandar um pedido incompleto.
+ *
+ * **E marca o instante em que o pedido fica completo.** Antes o `<button
+ * disabled>` virava `<a>` e a única diferença visível era o cinza sair: a
+ * pessoa escolhia a última opção e nada dizia "pronto, agora dá". O botão
+ * assenta uma vez e um anel se abre em volta dele — 550ms, uma vez só, no
+ * próprio botão. Nada disputa a atenção dele: o movimento é DELE.
  */
 export function Pedido({
   nomeDoProduto,
@@ -41,6 +47,17 @@ export function Pedido({
 
   const faltando = grupos.filter((g) => g.obrigatorio && !escolhas[g.slug]?.trim());
   const completo = faltando.length === 0;
+
+  // Só comemora a VIRADA, não o estado. Numa peça sem escolha obrigatória o
+  // botão já nasce liberado, e animar isso no carregamento seria celebrar algo
+  // que a pessoa não fez. Derivado durante a renderização, e não num efeito,
+  // para o botão nascer já com a classe em vez de piscar sem ela.
+  const [antes, setAntes] = useState(completo);
+  const [celebrar, setCelebrar] = useState(false);
+  if (completo !== antes) {
+    setAntes(completo);
+    setCelebrar(completo);
+  }
 
   const link = useMemo(() => {
     const mensagem = montarMensagem(template, {
@@ -125,19 +142,30 @@ export function Pedido({
       {/* No desktop o botão fica no fluxo; no mobile ele também vira barra fixa
           no rodapé, porque a página é longa e o CTA não pode ficar para trás. */}
       <div className="mt-bloco hidden sm:block">
-        <BotaoPedir link={link} completo={completo} />
-        <FaltaEscolher grupos={faltando} />
+        <BotaoPedir
+          link={link}
+          completo={completo}
+          celebrar={celebrar}
+          aoTerminar={() => setCelebrar(false)}
+        />
+        <EstadoDoPedido grupos={faltando} />
       </div>
 
       <div className="mt-bloco sm:hidden">
-        <FaltaEscolher grupos={faltando} />
+        <EstadoDoPedido grupos={faltando} />
       </div>
 
       {/* A barra fixa cobre o fim da página; quem reserva o espaço dela é o
           rodapé (`pb-zap-flutua sm:pb-0`), porque ele é o último elemento do
           documento — um espaçador aqui dentro ficaria no meio da página. */}
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-borda bg-superficie/95 p-4 backdrop-blur sm:hidden">
-        <BotaoPedir link={link} completo={completo} bloco />
+        <BotaoPedir
+          link={link}
+          completo={completo}
+          celebrar={celebrar}
+          aoTerminar={() => setCelebrar(false)}
+          bloco
+        />
       </div>
     </div>
   );
@@ -146,10 +174,14 @@ export function Pedido({
 function BotaoPedir({
   link,
   completo,
+  celebrar,
+  aoTerminar,
   bloco = false,
 }: {
   link: string;
   completo: boolean;
+  celebrar: boolean;
+  aoTerminar: () => void;
   bloco?: boolean;
 }) {
   const classes = `${classesDeBotao("primaria")} ${bloco ? "w-full" : ""}`;
@@ -164,18 +196,36 @@ function BotaoPedir({
   }
 
   return (
-    <a className={classes} href={link} target="_blank" rel="noopener noreferrer">
+    // O `href` já está aqui no primeiro quadro em que o botão existe: a
+    // animação é decoração de CSS por cima de um link pronto, e o clique não
+    // espera nada. `onAnimationEnd` só tira a classe depois — se ficasse, o
+    // anel voltaria a cada nova renderização do bloco.
+    <a
+      className={`${classes} ${celebrar ? "pedido-pronto" : ""}`}
+      onAnimationEnd={aoTerminar}
+      href={link}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       <IconeZap className="size-5" />
       Pedir pelo WhatsApp
     </a>
   );
 }
 
-function FaltaEscolher({ grupos }: { grupos: GrupoDeOpcao[] }) {
-  if (grupos.length === 0) return null;
+/**
+ * O que ainda falta — ou a confirmação de que não falta nada.
+ *
+ * O `role="status"` já existia para o "Falta escolher"; a linha de confirmação
+ * entra pelo mesmo canal, então quem usa leitor de tela ouve a virada em vez de
+ * ter que sair procurando se o botão liberou.
+ */
+function EstadoDoPedido({ grupos }: { grupos: GrupoDeOpcao[] }) {
   return (
     <p className="mt-3 text-apoio text-conteudo-suave" role="status">
-      Falta escolher: {grupos.map((g) => g.nome).join(", ")}.
+      {grupos.length > 0
+        ? `Falta escolher: ${grupos.map((g) => g.nome).join(", ")}.`
+        : "Tudo escolhido. É só mandar."}
     </p>
   );
 }

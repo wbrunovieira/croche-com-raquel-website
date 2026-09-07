@@ -694,6 +694,91 @@ menor que isso para não roubar atenção — e abaixo de 2px, num celular, não
 nada. Todo o resto tem de ser disparado por evento. Nenhuma mudança desta etapa
 acrescenta um ciclo.
 
+### ✅ Etapa 19 — A camada de encantamento *(pedido do Bruno)*
+
+A Etapa 18 fechou os **defeitos**; esta é a parte que o Bruno pediu desde o começo
+e que tinha ficado para depois: o site funcionar bem já estava feito, faltava
+impressionar. Nenhum ciclo novo entrou na tela — a batida do logotipo continua
+sendo o único movimento periódico do site, e tudo aqui é disparado por evento.
+
+**1. As seções ganharam vocabulário de entrada.** Toda seção entrava com o mesmo
+`Revelar` (fade + 24px): correto e sem caráter — o catálogo, a faixa verde e o
+texto de leitura chegavam como se fossem a mesma coisa. Agora o `Revelar` tem um
+`entrada` com cinco gestos, todos em `transform`/`opacity` e todos desenhados no
+`globals.css`:
+
+- **`ponto`** — cabeçalho de seção. Quem entra em cascata são os *filhos*
+  (etiqueta → título → apoio), curto e preciso, três a quatro itens.
+- **`grade`** — catálogo. **Só opacidade, sem deslocamento e sem cascata.** Quem
+  chega ali está comparando peças; uma grade se montando na frente da pessoa
+  atrasa a tarefa real. Mantém a recomendação da Etapa 18.
+- **`trama` / `trama-inversa`** — seções verdes. O fio atravessa na horizontal, e
+  as duas metades vêm de lados opostos: é o desenho que a `.trama` já faz no fundo
+  daquelas seções, agora em movimento. As seções ganharam `overflow-x-clip` porque
+  20px de deslocamento horizontal, sem corte, viram rolagem lateral no celular.
+- **`texto`** — blocos de leitura. Assenta devagar e quase não se desloca.
+- **`fio`** — o padrão de antes, para o resto.
+
+De carona, a corrente da página de bolsas passou a se **costurar** da esquerda
+para a direita ao entrar na tela (`clip-path` numa faixa de 12px): o ornamento da
+marca fazendo o que ele representa.
+
+**2. O card de peça responde ao toque.** Tinha só `transition-shadow`. Agora tem o
+que a identidade §7.1 pede — subir 2px e ganhar `--shadow-peca` em 180ms — e, o que
+importa mais, um `:active` que o afunda sob o dedo. **No celular o `hover:` do
+Tailwind v4 nem chega a valer**: ele mora atrás de `@media (hover: hover)`,
+confirmado no CSS gerado. Sem `:active`, o elemento mais repetido do site era o
+único que não dava retorno nenhum a quem veio do Instagram. O estilo mora no `<a>`,
+e não no `<article>`: o Safari do iPhone só aplica `:active` de forma confiável em
+elemento clicável. **A foto continua sem zoom** — as fotos têm marca-d'água.
+
+O mesmo `:active` foi para os controles que montam o pedido (seletor de opção,
+seletor de cor, quantidade, todos os CTAs de WhatsApp) — é a identidade §7.3, que
+especificava `translateY(1px)` no ativo e nunca tinha sido implementada.
+
+**3. A página de produto.** A troca de miniatura era um corte seco (lê como erro de
+carregamento) e virou crossfade de 350ms. A lupa abria e fechava sem transição
+**e sem cuidado nenhum com o foco**: quem navega por teclado abria a foto e
+continuava tabulando a página atrás dela, invisível; ao fechar, o foco voltava para
+o começo do documento. Agora o foco entra no diálogo, o Tab fica preso lá dentro e
+volta para o botão que abriu.
+
+E o botão de WhatsApp **marca o instante em que o pedido fica completo**: antes o
+`<button disabled>` virava `<a>` e a única mudança visível era o cinza sair. Agora
+o botão assenta uma vez e um anel se abre em volta — 500ms, uma vez só, no próprio
+botão. O anel é `::after` com `pointer-events: none`: nada pode atrapalhar este
+clique. A linha de status passou a dizer "Tudo escolhido. É só mandar." pelo mesmo
+`role="status"` que já anunciava o que faltava.
+
+**4. O filtro de cor não tinha estado pendente.** `router.push` sem `useTransition`:
+a pessoa tocava numa bolinha e **nada acontecia** até o servidor responder — em 4G,
+meio segundo achando que o toque não pegou, e o segundo toque cancelando o primeiro.
+A correção que importa é otimista: o anel de selecionado vai para a cor tocada na
+hora, porque é estado local; a URL confirma depois. Junto veio um "filtrando…" —
+sem laço e sem girar, que seria um ciclo. O `<details>` das perguntas passou a abrir
+em altura animada (`::details-content` + `interpolate-size: allow-keywords`); onde o
+navegador não tiver a regra, abre seco como sempre abriu, e a resposta continua no
+HTML para o FAQPage.
+
+**5. Os tokens de movimento viraram um lugar só.** `[0.22, 1, 0.36, 1]` estava
+copiado literal em oito arquivos e o `--ease-fio` do CSS — a mesma curva — não era
+usado por nenhum JS: duas fontes da verdade para uma decisão só. Agora
+`src/lib/movimento.ts` exporta `FIO`, `DURACAO` (nomes de intenção, não de número) e
+`transicao(duracao, semMovimento)`, que já embute o `prefers-reduced-motion` — que
+em JS não chega sozinho, porque o `motion` anima por `requestAnimationFrame` e passa
+por fora do bloco global do CSS.
+
+*Conferido, e não só escrito:* o HTML continua saindo pintado (`opacity:0` inline =
+**0** na home, na página de peça e na página filtrada); nada fica invisível depois
+de revelado, em celular, desktop e com `prefers-reduced-motion: reduce`; não há
+rolagem lateral a 390px; a resposta da pergunta abre passando por alturas
+intermediárias; o foco entra, fica e volta na lupa; o anel do botão de pedido
+aparece na virada e some sozinho, sem virar laço.
+
+*O que continua fora, de propósito:* zoom na foto, View Transitions entre rotas,
+cascata na grade do catálogo, qualquer laço decorativo e paralaxe além da curta que
+o hero já tem.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

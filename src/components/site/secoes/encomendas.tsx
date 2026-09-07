@@ -12,10 +12,12 @@ export function SecaoEncomendas({ whatsappNumero }: { whatsappNumero: string }) 
   return (
     <section
       id="encomendas"
-      className="trama scroll-mt-cabecalho-lg bg-inv-fundo text-inv-conteudo"
+      // `overflow-x-clip` porque a entrada aqui é horizontal: sem o corte, os
+      // 20px de deslocamento viram rolagem lateral do corpo no celular.
+      className="trama overflow-x-clip scroll-mt-cabecalho-lg bg-inv-fundo text-inv-conteudo"
     >
       <div className="container-site secao">
-        <Revelar className="max-w-texto">
+        <Revelar entrada="trama" className="max-w-texto">
           <Etiqueta tom="invertido">Sob medida</Etiqueta>
           <h2 className="mt-2 max-w-[18ch] font-display text-t2">
             A peça que você quer, do jeito que você quer
@@ -27,7 +29,8 @@ export function SecaoEncomendas({ whatsappNumero }: { whatsappNumero: string }) 
           </p>
         </Revelar>
 
-        <Revelar atraso={0.08} className="mt-respiro">
+        {/* O briefing vem do outro lado, fechando a trama com o bloco de cima. */}
+        <Revelar entrada="trama-inversa" atraso={0.08} className="mt-respiro">
           <Briefing numeroDoWhatsapp={whatsappNumero} />
         </Revelar>
       </div>

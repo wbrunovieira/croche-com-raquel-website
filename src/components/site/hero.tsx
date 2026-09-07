@@ -13,9 +13,8 @@ import {
 import { ChevronRight, Hand, Package, Sparkles } from "lucide-react";
 import { Foto } from "@/components/ui/foto";
 import { IconeZap } from "@/components/ui/icone-zap";
+import { DURACAO, transicao } from "@/lib/movimento";
 import type { ImagemDeProduto } from "@/lib/queries/tipos";
-
-const SUAVE = [0.22, 1, 0.36, 1] as const;
 
 /**
  * Hero da home.
@@ -101,7 +100,7 @@ export function Hero({
             <div className="surgir surgir-4 mt-bloco flex flex-wrap gap-4">
               <Link
                 href="/bolsas"
-                className="inline-flex items-center gap-btn-icone rounded-fio bg-cru px-btn-x py-btn-y font-medium text-verde-cristal transition-colors hover:bg-papel"
+                className="inline-flex items-center gap-btn-icone rounded-fio bg-cru px-btn-x py-btn-y font-medium text-verde-cristal transition-[background-color,transform] duration-150 ease-fio active:translate-y-px hover:bg-papel"
               >
                 Ver as bolsas
               </Link>
@@ -109,7 +108,7 @@ export function Hero({
                 href={`https://wa.me/${whatsappNumero}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-btn-icone rounded-fio border border-inv-borda px-btn-x py-btn-y font-medium transition-colors hover:bg-white/10"
+                className="inline-flex items-center gap-btn-icone rounded-fio border border-inv-borda px-btn-x py-btn-y font-medium transition-[background-color,transform] duration-150 ease-fio active:translate-y-px hover:bg-white/10"
               >
                 <IconeZap className="size-5" />
                 Falar com a Raquel
@@ -159,7 +158,7 @@ export function Hero({
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          transition={{ duration: 0.6, ease: SUAVE }}
+                          transition={transicao(DURACAO.entrada, semMovimento)}
                           className="absolute inset-0"
                         >
                           <Image

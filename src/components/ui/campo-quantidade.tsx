@@ -10,8 +10,11 @@ export function CampoQuantidade({
   maximo?: number;
 }) {
   const limitar = (n: number) => Math.min(maximo, Math.max(1, n));
+  // O − e o + são tocados em sequência: sem retorno ao toque, a pessoa não
+  // sabe se o segundo toque pegou. `disabled:active` volta a zero para o botão
+  // no limite não fingir que respondeu.
   const botao =
-    "grid size-controle-sm place-items-center text-lead leading-none transition-colors hover:bg-superficie-baixa disabled:opacity-40 disabled:hover:bg-transparent";
+    "grid size-controle-sm place-items-center text-lead leading-none transition-[background-color,transform] duration-150 ease-fio active:scale-90 disabled:active:scale-100 hover:bg-superficie-baixa disabled:opacity-40 disabled:hover:bg-transparent";
 
   return (
     <div className="inline-flex items-center rounded-fio border border-borda-forte">

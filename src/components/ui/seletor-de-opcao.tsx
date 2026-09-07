@@ -25,7 +25,10 @@ export function SeletorDeOpcao({
             role="radio"
             aria-checked={ativo}
             onClick={() => aoSelecionar(v.slug)}
-            className={`rounded-fio px-btn-sm-x py-btn-sm-y text-apoio transition-colors ${
+            // Estes são os controles mais tocados do site: é por eles que o
+            // pedido se monta. `active:translate-y-px` é o retorno do toque —
+            // no celular o `hover:` do Tailwind v4 não existe.
+            className={`rounded-fio px-btn-sm-x py-btn-sm-y text-apoio transition-[color,background-color,border-color,transform] duration-150 ease-fio active:translate-y-px ${
               ativo
                 ? "bg-primaria text-sobre-primaria"
                 : "border border-borda-forte hover:bg-superficie-baixa"

@@ -107,22 +107,27 @@ export default async function Home({ searchParams }: PageProps<"/">) {
       <section className="relative overflow-hidden">
         <Simbolo className="pointer-events-none absolute right-[4%] top-1/2 h-[62%] -translate-y-1/2 text-primaria opacity-[0.05]" />
         <div className="container-site secao relative">
-          <Revelar>
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <Etiqueta>Escolhidas por ela</Etiqueta>
-                <h2 className="mt-2 font-display text-t2">Peças em destaque</h2>
-              </div>
-              <Link
-                href="/bolsas"
-                className="inline-flex items-center gap-2 py-2 -my-2 text-apoio text-destaque-texto underline underline-offset-4 hover:no-underline"
-              >
-                Ver todas as bolsas
-                <ArrowRight className="size-4" aria-hidden="true" />
-              </Link>
+          {/* O cabeçalho entra em `ponto`: o título e o link para as bolsas
+              chegam em cascata curta, um ponto depois do outro. */}
+          <Revelar
+            entrada="ponto"
+            className="flex flex-wrap items-end justify-between gap-4"
+          >
+            <div>
+              <Etiqueta>Escolhidas por ela</Etiqueta>
+              <h2 className="mt-2 font-display text-t2">Peças em destaque</h2>
             </div>
+            <Link
+              href="/bolsas"
+              className="inline-flex items-center gap-2 py-2 -my-2 text-apoio text-destaque-texto underline underline-offset-4 hover:no-underline"
+            >
+              Ver todas as bolsas
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
           </Revelar>
-          <Revelar atraso={0.08} className="mt-bloco">
+          {/* A vitrine só aparece — nada se desloca na frente de quem compara
+              peças. Sem cascata: a grade não se monta item a item. */}
+          <Revelar entrada="grade" atraso={0.08} className="mt-bloco">
             <GradeDeProdutos produtos={destaques} />
           </Revelar>
         </div>
@@ -130,7 +135,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
       {tiposDeBolsa.length > 0 ? (
         <section className="container-site secao-densa">
-          <Revelar>
+          <Revelar entrada="ponto">
             <Etiqueta>Navegar por tipo</Etiqueta>
             <h2 className="mt-2 font-display text-t2">Que bolsa você procura?</h2>
           </Revelar>
@@ -156,7 +161,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
       {outrasCategorias.length > 0 ? (
         <section className="container-site secao-densa">
-          <Revelar>
+          <Revelar entrada="ponto">
             <Etiqueta>Para a casa</Etiqueta>
             <h2 className="mt-2 font-display text-t2">Além das bolsas</h2>
           </Revelar>
@@ -166,7 +171,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
                 {/* Categoria virou filtro do catálogo, não página. */}
                 <Link
                   href={`/?categoria=${c.slug}#catalogo`}
-                  className="group flex h-full flex-col rounded-card border border-borda bg-superficie p-painel transition-shadow hover:shadow-peca"
+                  className="card-peca group flex h-full flex-col rounded-card border border-borda bg-superficie p-painel"
                 >
                   <h3 className="font-display text-t3">{c.nome}</h3>
                   {c.descricao ? (

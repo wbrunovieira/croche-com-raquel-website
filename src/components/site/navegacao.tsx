@@ -11,6 +11,7 @@ import {
   useScroll,
 } from "motion/react";
 import { ChevronDown, Menu, X } from "lucide-react";
+import { DURACAO, transicao } from "@/lib/movimento";
 import { Logo } from "@/components/brand/logo";
 import { IconeInstagram } from "@/components/ui/icone-instagram";
 import { IconeZap } from "@/components/ui/icone-zap";
@@ -137,7 +138,7 @@ export function Navegacao({
             initial={semMovimento ? { opacity: 0 } : { height: 0, opacity: 0 }}
             animate={semMovimento ? { opacity: 1 } : { height: "auto", opacity: 1 }}
             exit={semMovimento ? { opacity: 0 } : { height: 0, opacity: 0 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            transition={transicao(0.28, semMovimento)}
             className="overflow-hidden bg-primaria text-sobre-primaria"
           >
             <div className="container-site flex items-center justify-between gap-4 py-2">
@@ -165,7 +166,7 @@ export function Navegacao({
           borderBottomColor: rolou ? "var(--color-borda)" : "rgba(227,216,196,0)",
           boxShadow: rolou ? "var(--shadow-peca)" : "0 0 0 rgba(0,0,0,0)",
         }}
-        transition={{ duration: semMovimento ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
+        transition={transicao(DURACAO.media, semMovimento)}
         // O blur só entra junto com o fundo. Antes de rolar o fundo é
         // transparente e o `backdrop-filter` não produz efeito visível nenhum —
         // ficava ligado 100% do tempo por nada, e é dos filtros mais caros no
@@ -181,7 +182,7 @@ export function Navegacao({
               animate={{
                 fontSize: rolou ? "var(--corpo-logo-rolado)" : "var(--corpo-logo)",
               }}
-              transition={{ duration: semMovimento ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
+              transition={transicao(DURACAO.media, semMovimento)}
             >
               <Logo variante="linha" batendo className="h-[1em]" />
             </motion.span>
@@ -220,7 +221,7 @@ export function Navegacao({
               href={`https://wa.me/${whatsappNumero}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden items-center gap-btn-icone rounded-fio bg-primaria px-btn-x py-btn-y text-apoio font-medium text-sobre-primaria transition-colors hover:bg-primaria-hover sm:inline-flex"
+              className="hidden items-center gap-btn-icone rounded-fio bg-primaria px-btn-x py-btn-y text-apoio font-medium text-sobre-primaria transition-[background-color,transform] duration-150 ease-fio active:translate-y-px hover:bg-primaria-hover sm:inline-flex"
             >
               <IconeZap className="size-4" />
               Falar com a Raquel
@@ -261,6 +262,10 @@ function LinkDeMenu({
   ativo: boolean;
   children: React.ReactNode;
 }) {
+  // O traço desliza entre os itens com `layoutId`; quem pediu menos movimento
+  // precisa que ele apenas apareça no item certo.
+  const semMovimento = useReducedMotion();
+
   return (
     <Link
       href={href}
@@ -275,7 +280,7 @@ function LinkDeMenu({
         <motion.span
           layoutId="indicador-do-menu"
           className="absolute inset-x-3 -bottom-0.5 block h-px bg-destaque"
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          transition={transicao(DURACAO.media, semMovimento)}
         />
       ) : null}
     </Link>
@@ -325,7 +330,7 @@ function ItemComFilhos({ item, ativo }: { item: ItemDeMenu; ativo: boolean }) {
           <motion.span
             className="block"
             animate={{ rotate: aberto ? 180 : 0 }}
-            transition={{ duration: semMovimento ? 0 : 0.2 }}
+            transition={transicao(DURACAO.curta, semMovimento)}
           >
             <ChevronDown className="size-4" aria-hidden="true" />
           </motion.span>
@@ -339,7 +344,7 @@ function ItemComFilhos({ item, ativo }: { item: ItemDeMenu; ativo: boolean }) {
             initial={semMovimento ? { opacity: 0 } : { opacity: 0, y: -8 }}
             animate={semMovimento ? { opacity: 1 } : { opacity: 1, y: 0 }}
             exit={semMovimento ? { opacity: 0 } : { opacity: 0, y: -8 }}
-            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            transition={transicao(DURACAO.curta, semMovimento)}
             className="absolute left-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-card border border-borda bg-superficie shadow-alta"
           >
             <ul className="p-2">
@@ -348,7 +353,7 @@ function ItemComFilhos({ item, ativo }: { item: ItemDeMenu; ativo: boolean }) {
                   key={filho.href}
                   initial={semMovimento ? false : { opacity: 0, x: -6 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: semMovimento ? 0 : 0.02 * i, duration: 0.2 }}
+                  transition={{ ...transicao(DURACAO.curta, semMovimento), delay: semMovimento ? 0 : 0.02 * i }}
                 >
                   <Link
                     href={filho.href}
@@ -401,7 +406,7 @@ function Gaveta({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={transicao(DURACAO.curta, semMovimento)}
             onClick={aoFechar}
             className="fixed inset-0 z-50 bg-verde-musgo/50 lg:hidden"
           />
@@ -413,7 +418,7 @@ function Gaveta({
             initial={semMovimento ? { opacity: 0 } : { x: "100%" }}
             animate={semMovimento ? { opacity: 1 } : { x: 0 }}
             exit={semMovimento ? { opacity: 0 } : { x: "100%" }}
-            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            transition={transicao(0.32, semMovimento)}
             className="trama fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col bg-inv-fundo text-inv-conteudo lg:hidden"
           >
             <div className="flex items-center justify-between p-painel">
@@ -435,7 +440,7 @@ function Gaveta({
                     key={item.href}
                     initial={semMovimento ? false : { opacity: 0, x: 16 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: semMovimento ? 0 : 0.06 + 0.04 * i, duration: 0.28 }}
+                    transition={{ ...transicao(0.28, semMovimento), delay: semMovimento ? 0 : 0.06 + 0.04 * i }}
                     className="border-b border-inv-borda"
                   >
                     <Link
@@ -470,7 +475,7 @@ function Gaveta({
                 href={`https://wa.me/${whatsappNumero}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex w-full items-center justify-center gap-btn-icone rounded-fio bg-cru px-btn-x py-btn-y font-medium text-verde-cristal"
+                className="flex w-full items-center justify-center gap-btn-icone rounded-fio bg-cru px-btn-x py-btn-y font-medium transition-transform duration-150 ease-fio active:translate-y-px text-verde-cristal"
               >
                 <IconeZap className="size-5" />
                 Falar com a Raquel

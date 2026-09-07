@@ -9,7 +9,8 @@ export function SecaoCuidados({ pagina }: { pagina: PaginaInstitucional | null }
 
   return (
     <section id="cuidados" className="container-site secao scroll-mt-cabecalho-lg">
-      <Revelar className="max-w-texto">
+      {/* Seção de texto: assenta devagar. */}
+      <Revelar entrada="texto" className="max-w-texto">
         <Etiqueta>Cuidados</Etiqueta>
         <h2 className="mt-2 font-display text-t2">{pagina.titulo}</h2>
         {pagina.chamada ? (
