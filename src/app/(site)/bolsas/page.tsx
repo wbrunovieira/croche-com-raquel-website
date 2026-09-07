@@ -89,7 +89,7 @@ export default async function PaginaDeBolsas({
         </section>
       ) : null}
 
-      <section className="container-site secao-densa">
+      <section className="container-site secao--densa">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <h2 className="font-display text-t2">Todas as bolsas</h2>
           <p className="text-apoio text-conteudo-suave">

@@ -21,7 +21,8 @@
     "check:painel": "tsx scripts/verifica-painel.ts",
     "check:telas": "tsx scripts/verifica-painel-telas.ts",
     "check:seo": "node scripts/verifica-seo.mjs",
-    "check:hospedagem": "node scripts/verifica-hospedagem.mjs"
+    "check:hospedagem": "node scripts/verifica-hospedagem.mjs",
+    "check:classes": "node scripts/verifica-classes.mjs"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.10.0",

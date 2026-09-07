@@ -134,7 +134,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
       </section>
 
       {tiposDeBolsa.length > 0 ? (
-        <section className="container-site secao-densa">
+        <section className="container-site secao--densa">
           <Revelar entrada="ponto">
             <Etiqueta>Navegar por tipo</Etiqueta>
             <h2 className="mt-2 font-display text-t2">Que bolsa você procura?</h2>
@@ -160,7 +160,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
       ) : null}
 
       {outrasCategorias.length > 0 ? (
-        <section className="container-site secao-densa">
+        <section className="container-site secao--densa">
           <Revelar entrada="ponto">
             <Etiqueta>Para a casa</Etiqueta>
             <h2 className="mt-2 font-display text-t2">Além das bolsas</h2>

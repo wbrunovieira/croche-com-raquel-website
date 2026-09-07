@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Worktrees de agente: são cópias do repositório dentro dele, com `.next`
+    // próprio. Sem isto o eslint varre o build delas e reporta o código do
+    // projeto duas vezes, mais o bundle gerado — ruído que já mascarou erro de
+    // verdade numa revisão.
+    ".claude/worktrees/**",
   ]),
 ]);
 

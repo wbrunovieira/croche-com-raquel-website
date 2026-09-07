@@ -53,7 +53,9 @@ Antes de fechar uma etapa: `pnpm build`, `pnpm lint`, `pnpm check:espaco`,
 `pnpm check:produto` (caminho de conversão), `pnpm check:login` (acesso ao painel),
 `pnpm check:painel` (cadastro de peça de ponta a ponta; aceita `FOTO_DE_TESTE=<caminho>`
 para exercitar também o envio ao Blob), `pnpm check:telas` (abre todas as telas do
-painel — duas ficaram quebradas em silêncio antes dele existir), `pnpm check:seo`
+painel — duas ficaram quebradas em silêncio antes dele existir), `pnpm check:classes`
+(classe de projeto que não existe — `.secao--ampla` tem dois traços, e escrevê-la
+com um faz o padding sumir em silêncio: já aconteceu três vezes), `pnpm check:seo`
 (o que o buscador encontra em cada página) e `pnpm check:hospedagem` (quem vê a
 obra e quem vê o site). Os dois últimos aceitam `URL_BASE=https://…` e valem
 mais rodados **contra o que está no ar** — é lá que o roteamento por host pode
