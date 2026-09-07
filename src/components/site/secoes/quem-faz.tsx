@@ -63,11 +63,19 @@ export function SecaoQuemFaz({
         </div>
       </div>
 
+      {/* A história continua na MESMA coluna em que a fala dela parou dentro da
+          faixa verde. Solta na largura do container, ela começava 400px à
+          esquerda do texto de cima: a leitura saltava de lugar no meio da voz da
+          Raquel e o bloco lia como conteúdo que tinha vazado da seção. Por isso
+          a grade se repete aqui, com a mesma primeira coluna de 22rem — se ela
+          mudar, os dois blocos andam juntos. */}
       {historia ? (
         <div className="container-site secao">
-          <Revelar className="max-w-texto">
-            <TextoLongo texto={historia.corpo} />
-          </Revelar>
+          <div className="grid gap-x-coluna lg:grid-cols-[minmax(0,22rem)_1fr]">
+            <Revelar className="max-w-texto lg:col-start-2">
+              <TextoLongo texto={historia.corpo} />
+            </Revelar>
+          </div>
         </div>
       ) : null}
     </section>
