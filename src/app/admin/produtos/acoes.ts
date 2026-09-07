@@ -9,13 +9,6 @@ import { slugUnico } from "@/lib/admin/slug";
 import { revalidarCatalogo, revalidarProduto } from "@/lib/revalidar";
 
 /** Campo de número que aceita vazio — "" vira null, não 0. */
-const numeroOpcional = z
-  .string()
-  .trim()
-  .transform((v) => (v === "" ? null : Number(v)))
-  .refine((n) => n === null || (Number.isInteger(n) && n > 0), {
-    message: "Use um número inteiro maior que zero, ou deixe em branco.",
-  });
 
 const textoOpcional = z
   .string()
@@ -33,19 +26,28 @@ const esquemaDeProduto = z.object({
     .refine((n) => n === null || (Number.isFinite(n) && n >= 0), {
       message: "Preço inválido. Deixe em branco para “sob consulta”.",
     }),
-  dimensions: textoOpcional,
-  material: textoOpcional,
-  capacity: textoOpcional,
-  careText: textoOpcional,
-  productionDaysMin: numeroOpcional,
-  productionDaysMax: numeroOpcional,
   categoryId: z.string().min(1, "Escolha a categoria."),
   subcategoryId: textoOpcional,
   status: z.enum(["DRAFT", "PUBLISHED"]),
   featured: z.coerce.boolean(),
-  featuredPosition: numeroOpcional,
-  position: z.coerce.number().int().min(0).catch(0),
 });
+
+/**
+ * O cadastro guarda o essencial de uma VITRINE, e só.
+ *
+ * Medidas, material, o que cabe dentro, cuidados, prazo e as ordens saíram do
+ * formulário: este é o primeiro site dela, ninguém compra por aqui, e cada
+ * detalhe desses ela esclarece na conversa do WhatsApp. Um formulário com
+ * dezoito campos para preencher é um formulário que ela não usa.
+ *
+ * **As colunas continuam no banco de propósito.** As peças já cadastradas
+ * guardam o que têm, a página da peça mostra cada bloco só quando ele existe, e
+ * o dia que fizer sentido pedir isso de volta o dado não precisa ser
+ * reconstruído. O que não pode acontecer é o schema listar campo que o
+ * formulário não manda mais: `position` tinha `.catch(0)`, e salvar uma peça
+ * mandaria a ordem dela para zero em silêncio — foi exatamente esse defeito que
+ * apareceu nas categorias.
+ */
 
 export type ResultadoDaAcao = { erro?: string; ok?: string };
 
@@ -113,32 +115,16 @@ export async function salvarProduto(
     name: texto("name"),
     description: texto("description"),
     price: texto("price"),
-    dimensions: texto("dimensions"),
-    material: texto("material"),
-    capacity: texto("capacity"),
-    careText: texto("careText"),
-    productionDaysMin: texto("productionDaysMin"),
-    productionDaysMax: texto("productionDaysMax"),
     categoryId: texto("categoryId"),
     subcategoryId: texto("subcategoryId"),
     status: texto("status"),
     featured: dados.get("featured") === "on",
-    featuredPosition: texto("featuredPosition"),
-    position: texto("position"),
   });
 
   if (!analise.success) {
     return { erro: analise.error.issues[0]?.message ?? "Confira os campos." };
   }
   const v = analise.data;
-
-  if (
-    v.productionDaysMin !== null &&
-    v.productionDaysMax !== null &&
-    v.productionDaysMin > v.productionDaysMax
-  ) {
-    return { erro: "O prazo mínimo não pode ser maior que o máximo." };
-  }
 
   if (v.status === "PUBLISHED") {
     const fotos = await db.productImage.count({ where: { productId: id } });
@@ -149,49 +135,39 @@ export async function salvarProduto(
     }
   }
 
+  // Quantos destaques já existem, para a peça nova entrar no fim da fila.
+  let posicaoDeDestaque: number | null = null;
+  if (v.featured) {
+    const atual = await db.product.findUnique({
+      where: { id },
+      select: { featuredPosition: true },
+    });
+    if (atual?.featuredPosition === null) {
+      const agregado = await db.product.aggregate({
+        where: { featured: true },
+        _max: { featuredPosition: true },
+      });
+      posicaoDeDestaque = (agregado._max.featuredPosition ?? -1) + 1;
+    }
+  }
+
   const produto = await db.product.update({
     where: { id },
     data: {
       ...v,
       subcategoryId: v.subcategoryId || null,
-      featuredPosition: v.featured ? (v.featuredPosition ?? 0) : null,
+      // Sem campo de ordem no formulário, quem decide a posição é o código:
+      // peça marcada que ainda não tinha lugar entra no fim da fila da home;
+      // desmarcada, sai. Ela nunca precisa pensar em número.
+      //
+      // Não dá para deixar `undefined` e esperar o melhor: a home ordena por
+      // `featuredPosition asc`, e no Postgres nulo vem por ÚLTIMO nessa
+      // ordenação — a peça recém-marcada iria para o fim e ficaria fora das
+      // oito que a home mostra.
+      featuredPosition: v.featured ? (posicaoDeDestaque ?? undefined) : null,
     },
     select: { slug: true },
   });
-
-  // Grupos de opção: a lista chega como "grupoId:obrigatorio" e os valores
-  // como "valorId" marcados. Regravar tudo é mais simples e mais seguro que
-  // tentar casar o que mudou.
-  const gruposEscolhidos = dados.getAll("grupo").map(String);
-  await db.productOptionGroup.deleteMany({
-    where: { productId: id, groupId: { notIn: gruposEscolhidos } },
-  });
-
-  for (const [i, groupId] of gruposEscolhidos.entries()) {
-    const obrigatorio = dados.get(`obrigatorio-${groupId}`) === "on";
-    const pog = await db.productOptionGroup.upsert({
-      where: { productId_groupId: { productId: id, groupId } },
-      update: { required: obrigatorio, position: i },
-      create: { productId: id, groupId, required: obrigatorio, position: i },
-    });
-
-    const valores = dados.getAll(`valor-${groupId}`).map(String);
-    await db.productOptionValue.deleteMany({
-      where: { productOptionGroupId: pog.id, optionValueId: { notIn: valores } },
-    });
-    for (const [j, optionValueId] of valores.entries()) {
-      await db.productOptionValue.upsert({
-        where: {
-          productOptionGroupId_optionValueId: {
-            productOptionGroupId: pog.id,
-            optionValueId,
-          },
-        },
-        update: { position: j },
-        create: { productOptionGroupId: pog.id, optionValueId, position: j },
-      });
-    }
-  }
 
   revalidarProduto(produto.slug);
   return { ok: "Peça salva." };
