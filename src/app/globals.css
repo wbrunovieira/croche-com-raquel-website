@@ -242,6 +242,28 @@
       repeating-linear-gradient( 45deg, rgba(244,238,226,.05) 0 1px, transparent 1px 6px),
       repeating-linear-gradient(-45deg, rgba(244,238,226,.05) 0 1px, transparent 1px 6px);
   }
+
+  /* Luz de janela — acompanha a `.trama`, e só na faixa verde MAIS LONGA.
+     A trama é a textura da superfície e é igual em toda seção verde; é
+     justamente isso que faz ela desaparecer quando o site tem quatro faixas
+     verdes. O que diferencia uma faixa da outra não pode ser mais textura (duas
+     texturas somadas viram ruído) — é a LUZ.
+
+     A direção de fotografia da marca (§5.2 da identidade) manda a luz entrar
+     lateral, a ~45°, porque é a sombra do outro lado que revela o relevo do
+     ponto. Aqui vale o mesmo: uma única mancha clara no alto à esquerda, que
+     morre antes da metade da faixa, e a superfície deixa de ser chapada.
+
+     O pico é ~8,5% de Fio Cru sobre Verde Fundo, que dá aproximadamente o
+     mesmo salto que existe entre Verde Fundo e Verde Cristal — ou seja, a
+     faixa continua dentro da paleta, não ganha uma cor nova. Uma pintura só,
+     sem repetição, sem animação: custo zero durante a rolagem. */
+  .luz-de-janela { position: relative; isolation: isolate; }
+  .luz-de-janela::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: -1;
+    background-image: radial-gradient(90% 55% at 8% 0%,
+      rgba(244,238,226,.085) 0%, rgba(244,238,226,.03) 45%, transparent 72%);
+  }
 }
 
 @layer components {
@@ -405,6 +427,58 @@ body::after {
     /* A corrente que se costura quando a seção entra. */
     .corrente.revelar { opacity: 1; }
     .corrente.revelar[data-revelado] { animation: costurar .9s var(--ease-fio) both; }
+  }
+}
+
+/* ---------- A régua do fio ----------
+   O único movimento do site preso à rolagem, e ele existe numa seção só: a
+   história, que é o bloco de leitura mais longo da home. Uma linha vertical de
+   1px na calha entre o título pendurado e o texto, que se preenche conforme a
+   pessoa desce — o fio sendo puxado do novelo enquanto ela lê.
+
+   Três decisões que o mantêm barato e seguro:
+
+   1. É CSS puro, com `animation-timeline: view()`. Sem `scroll` listener, sem
+      `IntersectionObserver`, sem JavaScript nenhum: a animação roda no
+      compositor e o único bem animado é `transform: scaleY` de uma faixa de
+      1px de largura. Não há paralaxe, não há reflow, não há repintura de área.
+   2. A faixa é `cover 15% → 85%`, e não `contain`. `contain` é o trecho em que
+      o bloco cobre a tela inteira — elegante no papel e inútil aqui: o texto da
+      história mede 944px numa tela de 900px, então `contain` dura 44px de
+      rolagem e o fio salta de vazio a cheio num quadro (medido). `cover`
+      percorre a travessia inteira do bloco pela tela, e cortar 15% de cada
+      ponta tira o trecho em que a seção mal apareceu e o trecho em que ela já
+      está saindo — sobra o meio, que é onde se lê.
+   3. O estado sem animação é o estado CHEIO. Fora do `@supports`, o navegador
+      que não conhece linha do tempo de rolagem (e quem pediu menos movimento)
+      vê uma régua inteira, que é um ornamento legítimo — nunca uma linha pela
+      metade nem uma linha invisível. */
+@keyframes puxar-o-fio {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+@layer components {
+  .regua { position: relative; background-color: var(--color-borda); }
+  .regua::after {
+    content: ""; position: absolute; inset: 0;
+    background-color: var(--color-borda-forte);
+    transform-origin: top;
+  }
+
+  @supports (animation-timeline: view()) {
+    .regua::after {
+      animation: puxar-o-fio linear both;
+      animation-timeline: view();
+      animation-range: cover 15% cover 85%;
+    }
+  }
+
+  /* O bloco global de `prefers-reduced-motion` zera duração e atraso, mas isso
+     não desliga uma animação de linha do tempo de rolagem — ela não é medida em
+     tempo. Aqui o nome sai, e sem nome não há animação: sobra a régua cheia. */
+  @media (prefers-reduced-motion: reduce) {
+    .regua::after { animation: none; }
   }
 }
 

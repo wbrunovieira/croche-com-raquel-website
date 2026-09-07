@@ -790,6 +790,96 @@ aparece na virada e some sozinho, sem virar laço.
 cascata na grade do catálogo, qualquer laço decorativo e paralaxe além da curta que
 o hero já tem.
 
+### ✅ Etapa 20 — O ritmo da página *(pedido do Bruno)*
+
+O diagnóstico dele, na íntegra: *"seção história e cuidados não têm separação"*.
+Estava certo, e o problema era maior do que duas seções — **da história até as
+perguntas a home era uma parede de creme**: mesmo fundo, mesma largura de texto,
+mesmo cabeçalho, três assuntos diferentes lidos como um só. O sistema de
+espaçamento já previa isso na §5.2 ("duas seções adjacentes com o mesmo fundo
+somam padding e o olho lê uma seção só"); ninguém tinha aplicado.
+
+**1. A sequência ganhou pulso, e não listras.** Da faixa verde de "quem faz" em
+diante o fundo alterna, mas com **três superfícies**, não duas:
+
+| Seção | Superfície | Por quê |
+|---|---|---|
+| Quem faz (faixa) | Verde Fundo + `trama` | como já era |
+| A história | **Cru Fundo**, sangrando | terceira cor de papel da paleta — separa das duas faixas verdes que a cercam sem acrescentar uma quarta faixa verde |
+| Cuidados | **Verde Fundo** + `trama` + `luz-de-janela` | o pedido do Bruno |
+| Perguntas | Fio Cru | volta ao papel padrão |
+| Encomendas | Verde Fundo + `trama` | como já era |
+| Contato | Fio Cru | fecho |
+
+A escolha de não deixar a história verde é deliberada: com quatro faixas verdes
+seguidas a `.trama` deixa de significar "seção verde" e vira papel de parede.
+Cru Fundo é o mesmo recurso que a hub `/bolsas` já usava no texto longo dela.
+
+Junto, o padding das faixas invertidas subiu para `secao--ampla`, que é o que a
+§3.3 manda desde sempre ("superfície escura comprime opticamente") e que nunca
+tinha sido aplicado em "quem faz" nem em "encomendas".
+
+**2. Cuidados: verde com luz, e o texto virou grade.** A classe `.luz-de-janela`
+(nova, exclusiva desta faixa) é uma única mancha clara no alto à esquerda,
+resolvida em um `radial-gradient` sem repetição. Não é uma segunda textura —
+duas texturas somadas viram ruído; é a **luz** que a direção de fotografia da
+marca (§5.2 da identidade) já manda entrar lateral, a 45°. O pico é ~8,5% de Fio
+Cru, o mesmo salto que existe entre Verde Fundo e Verde Cristal: a faixa não
+ganha cor nova. E a emenda entre o claro e o escuro é uma `corrente`, que se
+costura da esquerda para a direita quando a seção entra.
+
+O corpo deixou de ser coluna corrida: cada `## ` do texto do painel virou uma
+**ficha** de uma grade de duas colunas, com fio no alto. Instrução de cuidado é
+consultada, não lida de cabo a rabo — a cliente quer achar "secagem" de relance,
+com a peça molhada na mão. A faixa escura encolheu ~40% de altura de quebra.
+`agruparPorSubtitulo` mora no `texto-longo.tsx`, ao lado do resto do markdown
+mínimo, e se a Raquel apagar os subtítulos a seção volta a ser a coluna de
+sempre.
+
+**3. Quatro geometrias seguidas, nenhuma repetida.** História: título pendurado
+na margem esquerda, preso pelo `sticky` enquanto o texto corre. Cuidados:
+cabeçalho **centrado** — o único centrado do site — e grade embaixo. Perguntas:
+duas colunas assimétricas, com o cartão "ficou com outra dúvida?" subindo para a
+calha da esquerda (a ordem no DOM continua cabeçalho → perguntas → cartão, que é
+a ordem certa de leitura; só o posicionamento muda a partir de `lg`). Contato:
+convite em linha cheia com o botão na ponta direita, e os três fatos viraram uma
+**fita de três colunas** com fio no alto.
+
+**4. A régua do fio — o único movimento preso à rolagem.** Uma linha de 1px na
+calha da história que se preenche conforme a pessoa desce: o fio sendo puxado
+enquanto ela lê. É CSS puro (`animation-timeline: view()`), sem listener e sem
+observador, animando só `transform: scaleY` de uma faixa de 1px. A faixa é
+`cover 15% → 85%`: `contain` seria mais elegante e é inútil aqui, porque o texto
+mede 944px numa tela de 900px e o fio saltaria de vazio a cheio num quadro
+(medido). **O estado sem animação é o estado cheio** — fora do `@supports`, e
+para quem pediu menos movimento, sobra uma régua inteira, que é um ornamento
+legítimo. Nenhum gesto de entrada novo entrou: o vocabulário da Etapa 19 deu
+conta.
+
+**5. `pnpm check:classes` (novo), e o bug que ele achou no primeiro minuto.**
+`.secao--ampla` e `.secao--densa` têm **dois** traços; escritas com um só, não
+são classe nenhuma e a seção roda sem padding vertical, em silêncio. Estava
+acontecendo: `secao-densa` em `(site)/page.tsx` (duas vezes) e em
+`(site)/bolsas/page.tsx` — as faixas "Que bolsa você procura?", "Além das
+bolsas" e "Todas as bolsas" estavam com padding zero desde que foram escritas.
+O check tem duas passagens: a primeira reprova todo token que começa com uma
+classe do `globals.css` sem ser ela; a segunda, depois de `pnpm build`, compara
+cada classe com os seletores realmente presentes no CSS de produção — é o que
+pega `bg-inv-fundoo` e companhia. Sem build, ela avisa e se cala.
+
+*Conferido, e não só escrito:* `opacity:0` inline = **0** na home, na hub e na
+página de peça; rolagem lateral = **0** a 320px, 390px, 820px e 1280px; a régua
+mede scaleY 0 → 0,16 → 0,52 → 0,88 → 1 ao longo da rolagem e `none` com
+`prefers-reduced-motion: reduce`; `pnpm lint`, `build`, `check:espaco`,
+`check:classes`, `check:whatsapp`, `check:produto`, `check:telas` e `check:seo`
+passando.
+
+*O que ficou de fora, de propósito:* numeração de seção (a identidade §7.4
+reserva o marcador numerado ao "como encomendar" da página de produto, e só a
+ele); uma quarta faixa verde; segunda textura de fundo; e divisória entre as
+seções creme do topo (destaques → tipos → catálogo), que continuam sem fio entre
+elas — vale uma `corrente` acima do "Catálogo" numa próxima passada.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

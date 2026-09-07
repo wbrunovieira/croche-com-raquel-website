@@ -16,7 +16,9 @@ export function SecaoEncomendas({ whatsappNumero }: { whatsappNumero: string }) 
       // 20px de deslocamento viram rolagem lateral do corpo no celular.
       className="trama overflow-x-clip scroll-mt-cabecalho-lg bg-inv-fundo text-inv-conteudo"
     >
-      <div className="container-site secao">
+      {/* `secao--ampla`, com DOIS traços: padding de faixa invertida sobe um
+          degrau (§3.3 do sistema de espaçamento). */}
+      <div className="container-site secao--ampla">
         <Revelar entrada="trama" className="max-w-texto">
           <Etiqueta tom="invertido">Sob medida</Etiqueta>
           <h2 className="mt-2 max-w-[18ch] font-display text-t2">

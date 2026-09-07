@@ -58,7 +58,7 @@ export function Revelar({
   /** Ornamento sem conteúdo: sai do alcance dos leitores de tela. */
   decorativo?: boolean;
   className?: string;
-  as?: "div" | "section" | "li" | "span";
+  as?: "div" | "section" | "ul" | "li" | "span";
 }) {
   const alvo = useRef<HTMLElement | null>(null);
 
