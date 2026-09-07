@@ -10,6 +10,7 @@ import {
   moverImagem,
 } from "@/app/admin/produtos/acoes";
 import { classesDeBotao } from "@/components/ui/botao";
+import { prepararFoto } from "@/lib/imagem";
 
 export type ImagemDoAdmin = {
   id: string;
@@ -38,6 +39,7 @@ export function ImagensDoProduto({
   ehBolsa: boolean;
 }) {
   const [estado, acaoDeEnvio, enviando] = useActionState(enviarImagem, null);
+  const [preparando, setPreparando] = useState(false);
   const [pendente, iniciar] = useTransition();
   const formulario = useRef<HTMLFormElement>(null);
   const [nomeDoArquivo, setNomeDoArquivo] = useState<string | null>(null);
@@ -139,16 +141,37 @@ export function ImagensDoProduto({
               type="file"
               accept="image/jpeg,image/png,image/webp,image/avif"
               className="sr-only"
-              onChange={(e) => {
-                setNomeDoArquivo(e.target.files?.[0]?.name ?? null);
-                // Envia assim que a foto é escolhida: um segundo clique em
+              onChange={async (e) => {
+                const original = e.target.files?.[0];
+                if (!original) return;
+                setNomeDoArquivo(original.name);
+                setPreparando(true);
+                try {
+                  // Reduz no navegador ANTES de enviar. Foto de celular tem 2 a
+                  // 6 MB e o Server Action aceita 1 MB de corpo: sem isto, a
+                  // escolha estourava um 500 antes de a validação rodar. A
+                  // troca via `DataTransfer` mantém o envio pelo `action`
+                  // normal do formulário.
+                  const { arquivo } = await prepararFoto(original);
+                  const balde = new DataTransfer();
+                  balde.items.add(arquivo);
+                  e.target.files = balde.files;
+                } catch {
+                  setNomeDoArquivo(null);
+                  e.target.value = "";
+                  setPreparando(false);
+                  return;
+                }
+                setPreparando(false);
+                // Envia assim que a foto está pronta: um segundo clique em
                 // "enviar" só criaria um passo a mais para errar.
-                if (e.target.files?.length) formulario.current?.requestSubmit();
+                formulario.current?.requestSubmit();
               }}
             />
           </div>
           <p className="text-legenda text-conteudo-suave">
-            JPG, PNG, WebP ou AVIF, até 15 MB. {enviando ? "Enviando…" : ""}
+            JPG, PNG, WebP ou AVIF. A foto é reduzida aqui antes de subir.{" "}
+            {preparando ? "Preparando…" : enviando ? "Enviando…" : ""}
           </p>
         </div>
       </form>

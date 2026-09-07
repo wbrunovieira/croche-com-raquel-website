@@ -13,11 +13,21 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { urlComSslVerificado } from "../src/lib/db-url";
 import { gerarHashDeSenha } from "../src/lib/senha";
+import { fotoDeCelularFalsa } from "./lib/foto-de-teste";
 
 config({ path: ".env.local", quiet: true });
 
 const BASE = process.env.URL_BASE ?? "http://localhost:3000";
-const FOTO = process.env.FOTO_DE_TESTE;
+/**
+ * A foto do teste é GERADA, e com o peso de uma de celular (~3,2 MB).
+ *
+ * Antes isto dependia de `FOTO_DE_TESTE=` na linha de comando, e sem a variável
+ * o check não enviava foto nenhuma — foi por isso que ele passou verde enquanto
+ * o painel recusava qualquer foto real: Server Action aceita 1 MB de corpo, e o
+ * envio quebrava com 500 antes de a validação rodar. Agora o caminho da foto é
+ * obrigatório e o tamanho é o do mundo real.
+ */
+const FOTO = { name: "IMG_9001.PNG", mimeType: "image/png", buffer: fotoDeCelularFalsa() };
 const USUARIO = "verificacao-painel";
 // Cumpre a política do painel de propósito: senha de teste fora da regra
 // faria o check passar por um caminho que a Raquel nunca percorre.
@@ -91,11 +101,38 @@ async function main() {
     );
 
     // envia a foto
-    if (FOTO) {
+    {
       await p.setInputFiles("#arquivo", FOTO);
-      await p.waitForTimeout(6000);
-      const comFoto = await db.productImage.count({ where: { productId: criada!.id } });
-      conferir("envia a foto para o Blob", comFoto === 1, `${comFoto} foto(s)`);
+      // Espera mais que o normal: o navegador ainda reduz a foto antes de subir.
+      await p.waitForTimeout(9000);
+      const guardadas = await db.productImage.findMany({
+        where: { productId: criada!.id },
+        select: { url: true },
+      });
+      conferir("envia a foto para o Blob", guardadas.length === 1, `${guardadas.length} foto(s)`);
+
+      /**
+       * E a foto guardada é PEQUENA.
+       *
+       * Esta é a asserção com dentes. Só conferir que o envio funcionou não
+       * pega a regressão que interessa: se alguém tirar a redução do navegador
+       * (`src/lib/imagem.ts`), o envio continua passando enquanto o
+       * `bodySizeLimit` do `next.config.ts` for generoso — e volta a quebrar
+       * no dia em que ela escolher várias fotos, ou em produção. Aqui a
+       * pergunta é direta: a foto que subiu tem tamanho de web?
+       *
+       * Entra uma de 3,2 MB. Reduzida, sai em algumas centenas de kB; sem
+       * redução, chega inteira e este número entrega.
+       */
+      if (guardadas[0]) {
+        const cabecalho = await fetch(guardadas[0].url, { method: "HEAD" });
+        const bytes = Number(cabecalho.headers.get("content-length") ?? 0);
+        conferir(
+          "e a foto foi reduzida antes de subir",
+          bytes > 0 && bytes < 900 * 1024,
+          `${(bytes / 1024).toFixed(0)} kB (entrou com ${(FOTO.buffer.length / 1024).toFixed(0)} kB)`
+        );
+      }
 
       // Agora publica. A descrição precisa ser digitada de novo: a tentativa
       // anterior foi recusada por falta de foto, então nada foi salvo, e o

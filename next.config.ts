@@ -34,6 +34,21 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  /**
+   * Folga para o envio de fotos — não é aqui que o tamanho se resolve.
+   *
+   * Quem reduz a foto é o navegador, antes de ela sair do celular (ver
+   * `src/lib/imagem.ts`): cada uma chega ao servidor com 200 a 400 kB. Este
+   * teto existe só porque a tela de criação aceita VÁRIAS fotos num envio só,
+   * e dez delas passam do 1 MB que o Next aceita de fábrica.
+   *
+   * Subir só este número teria sido a correção preguiçosa: resolveria o 500 e
+   * deixaria a Raquel esperando 6 MB subirem pelo 4G da serra, pagando Blob
+   * caro e servindo um PNG gigante para quem só quer ver uma bolsa.
+   */
+  experimental: {
+    serverActions: { bodySizeLimit: "8mb" },
+  },
   images: {
     remotePatterns: [
       {
