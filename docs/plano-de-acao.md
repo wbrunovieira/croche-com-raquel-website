@@ -991,6 +991,34 @@ um preço, esbarrar num aviso e ver os campos voltarem ao que estava salvo.
 A verificação do painel foi reescrita para o fluxo novo e ganhou asserções: que a
 recusa acontece **sem criar nada pela metade**, que a prévia aparece antes de salvar,
 e que a peça nasce no ar numa submissão só.
+### ✅ Etapa 25 — Sob medida em um campo *(pedido do Bruno)*
+
+*"Se o cliente tiver muitos campos para preencher, ele posterga. Então simplifique,
+que na conversa a Raquel esclarece todas as dúvidas."*
+
+O briefing tinha cinco campos — peça, cores, medidas, prazo, detalhes. Cada um era
+uma pergunta razoável; juntos viravam um formulário. Quem chega com vontade de
+encomendar bate numa lista de perguntas e adia, e do outro lado a conversa ia
+acontecer de qualquer jeito.
+
+**Ficou um campo:** *"O que você tem em mente?"*, com um `placeholder` de exemplo.
+
+A orientação não sumiu, mudou de lugar: o que era rótulo de campo virou exemplo no
+texto de apoio e no `placeholder`. Cinco caixas vazias cobram; uma frase de exemplo
+convida. Quem quiser detalhar tem por onde começar, quem só quer perguntar escreve
+uma linha e manda.
+
+`montarMensagemDeEncomenda` deixou de montar ficha ("Peça: … / Cores: …") e passou a
+concatenar a saudação com o texto livre. **A mensagem nunca sai vazia** — sem uma
+palavra digitada, a Raquel ainda recebe uma saudação que diz do que se trata, e isso
+virou asserção no `check:whatsapp`.
+
+*De carona, um defeito de acessibilidade que a captura revelou:* o rótulo e os dois
+parágrafos de apoio usavam as cores do tema **claro** dentro da faixa verde —
+**2,15:1** de contraste, abaixo do mínimo de 4,5:1 e na prática ilegíveis. O rótulo
+passava batido porque herda a cor invertida da seção; os parágrafos não herdavam
+nada. Com `text-inv-suave` foram para **9,01:1**. Valia desde que a seção virou
+verde, e só apareceu porque desta vez eu medi em vez de olhar.
 
 ## Decisões em aberto
 

@@ -76,15 +76,25 @@ conferir(
 );
 
 conferir(
-  "encomenda: só entra o que foi preenchido",
-  montarMensagemDeEncomenda({
-    tipoDePeca: "Bolsa transversal",
-    cores: "Terracota",
-    medidas: "",
-    prazo: "Até o Natal",
-    detalhes: "   ",
-  }),
-  "Oi Raquel! Queria encomendar uma peça sob medida 💛\n\nPeça: Bolsa transversal\nCores: Terracota\nPara quando: Até o Natal"
+  "encomenda: o que ela escreveu vai junto",
+  montarMensagemDeEncomenda(
+    "  Uma bolsa transversal em terracota, para o Natal.  "
+  ),
+  "Oi Raquel! Queria encomendar uma peça sob medida 💛\n\nUma bolsa transversal em terracota, para o Natal."
+);
+
+/**
+ * A mensagem NUNCA sai vazia.
+ *
+ * O briefing virou um campo só e nada é obrigatório: quem só quer perguntar
+ * clica direto. Se a saudação sumisse com o campo em branco, a Raquel receberia
+ * um WhatsApp mudo e não saberia do que se trata — que é justamente o oposto do
+ * que este bloco existe para fazer.
+ */
+conferir(
+  "encomenda: sem escrever nada, a saudação ainda vai",
+  montarMensagemDeEncomenda("   "),
+  "Oi Raquel! Queria encomendar uma peça sob medida 💛"
 );
 
 console.log(falhas === 0 ? "\n✓ mensagem de WhatsApp ok" : `\n✗ ${falhas} falha(s)`);

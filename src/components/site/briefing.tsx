@@ -4,84 +4,55 @@ import { useState } from "react";
 import { classesDeBotao } from "@/components/ui/botao";
 import { Etiqueta } from "@/components/ui/etiqueta";
 import { IconeZap } from "@/components/ui/icone-zap";
-import {
-  montarLinkWhatsApp,
-  montarMensagemDeEncomenda,
-  type BriefingDeEncomenda,
-} from "@/lib/whatsapp";
-
-const VAZIO: BriefingDeEncomenda = {
-  tipoDePeca: "",
-  cores: "",
-  medidas: "",
-  prazo: "",
-  detalhes: "",
-};
-
-const CAMPOS: {
-  chave: keyof BriefingDeEncomenda;
-  rotulo: string;
-  dica: string;
-  linhas?: number;
-}[] = [
-  { chave: "tipoDePeca", rotulo: "Que peça você quer?", dica: "Bolsa transversal, manta de sofá, jogo americano…" },
-  { chave: "cores", rotulo: "Que cores?", dica: "Pode dizer o tom, ou o ambiente onde a peça vai ficar." },
-  { chave: "medidas", rotulo: "Alguma medida?", dica: "Se souber. Se não souber, deixe em branco que eu ajudo." },
-  { chave: "prazo", rotulo: "Para quando?", dica: "Se é presente e tem data, me conte." },
-  { chave: "detalhes", rotulo: "Mais alguma coisa?", dica: "Referência, foto que você viu, um detalhe que importa.", linhas: 4 },
-];
+import { montarLinkWhatsApp, montarMensagemDeEncomenda } from "@/lib/whatsapp";
 
 /**
- * Briefing da encomenda sob medida.
+ * Briefing da encomenda sob medida — **um campo só**.
  *
- * Não grava nada: os campos existem só para organizar o que a pessoa já ia
- * escrever no WhatsApp. Um formulário que precisasse de servidor, e-mail e
- * banco entregaria menos e daria à Raquel outra caixa de entrada para
- * acompanhar — ela já vive no WhatsApp.
+ * Eram cinco (peça, cores, medidas, prazo, detalhes). Cada um era uma pergunta
+ * razoável, e juntos viravam um formulário: quem chega com vontade de encomendar
+ * bate numa lista de perguntas e adia. O Bruno cortou com a razão certa — *"se o
+ * cliente tiver muitos campos para preencher, ele posterga; na conversa a Raquel
+ * esclarece todas as dúvidas"*.
  *
- * Nenhum campo é obrigatório, de propósito: exigir preenchimento aqui só
- * afastaria quem só quer perguntar.
+ * **A orientação não sumiu, mudou de lugar.** O que era rótulo de campo virou
+ * exemplo no texto de apoio e no `placeholder`: quem quiser detalhar tem por onde
+ * começar, e quem só quer perguntar escreve uma linha e manda. Cinco caixas
+ * vazias cobram; uma frase de exemplo convida.
+ *
+ * Continua sem gravar nada: os campos existem para organizar o que a pessoa já ia
+ * escrever no WhatsApp. Um formulário com servidor, e-mail e banco entregaria
+ * menos e daria à Raquel outra caixa de entrada para acompanhar — ela já vive no
+ * WhatsApp.
  */
 export function Briefing({ numeroDoWhatsapp }: { numeroDoWhatsapp: string }) {
-  const [dados, setDados] = useState<BriefingDeEncomenda>(VAZIO);
+  const [pedido, setPedido] = useState("");
 
-  const mensagem = montarMensagemDeEncomenda(dados);
+  const mensagem = montarMensagemDeEncomenda(pedido);
   const link = montarLinkWhatsApp(numeroDoWhatsapp, mensagem);
-  const algoPreenchido = Object.values(dados).some((v) => v.trim() !== "");
-
-  const campo =
-    "w-full rounded-fio border border-borda-forte bg-superficie px-campo-x py-campo-y text-base placeholder:text-conteudo-suave/60";
 
   return (
     <div className="grid gap-x-coluna gap-y-grade-linha lg:grid-cols-2">
       <div>
-        {CAMPOS.map(({ chave, rotulo, dica, linhas }) => (
-          <div key={chave} className="mt-bloco first:mt-0">
-            <label htmlFor={chave} className="block text-apoio font-medium">
-              {rotulo}
-            </label>
-            <p className="mt-1 text-legenda text-conteudo-suave">{dica}</p>
-            <div className="mt-3">
-              {linhas ? (
-                <textarea
-                  id={chave}
-                  rows={linhas}
-                  value={dados[chave]}
-                  onChange={(e) => setDados((d) => ({ ...d, [chave]: e.target.value }))}
-                  className={campo}
-                />
-              ) : (
-                <input
-                  id={chave}
-                  type="text"
-                  value={dados[chave]}
-                  onChange={(e) => setDados((d) => ({ ...d, [chave]: e.target.value }))}
-                  className={`${campo} h-controle py-0`}
-                />
-              )}
-            </div>
-          </div>
-        ))}
+        <label htmlFor="pedido" className="block text-apoio font-medium">
+          O que você tem em mente?
+        </label>
+        {/* `inv-suave`, e não `conteudo-suave`: este bloco vive na faixa verde,
+            e a cor do tema claro dava 2,15:1 de contraste — abaixo do mínimo de
+            4,5:1, praticamente ilegível. O rótulo passava porque herda a cor
+            invertida da seção; estes dois parágrafos não herdavam nada. */}
+        <p className="mt-1 text-legenda text-inv-suave">
+          Escreva do seu jeito. Se souber a cor, o tamanho ou a data, conte —
+          se não souber, a Raquel ajuda a decidir na conversa.
+        </p>
+        <textarea
+          id="pedido"
+          rows={5}
+          value={pedido}
+          onChange={(e) => setPedido(e.target.value)}
+          placeholder="Ex.: uma bolsa transversal em tom terracota, para usar no dia a dia. Queria até o Natal."
+          className="mt-3 w-full rounded-fio border border-borda-forte bg-superficie px-campo-x py-campo-y text-base placeholder:text-conteudo-suave/60"
+        />
 
         <div className="mt-bloco">
           <a
@@ -93,7 +64,7 @@ export function Briefing({ numeroDoWhatsapp }: { numeroDoWhatsapp: string }) {
             <IconeZap className="size-5" />
             Enviar pelo WhatsApp
           </a>
-          <p className="mt-3 text-apoio text-conteudo-suave">
+          <p className="mt-3 text-apoio text-inv-suave">
             Nada é enviado daqui: o botão abre o seu WhatsApp com a mensagem
             pronta. Você lê antes de mandar.
           </p>
@@ -111,10 +82,10 @@ export function Briefing({ numeroDoWhatsapp }: { numeroDoWhatsapp: string }) {
           <pre className="mt-bloco overflow-x-auto rounded-fio bg-verde-musgo p-4 font-texto text-apoio leading-relaxed whitespace-pre-wrap text-inv-conteudo">
             {mensagem}
           </pre>
-          {!algoPreenchido ? (
+          {pedido.trim() === "" ? (
             <p className="mt-4 text-legenda text-inv-suave">
-              Preencha o que souber. Campo em branco não vira linha vazia na
-              mensagem — ele simplesmente não aparece.
+              Pode mandar assim mesmo. A saudação já vai pronta — o resto vocês
+              combinam na conversa.
             </p>
           ) : null}
         </div>

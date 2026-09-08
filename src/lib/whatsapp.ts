@@ -69,40 +69,21 @@ export function montarLinkWhatsApp(numero: string, mensagem: string): string {
   return `https://wa.me/${digitos}?text=${encodeURIComponent(mensagem)}`;
 }
 
-export type BriefingDeEncomenda = {
-  tipoDePeca: string;
-  cores: string;
-  medidas: string;
-  prazo: string;
-  detalhes: string;
-};
-
-const ROTULOS: { chave: keyof BriefingDeEncomenda; rotulo: string }[] = [
-  { chave: "tipoDePeca", rotulo: "Peça" },
-  { chave: "cores", rotulo: "Cores" },
-  { chave: "medidas", rotulo: "Medidas" },
-  { chave: "prazo", rotulo: "Para quando" },
-  { chave: "detalhes", rotulo: "Detalhes" },
-];
-
 /**
  * Mensagem da encomenda sob medida.
  *
- * Só entra no texto o campo que a pessoa preencheu: um briefing cheio de
- * "Medidas: (não informado)" é pior que um briefing curto, porque dá à Raquel
- * a impressão de que a pessoa respondeu quando ela não respondeu.
+ * O briefing virou **um texto livre**. Antes eram cinco campos rotulados
+ * (peça, cores, medidas, prazo, detalhes) e a mensagem saía como uma ficha
+ * — "Peça: … / Cores: …". Cada pergunta era razoável e o conjunto virava
+ * formulário: quem chega com vontade de encomendar bate numa lista e adia.
+ *
+ * Sem rótulos para montar, a função ficou simples de propósito. O que ela
+ * ainda garante é o que importa: a mensagem **nunca sai vazia**. Mesmo sem
+ * uma palavra digitada, a Raquel recebe uma saudação que diz do que se trata,
+ * e a conversa começa.
  */
-export function montarMensagemDeEncomenda(b: BriefingDeEncomenda): string {
-  const linhas = ROTULOS.map(({ chave, rotulo }) => {
-    const valor = b[chave].trim();
-    return valor === "" ? null : `${rotulo}: ${valor}`;
-  }).filter((l): l is string => l !== null);
-
-  return [
-    "Oi Raquel! Queria encomendar uma peça sob medida 💛",
-    "",
-    ...linhas,
-  ]
-    .join("\n")
-    .trim();
+export function montarMensagemDeEncomenda(pedido: string): string {
+  const texto = pedido.trim();
+  const abertura = "Oi Raquel! Queria encomendar uma peça sob medida 💛";
+  return texto === "" ? abertura : `${abertura}\n\n${texto}`;
 }
