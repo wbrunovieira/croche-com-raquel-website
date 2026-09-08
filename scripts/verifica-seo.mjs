@@ -174,5 +174,42 @@ try {
   await b.close();
 }
 
+/**
+ * As âncoras funcionam ao ABRIR a URL, não só ao clicar.
+ *
+ * `/#encomendas` é endereço de verdade neste site — é assim que o menu navega e
+ * é o que se manda por WhatsApp. E estava quebrado: o `scroll-behavior: smooth`
+ * faz o navegador começar uma rolagem suave de milhares de pixels ao abrir a
+ * página, e qualquer coisa que mexa na rolagem no caminho a interrompe. Parava
+ * a 182px de uma seção a 8.300px.
+ *
+ * Só existência da âncora no HTML não pega isso: a seção estava lá o tempo
+ * todo. Por isso este teste abre a URL de verdade e mede onde a página parou.
+ */
+const ANCORAS = ["catalogo", "quem-faz", "cuidados", "perguntas", "encomendas", "contato"];
+if (process.env.PULAR_NAVEGADOR !== "1") {
+  const { chromium } = await import("playwright");
+  const navegador = await chromium.launch();
+  try {
+    for (const id of ANCORAS) {
+      const p = await navegador.newPage({ viewport: { width: 1280, height: 900 } });
+      await p.goto(`${BASE}/#${id}`, { waitUntil: "load" });
+      await p.waitForTimeout(2200);
+      const distancia = await p.evaluate(
+        (alvo) => Math.round(document.getElementById(alvo).getBoundingClientRect().top),
+        id
+      );
+      ok(
+        `abrir /#${id} chega na seção`,
+        Math.abs(distancia) < 160,
+        `${distancia}px do topo`
+      );
+      await p.close();
+    }
+  } finally {
+    await navegador.close();
+  }
+}
+
 console.log(falhas === 0 ? "\n✓ SEO ok" : `\n✗ ${falhas} falha(s)`);
 process.exit(falhas === 0 ? 0 : 1);

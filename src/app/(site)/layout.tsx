@@ -1,3 +1,4 @@
+import { AncoraNaAbertura } from "@/components/site/ancora-na-abertura";
 import { Cabecalho } from "@/components/site/cabecalho";
 import { Rodape } from "@/components/site/rodape";
 import { DadosEstruturados, negocioLocal } from "@/components/seo/dados-estruturados";
@@ -20,6 +21,7 @@ export default async function LayoutDoSite({ children }: LayoutProps<"/">) {
           email: config.email,
         })}
       />
+      <AncoraNaAbertura />
       <Cabecalho />
       {children}
       <Rodape />

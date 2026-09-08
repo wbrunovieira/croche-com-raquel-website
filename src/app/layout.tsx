@@ -24,6 +24,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="pt-BR"
       className={`${fraunces.variable} ${karla.variable} h-full`}
+      // Diz ao Next que a rolagem suave é intencional, para ele não avisar no
+      // console. Isto NÃO conserta a chegada por âncora ao abrir a página —
+      // testei: continuava parando no meio do caminho. Quem resolve aquilo é o
+      // `AncoraNaAbertura` do layout do site.
+      data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

@@ -1019,6 +1019,37 @@ parágrafos de apoio usavam as cores do tema **claro** dentro da faixa verde —
 passava batido porque herda a cor invertida da seção; os parágrafos não herdavam
 nada. Com `text-inv-suave` foram para **9,01:1**. Valia desde que a seção virou
 verde, e só apareceu porque desta vez eu medi em vez de olhar.
+### ✅ Etapa 26 — Três defeitos que uma captura revelou
+
+O Bruno abriu o link `/#encomendas` que eu mandei e achou três coisas de uma vez.
+
+**1. O texto digitado era invisível: 1,08:1.** O campo tem fundo claro mas mora na
+faixa verde, então herdava a cor invertida — creme sobre creme. Ela escrevia e não
+via o que escreveu. Fundo próprio pede cor própria: com `text-conteudo`, foi para
+**15,57:1**. É o mesmo defeito de herança que apareceu na etapa anterior no texto de
+apoio, agora no lugar que mais importa.
+
+**2. A âncora não chegava.** Abrir `/#encomendas` parava a **182px** de uma seção
+que fica a **8.300px**. A causa é o `scroll-behavior: smooth` do `globals.css`: ao
+abrir a URL o navegador começa uma rolagem suave de milhares de pixels, e qualquer
+coisa que mexa na rolagem no caminho a interrompe. Medido lado a lado — com `smooth`
+para em 182, com `auto` (o que acontece sob `prefers-reduced-motion`) chega certinho.
+
+Tirar o `smooth` resolveria e custaria o deslizar dos cliques de menu. Então a
+chegada por âncora virou `AncoraNaAbertura`: um efeito que salta **instantâneo** ao
+montar. A primeira tentativa pedia `behavior: "auto"` só no salto e ainda falhava em
+duas das seis seções — porque a rolagem suave que o navegador já iniciou continua
+correndo por baixo e briga. Zerar `scroll-behavior` no `html` antes do salto cancela
+a que estava em curso; o valor volta no quadro seguinte.
+
+E virou verificação: o `check:seo` agora **abre cada uma das seis URLs com âncora e
+mede onde a página parou**. Só conferir que a seção existe no HTML nunca pegaria
+isso — ela estava lá o tempo todo. Testado nos dois sentidos: com o conserto
+desligado, as seis reprovam.
+
+**3. A prévia da mensagem saiu.** Ela existia quando o briefing tinha cinco campos e
+montava uma ficha; com um campo de texto livre, ela só repetia o que a pessoa acabou
+de escrever, ao lado do próprio campo. Repetir não informa: ocupa.
 
 ## Decisões em aberto
 

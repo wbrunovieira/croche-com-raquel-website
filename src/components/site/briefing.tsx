@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { classesDeBotao } from "@/components/ui/botao";
-import { Etiqueta } from "@/components/ui/etiqueta";
 import { IconeZap } from "@/components/ui/icone-zap";
 import { montarLinkWhatsApp, montarMensagemDeEncomenda } from "@/lib/whatsapp";
 
@@ -32,63 +31,48 @@ export function Briefing({ numeroDoWhatsapp }: { numeroDoWhatsapp: string }) {
   const link = montarLinkWhatsApp(numeroDoWhatsapp, mensagem);
 
   return (
-    <div className="grid gap-x-coluna gap-y-grade-linha lg:grid-cols-2">
-      <div>
-        <label htmlFor="pedido" className="block text-apoio font-medium">
-          O que você tem em mente?
-        </label>
-        {/* `inv-suave`, e não `conteudo-suave`: este bloco vive na faixa verde,
+    /* Sem prévia da mensagem. Ela existia quando o briefing tinha cinco campos e
+       montava uma ficha — ver o que sairia dali valia alguma coisa. Com um campo
+       de texto livre, a prévia só repetia o que a pessoa acabou de escrever, ao
+       lado do próprio campo. Repetir não informa: ocupa. */
+    <div className="max-w-texto">
+      <label htmlFor="pedido" className="block text-apoio font-medium">
+        O que você tem em mente?
+      </label>
+      {/* `inv-suave`, e não `conteudo-suave`: este bloco vive na faixa verde,
             e a cor do tema claro dava 2,15:1 de contraste — abaixo do mínimo de
             4,5:1, praticamente ilegível. O rótulo passava porque herda a cor
             invertida da seção; estes dois parágrafos não herdavam nada. */}
-        <p className="mt-1 text-legenda text-inv-suave">
-          Escreva do seu jeito. Se souber a cor, o tamanho ou a data, conte —
-          se não souber, a Raquel ajuda a decidir na conversa.
+      <p className="mt-1 text-legenda text-inv-suave">
+        Escreva do seu jeito. Se souber a cor, o tamanho ou a data, conte — se
+        não souber, a Raquel ajuda a decidir na conversa.
+      </p>
+      {/* `text-conteudo` explícito: o campo tem fundo claro mas mora na faixa
+            verde, então herdava a cor invertida e o que ela digitava saía creme
+            sobre creme — 1,08:1, invisível. Fundo próprio pede cor própria. */}
+      <textarea
+        id="pedido"
+        rows={5}
+        value={pedido}
+        onChange={(e) => setPedido(e.target.value)}
+        placeholder="Ex.: uma bolsa transversal em tom terracota, para usar no dia a dia. Queria até o Natal."
+        className="mt-3 w-full rounded-fio border border-borda-forte bg-superficie px-campo-x py-campo-y text-base text-conteudo placeholder:text-conteudo-suave/60"
+      />
+
+      <div className="mt-bloco">
+        <a
+          className={classesDeBotao("primaria")}
+          href={link}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <IconeZap className="size-5" />
+          Enviar pelo WhatsApp
+        </a>
+        <p className="mt-3 text-apoio text-inv-suave">
+          Nada é enviado daqui: o botão abre o seu WhatsApp com a mensagem
+          pronta. Você lê antes de mandar.
         </p>
-        <textarea
-          id="pedido"
-          rows={5}
-          value={pedido}
-          onChange={(e) => setPedido(e.target.value)}
-          placeholder="Ex.: uma bolsa transversal em tom terracota, para usar no dia a dia. Queria até o Natal."
-          className="mt-3 w-full rounded-fio border border-borda-forte bg-superficie px-campo-x py-campo-y text-base placeholder:text-conteudo-suave/60"
-        />
-
-        <div className="mt-bloco">
-          <a
-            className={classesDeBotao("primaria")}
-            href={link}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <IconeZap className="size-5" />
-            Enviar pelo WhatsApp
-          </a>
-          <p className="mt-3 text-apoio text-inv-suave">
-            Nada é enviado daqui: o botão abre o seu WhatsApp com a mensagem
-            pronta. Você lê antes de mandar.
-          </p>
-        </div>
-      </div>
-
-      <div className="lg:sticky lg:top-cabecalho-lg lg:self-start">
-        <div className="trama rounded-card bg-inv-fundo p-painel">
-          <Etiqueta tom="invertido">A mensagem que vai</Etiqueta>
-          {/* `<pre>` comum, sem animação: com `key={mensagem}` isto desmontava e
-              remontava a cada TECLA digitada, piscando de 0,4 para 1 de
-              opacidade. Quem escreve "Bolsa transversal" via o painel piscar
-              dezoito vezes — e num Android médio era um remount de nó de texto
-              por keystroke. O texto já muda; não precisa se anunciar. */}
-          <pre className="mt-bloco overflow-x-auto rounded-fio bg-verde-musgo p-4 font-texto text-apoio leading-relaxed whitespace-pre-wrap text-inv-conteudo">
-            {mensagem}
-          </pre>
-          {pedido.trim() === "" ? (
-            <p className="mt-4 text-legenda text-inv-suave">
-              Pode mandar assim mesmo. A saudação já vai pronta — o resto vocês
-              combinam na conversa.
-            </p>
-          ) : null}
-        </div>
       </div>
     </div>
   );
