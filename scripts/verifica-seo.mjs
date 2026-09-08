@@ -22,9 +22,20 @@ async function jsonLd(p) {
   );
 }
 
+/**
+ * Timeout generoso porque este check também roda contra produção, e a primeira
+ * requisição depois de um deploy é partida a frio — medida em 3,9s, contra
+ * 0,5s quando o serviço está quente. Com o padrão de 30s do Playwright a
+ * verificação reprovava por lentidão, não por defeito. Teste que falha à toa
+ * treina a gente a ignorar teste.
+ */
+const ESPERA = 60_000;
+
 const b = await chromium.launch();
 try {
   const p = await b.newPage();
+  p.setDefaultNavigationTimeout(ESPERA);
+  p.setDefaultTimeout(ESPERA);
 
   // robots e sitemap
   const robots = await (await fetch(`${BASE}/robots.txt`)).text();
@@ -193,6 +204,7 @@ if (process.env.PULAR_NAVEGADOR !== "1") {
   try {
     for (const id of ANCORAS) {
       const p = await navegador.newPage({ viewport: { width: 1280, height: 900 } });
+      p.setDefaultNavigationTimeout(ESPERA);
       await p.goto(`${BASE}/#${id}`, { waitUntil: "load" });
       await p.waitForTimeout(2200);
       const distancia = await p.evaluate(
