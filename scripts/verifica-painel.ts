@@ -79,9 +79,18 @@ async function main() {
     await p.selectOption("#categoryId", { label: "Bolsas" });
     await p.fill("#description", "Descrição de verificação automática do painel.");
 
-    // Primeiro a trava: pôr no ar sem foto tem de ser recusado ANTES de criar
-    // qualquer coisa. Página publicada sem foto é pior que peça que não estreou.
-    await p.selectOption("#status", "PUBLISHED");
+    // A peça nasce ATIVA: quem entra em "Nova peça" está cadastrando algo para
+    // aparecer no site, e o caso comum não deve custar um clique a mais. Se
+    // alguém trocar o padrão para desativado, isto reprova antes de a Raquel
+    // descobrir que cadastrou dez peças que não apareceram.
+    conferir(
+      "a peça nasce ativa por padrão",
+      (await p.locator("#status").inputValue()) === "PUBLISHED",
+      await p.locator("#status").inputValue()
+    );
+
+    // E a trava: ativar sem foto tem de ser recusado ANTES de criar qualquer
+    // coisa. Página publicada sem foto é pior que peça que não estreou.
     await p.click('button[type="submit"]');
     const alerta = await p
       .locator('form [role="alert"]')
@@ -89,7 +98,7 @@ async function main() {
       .textContent({ timeout: 15000 })
       .catch(() => null);
     conferir(
-      "recusa criar no ar sem foto",
+      "recusa criar ativa sem foto",
       (alerta ?? "").includes("pelo menos uma foto"),
       alerta ?? "(sem alerta)"
     );
@@ -116,7 +125,7 @@ async function main() {
       conferir("cria em uma etapa e volta para a lista", p.url().endsWith("/admin/produtos"));
 
       const criada = await db.product.findFirst({ where: { name: NOME_DA_PECA } });
-      conferir("e ela já nasce no ar", criada?.status === "PUBLISHED", criada?.status);
+      conferir("e ela já nasce ativa", criada?.status === "PUBLISHED", criada?.status);
 
       const guardadas = await db.productImage.findMany({
         where: { productId: criada!.id },

@@ -101,11 +101,11 @@ export function FormularioDeProduto({
         <Selecao
           id="status"
           rotulo="Situação"
-          dica="Fora do ar, a peça fica só aqui no painel. No ar, ela aparece no site."
+          dica="Ativa, a peça aparece no site. Desativada, fica só aqui no painel."
           defaultValue={produto.status}
         >
-          <option value="DRAFT">Fora do ar</option>
-          <option value="PUBLISHED">No ar</option>
+          <option value="PUBLISHED">Ativo</option>
+          <option value="DRAFT">Desativado</option>
         </Selecao>
       </Secao>
 

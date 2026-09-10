@@ -93,10 +93,10 @@ export async function criarProduto(_anterior: unknown, dados: FormData) {
   // a peça publicada é a que a cliente vê, e página sem foto ou sem texto é
   // pior que peça que ainda não estreou.
   if (noAr && fotos.length === 0) {
-    return { erro: "Para a peça já entrar no ar, escolha pelo menos uma foto." };
+    return { erro: "Para a peça ficar ativa, escolha pelo menos uma foto." };
   }
   if (noAr && descricao.length < 10) {
-    return { erro: "Para a peça já entrar no ar, escreva a descrição." };
+    return { erro: "Para a peça ficar ativa, escreva a descrição." };
   }
 
   const slug = await slugUnico(nome, async (candidato) =>
@@ -170,7 +170,7 @@ export async function salvarProduto(
     const fotos = await db.productImage.count({ where: { productId: id } });
     if (fotos === 0) {
       return {
-        erro: "Esta peça não tem foto. Adicione pelo menos uma antes de colocar no ar.",
+        erro: "Esta peça não tem foto. Adicione pelo menos uma antes de ativar.",
       };
     }
   }

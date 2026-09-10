@@ -147,7 +147,11 @@ export default async function PaginaDeProduto({ params }: PageProps<"/produtos/[
           </div>
 
           <div className="mt-bloco">
-            <Compartilhar url={url} titulo={`${produto.nome} · Crochê com Raquel`} />
+            {/* Só o nome da peça: o sufixo da marca servia para o `<title>` da
+                aba, e na mensagem do WhatsApp virava ruído antes do link —
+                "Bolsa Transversal Caramelo · Crochê com Raquel". Quem recebe já
+                sabe de quem é, porque quem manda é a Raquel. */}
+            <Compartilhar url={url} titulo={produto.nome} />
           </div>
         </div>
       </div>

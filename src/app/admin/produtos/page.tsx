@@ -34,8 +34,8 @@ export default async function ListaDeProdutos({
 
   const abas = [
     { rotulo: "Todas", href: "/admin/produtos", ativa: !filtro },
-    { rotulo: "No ar", href: "/admin/produtos?status=PUBLISHED", ativa: filtro === "PUBLISHED" },
-    { rotulo: "Fora do ar", href: "/admin/produtos?status=DRAFT", ativa: filtro === "DRAFT" },
+    { rotulo: "Ativas", href: "/admin/produtos?status=PUBLISHED", ativa: filtro === "PUBLISHED" },
+    { rotulo: "Desativadas", href: "/admin/produtos?status=DRAFT", ativa: filtro === "DRAFT" },
   ];
 
   return (
@@ -108,7 +108,7 @@ export default async function ListaDeProdutos({
               <span className="flex shrink-0 flex-wrap items-center gap-2">
                 {p.featured ? <Chip tom="neutro">Destaque</Chip> : null}
                 <Chip tom={p.status === "PUBLISHED" ? "neutro" : "destaque"}>
-                  {p.status === "PUBLISHED" ? "No ar" : "Fora do ar"}
+                  {p.status === "PUBLISHED" ? "Ativa" : "Desativada"}
                 </Chip>
               </span>
             </Link>

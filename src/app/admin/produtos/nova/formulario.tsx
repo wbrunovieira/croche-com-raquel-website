@@ -37,7 +37,13 @@ export function FormularioDeNovaPeca({
   const [descricao, setDescricao] = useState("");
   const [preco, setPreco] = useState("");
   const [destaque, setDestaque] = useState(false);
-  const [situacao, setSituacao] = useState("DRAFT");
+  /**
+   * Nasce **ativo**: quem entra em "Nova peça" está cadastrando algo para
+   * aparecer no site, e obrigar um clique a mais para o caso comum é atrito
+   * sem contrapartida. Desativado continua a um clique, para quem quer deixar
+   * a peça pronta e publicar depois.
+   */
+  const [situacao, setSituacao] = useState("PUBLISHED");
   const [preparando, setPreparando] = useState(false);
   const [aviso, setAviso] = useState<string | null>(null);
   const entrada = useRef<HTMLInputElement>(null);
@@ -244,12 +250,12 @@ export function FormularioDeNovaPeca({
       <Selecao
         id="status"
         rotulo="Situação"
-        dica="Fora do ar, a peça fica só aqui no painel. Para entrar no ar já, ela precisa de foto e descrição."
+        dica="Ativa, a peça aparece no site — para isso ela precisa de foto e descrição. Desativada, fica só aqui no painel."
         value={situacao}
         onChange={(e) => setSituacao(e.target.value)}
       >
-        <option value="DRAFT">Fora do ar</option>
-        <option value="PUBLISHED">No ar</option>
+        <option value="PUBLISHED">Ativo</option>
+        <option value="DRAFT">Desativado</option>
       </Selecao>
 
       <button

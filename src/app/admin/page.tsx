@@ -14,8 +14,8 @@ export default async function PaginaDoAdmin() {
   ]);
 
   const numeros = [
-    { rotulo: "Peças no ar", valor: publicados, href: "/admin/produtos" },
-    { rotulo: "Fora do ar", valor: foraDoAr, href: "/admin/produtos?status=DRAFT" },
+    { rotulo: "Peças ativas", valor: publicados, href: "/admin/produtos" },
+    { rotulo: "Desativadas", valor: foraDoAr, href: "/admin/produtos?status=DRAFT" },
   ];
 
   return (

@@ -1050,6 +1050,40 @@ desligado, as seis reprovam.
 **3. A prévia da mensagem saiu.** Ela existia quando o briefing tinha cinco campos e
 montava uma ficha; com um campo de texto livre, ela só repetia o que a pessoa acabou
 de escrever, ao lado do próprio campo. Repetir não informa: ocupa.
+### ✅ Etapa 27 — "Ativo/Desativado", botões de compartilhar, e a limpeza de um vacilo meu
+
+**1. "No ar / Fora do ar" virou "Ativo / Desativado"**, e a peça **nasce ativa**.
+Quem entra em "Nova peça" está cadastrando algo para aparecer no site; obrigar um
+clique a mais no caso comum é atrito sem contrapartida. Desativado continua a um
+clique para quem quer deixar pronto e publicar depois. O vocabulário foi trocado em
+todos os lugares — criação, edição, lista, painel inicial e as mensagens de erro —,
+porque metade em cada língua é pior que qualquer das duas. E virou asserção: o
+`check:painel` reprova se alguém mudar o padrão, antes de ela cadastrar dez peças
+que não apareceram.
+
+**2. Compartilhar ganhou botões.** Era um link sublinhado que no celular abria o menu
+nativo e no desktop copiava — funcionava e não parecia nada. Agora são **WhatsApp**,
+**Copiar para o Instagram** e um "copiar link" discreto.
+
+*O Instagram merece nota:* ele **não aceita link pré-preenchido pela web**. Não existe
+URL de compartilhamento equivalente à do WhatsApp, e nenhum truque de `intent://`
+funciona no navegador. O botão faz o que dá para fazer de verdade — copia o link e
+abre o Instagram para ela colar no story ou na direct — e o rótulo diz exatamente
+isso. Prometer "compartilhar no Instagram" e entregar uma aba aberta seria mentir
+para quem usa.
+
+De carona, a mensagem do WhatsApp deixou de levar o sufixo da marca: era
+"Bolsa Transversal Caramelo · Crochê com Raquel" antes do link, e o sufixo serve ao
+`<title>` da aba, não a uma mensagem que a própria Raquel manda.
+
+**3. Limpei dez peças de teste do banco — quatro delas estavam NO AR.** Foram criadas
+por mim validando os fluxos de cadastro contra o banco de produção, e eu não limpei
+atrás. Elas apareciam no catálogo e no "Combina com" das peças reais. O catálogo
+voltou às 7 peças de verdade, e as fotos saíram do Blob junto.
+
+*Fica a lição registrada:* validar fluxo de escrita contra o banco de produção exige
+limpar na mesma passada. O `check:painel` faz isso sozinho (tem um `limpar()` no
+`finally`); os testes que eu escrevo à mão no meio de uma conversa, não.
 
 ## Decisões em aberto
 
