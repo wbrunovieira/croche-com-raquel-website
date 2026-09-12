@@ -191,7 +191,21 @@
   /* O site é de uma página: o menu navega por âncora, e o salto seco perde a
      noção de onde a pessoa está. O bloco de `prefers-reduced-motion` abaixo já
      devolve o salto para quem pediu menos movimento. */
-  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  /* O `background-color` do `html` é o que o navegador pinta ALÉM da página —
+     a faixa que aparece quando se puxa para cima no topo ou para baixo no fim
+     (o "rubber-band"). Sem ele, o `body` creme era propagado para essa área e
+     o gesto revelava uma tarja quase branca logo acima da faixa verde de
+     aviso. Como as duas pontas do site são verdes — aviso #10402C em cima,
+     rodapé #0A2E1F embaixo —, um verde só resolve os dois lados, e a
+     diferença para qualquer um deles não se distingue no gesto.
+
+     O conteúdo não muda: o `body` continua pintando o creme sobre a própria
+     caixa, que cobre a página inteira. */
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    background-color: var(--color-verde-fundo);
+  }
   body {
     background-color: var(--color-fundo);
     color: var(--color-conteudo);
