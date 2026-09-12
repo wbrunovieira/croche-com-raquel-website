@@ -1812,6 +1812,53 @@ Verificado: `build`, `lint`, `check:classes` (402), `check:espaco`, `check:whats
 `check:seo` (as 6 âncoras, incluindo `#encomendas`), `check:produto`; e nenhum botão da
 seção quebrando linha.
 
+### ✅ Etapa 45 — Rodapé, assinatura WB e auditoria da política de trocas *(pedidos do Bruno)*
+
+**1. Os links do rodapé.** Conferi os quinze um a um: todos respondem 200 e **todas as
+âncoras existem** na página. Nada quebrado.
+
+**2. A assinatura da WB.** Veio da `wb-signature.tsx` do `padariarainhadamassa-website`,
+com o mesmo conteúdo e o mesmo destino. Três adaptações, e uma importa:
+
+*O coração pulsante saiu.* Lá é um detalhe simpático; aqui seria o **segundo laço
+periódico na tela** — o novelo do logotipo já bate e o cabeçalho é fixo, então os dois
+apareceriam juntos, e a identidade §7.2 permite um ciclo periódico por tela. Conferido
+com `document.getAnimations()`: as animações infinitas visíveis são todas do mesmo
+logotipo. As outras duas: raio, curva e transições passaram a ser os daqui, e o brilho
+desfocado saiu — `blur` num site cuja assinatura visual é fio e trama não pertence.
+
+Copyright e assinatura dividem a mesma linha: são as duas notas de rodapé do rodapé, e
+empilhá-las daria a uma delas um peso que nenhuma tem.
+
+**3. A auditoria da política de trocas achou dois problemas sérios.** *Ressalva registrada:
+não sou advogado — mas os dois são sobre pisos legais explícitos do CDC.*
+
+**O prazo de defeito estava abaixo do mínimo legal.** A página pedia a foto "em até **sete
+dias** depois de receber". O art. 26 dá **noventa dias** para produto durável, e uma bolsa
+de crochê é durável. Pior: defeito que só aparece com o uso conta a partir do dia em que
+aparece, não da entrega. Cláusula que reduz prazo legal é nula pelo art. 51 e, publicada,
+**expõe a Raquel em vez de proteger**.
+
+**"Peça personalizada não tem troca por arrependimento" é juridicamente frágil.** O art.
+49 **não tem exceção** para produto personalizado — essa exceção existe na lei europeia,
+não na brasileira, e a jurisprudência é dividida. Como estava, era negativa absoluta de um
+direito, que é exatamente o que o art. 51 anula. Virou: confirmo tudo antes de começar, e
+se ainda assim você quiser desistir nos sete dias, me chame.
+
+*O Bruno escolheu corrigir os dois.* Ambas as mudanças vão na direção de MAIS direito ao
+consumidor, que é sempre o lado seguro — não há risco jurídico em oferecer mais do que a
+lei exige.
+
+**Três omissões menores, corrigidas junto:** quem paga o frete da devolução (entendimento
+dominante: o vendedor, nos dois casos); o prazo de **trinta dias** que o art. 18 dá ao
+fornecedor para consertar, depois do qual a escolha passa a ser do cliente; e o lead, que
+dizia "regra diferente da loja comum" — o que ficou impreciso depois de a cláusula de
+personalizado deixar de negar o direito.
+
+Verificado: `build`, `lint`, `check:classes` (410), `check:espaco`, `check:seo`,
+`check:produto`; as quatro frases novas conferidas no ar e a frase antiga confirmada como
+removida.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

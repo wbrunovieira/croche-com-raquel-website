@@ -72,22 +72,28 @@ Um ponto soltou, a alça folgou, a peça precisa de um ajuste? Me chame no Whats
   {
     slug: "trocas-e-devolucoes",
     title: "Trocas e devoluções",
-    lead: "Peça sob encomenda tem uma regra diferente da loja comum. Está tudo escrito aqui.",
+    lead: "Peça sob encomenda tem algumas particularidades. Está tudo escrito aqui, sem letra miúda.",
     seoDescription:
-      "Política de trocas e devoluções da Crochê com Raquel: prazos, o que se aplica a peças feitas sob medida e como pedir ajuste.",
+      "Política de trocas e devoluções da Crochê com Raquel: prazo de sete dias para arrependimento, noventa para defeito, o que vale em peça sob medida e como pedir ajuste.",
     content: `## Peça com defeito
 
-Se a peça chegar com defeito de fabricação, eu conserto ou refaço, sem custo. Me mande uma foto pelo WhatsApp em até **sete dias** depois de receber.
+Se a peça chegar com defeito de fabricação, eu conserto ou refaço, sem custo — e o frete da ida e da volta é por minha conta. Me mande uma foto pelo WhatsApp assim que notar.
+
+Pelo Código de Defesa do Consumidor você tem **noventa dias** para reclamar de defeito em peça duradoura. E defeito que só aparece com o uso conta a partir do dia em que aparece, não da entrega.
+
+Tenho **trinta dias** para resolver. Se eu não resolver nesse prazo, a escolha é sua: outra peça, o dinheiro de volta ou um abatimento no preço.
 
 ## Arrependimento
 
-Compra feita à distância dá direito a desistir em até **sete dias corridos** depois de receber a peça, pelo Código de Defesa do Consumidor. A peça precisa voltar sem uso e nas mesmas condições.
+Compra feita à distância dá direito a desistir em até **sete dias corridos** depois de receber a peça, pelo Código de Defesa do Consumidor. A peça precisa voltar sem uso e nas mesmas condições, e o frete da devolução é por minha conta.
 
 ## Peça personalizada
 
-Peça feita com nome, monograma ou medida específica **não tem troca por arrependimento** — ela não serve para mais ninguém. Isso não vale para defeito: defeito eu resolvo sempre.
+Peça feita com nome, monograma ou medida específica é feita só para você — ela não serve para mais ninguém. Por isso confirmo cor, medida e personalização com você no WhatsApp **antes** de começar: é ali que a gente acerta tudo, e é ali que dá para mudar de ideia sem custo nenhum.
 
-Por isso confirmo cor, medida e personalização com você no WhatsApp **antes** de começar. Se algo estiver errado nessa confirmação, é hora de falar.
+Se ainda assim você quiser desistir dentro dos sete dias, me chame. A gente conversa e resolve.
+
+Defeito é outra coisa: defeito eu resolvo sempre, personalizada ou não.
 
 ## Ajustes
 
