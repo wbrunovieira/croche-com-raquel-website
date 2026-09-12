@@ -88,9 +88,21 @@
   --text-display--line-height: 1;
   --text-display--letter-spacing: -0.025em;
 
-  /* ---------- Forma ---------- */
-  --radius-fio:     2px;
+  /* ---------- Forma ----------
+     A escada de cantos tem DUAS vozes, não três.
+
+     `--radius-fio` valia 2px, e 2px é um valor indeciso: não é 0, que leria
+     como "reto de propósito", nem 6, que conversa com o card. No tamanho de um
+     botão ninguém lê 2px como escolha — lê como arredondamento pela metade. E
+     o degrau aparecia toda vez que um botão de 2px morava dentro de um card
+     de 6px.
+
+     Agora controle e superfície falam a mesma língua, e o 999px do arco fica
+     sendo o único gesto expressivo — que é o que faz o arco significar
+     alguma coisa. Os dois nomes continuam porque carregam intenção diferente:
+     se um dia a direção quiser separar de novo, é uma linha. */
   --radius-card:    6px;
+  --radius-fio:     var(--radius-card);
   --radius-pilula:  999px;
 
   /* ---------- Sombra ---------- */
@@ -246,6 +258,76 @@
   .corrente--claro {
     background-image: radial-gradient(ellipse 8px 6px at 50% 50%,
       transparent 0 58%, rgba(244,238,226,.45) 60% 82%, transparent 84%);
+  }
+
+  /**
+   * Botão de ícone — o Instagram do cabeçalho e o que mais aparecer.
+   *
+   * O hover era `bg-superficie-baixa`, um bege quente. Isolado passa; ao lado
+   * do verde do botão de WhatsApp ele puxa para rosado e lê como cor de outro
+   * sistema. A marca tem uma cor para "isto respondeu": o verde. Uma lavagem
+   * de 8% dele não compete com nada e pertence à paleta.
+   *
+   * Redondo, e não quadrado arredondado: alvo de ícone é um ponto, e círculo
+   * é a forma que diz isso. O quadrado sugeria uma caixa que não existe.
+   *
+   * A curva é a `--ease-fio`, a mesma do resto do site. Antes era a padrão do
+   * Tailwind — a diferença é pequena num elemento, e some quando todo o
+   * cabeçalho responde no mesmo tempo e com a mesma curva.
+   */
+  .botao-de-icone {
+    border-radius: var(--radius-pilula);
+    color: var(--color-conteudo-suave);
+    transition:
+      color 180ms var(--ease-fio),
+      background-color 180ms var(--ease-fio);
+  }
+  .botao-de-icone:hover,
+  .botao-de-icone:focus-visible {
+    color: var(--color-primaria);
+    background-color: color-mix(in srgb, var(--color-primaria) 8%, transparent);
+  }
+
+  /**
+   * Superfície do cabeçalho quando ele se descola do conteúdo.
+   *
+   * Era uma cor chapada — `rgba(251,247,239,.88)` — e chapado não tem
+   * profundidade: a barra parecia um retângulo colado na frente da página. São
+   * três camadas de pouca coisa cada, e juntas o cabeçalho passa a ler como uma
+   * superfície que pega luz:
+   *
+   * 1. Um degradê vertical curto: mais denso em cima, mais leve embaixo. É como
+   *    papel se comporta sob luz frontal, e é a mesma direção de luz que a
+   *    `.luz-de-janela` usa nas seções verdes.
+   * 2. Um fio de luz na aresta de cima, quase branco. É o que dá a impressão de
+   *    espessura — sem ele, a barra tem cor mas não tem borda.
+   * 3. A borda de baixo **desaparece nas pontas**. Uma linha de ponta a ponta
+   *    corta a página em duas; esmaecida nas laterais, ela separa sem cortar.
+   *
+   * Fica num elemento próprio, e não no `background` do `<header>`, porque a
+   * entrada é animada por opacidade — degradê não interpola como cor.
+   */
+  .superficie-cabecalho {
+    background-image: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-papel) 96%, transparent),
+      color-mix(in srgb, var(--color-papel) 82%, transparent)
+    );
+    box-shadow: inset 0 1px 0 color-mix(in srgb, white 55%, transparent);
+  }
+  .superficie-cabecalho::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    background-image: linear-gradient(
+      to right,
+      transparent,
+      var(--color-borda) 12%,
+      var(--color-borda) 88%,
+      transparent
+    );
   }
 
   /* trama: só em seção verde */

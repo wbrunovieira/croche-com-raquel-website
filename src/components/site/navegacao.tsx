@@ -10,9 +10,10 @@ import {
   useReducedMotion,
   useScroll,
 } from "motion/react";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
 import { DURACAO, transicao } from "@/lib/movimento";
 import { Logo } from "@/components/brand/logo";
+import { Simbolo } from "@/components/brand/simbolo";
 import { IconeInstagram } from "@/components/ui/icone-instagram";
 import { IconeZap } from "@/components/ui/icone-zap";
 
@@ -139,19 +140,56 @@ export function Navegacao({
             animate={semMovimento ? { opacity: 1 } : { height: "auto", opacity: 1 }}
             exit={semMovimento ? { opacity: 0 } : { height: 0, opacity: 0 }}
             transition={transicao(0.28, semMovimento)}
-            className="overflow-hidden bg-primaria text-sobre-primaria"
+            /* `trama` e `luz-de-janela` são os mesmos motivos das seções verdes
+               do site, e a `corrente` embaixo é a divisória da marca. A faixa
+               era um retângulo chapado com um texto; usando o vocabulário que
+               já existe, ela ganha profundidade sem inventar linguagem nova —
+               e a primeira coisa que a pessoa vê passa a parecer parte do
+               conjunto, não um aviso pregado por cima. */
+            className="trama luz-de-janela relative overflow-hidden bg-primaria text-sobre-primaria"
           >
-            <div className="container-site flex items-center justify-between gap-4 py-2">
-              <p className="text-apoio">{aviso}</p>
+            <div className="container-site flex items-center gap-4 py-2.5">
+              {/* A faixa INTEIRA é o link. O texto convidava — "é só contar o
+                  que você tem em mente" — e não havia como contar: a pessoa
+                  lia um convite e ficava sem porta. Agora ela leva para a
+                  seção de encomenda sob medida. */}
+              <Link
+                href="/#encomendas"
+                className="group flex min-w-0 flex-1 items-center gap-3 py-1"
+              >
+                <Simbolo className="hidden h-5 w-auto shrink-0 opacity-70 sm:block" />
+
+                <p className="min-w-0 flex-1 truncate text-apoio sm:whitespace-normal">
+                  {aviso}
+                </p>
+
+                <span className="hidden shrink-0 items-center gap-2 text-apoio font-medium underline-offset-4 group-hover:underline sm:inline-flex">
+                  Me conte
+                  {/* A seta anda no hover — é o único movimento aqui, e é
+                      resposta a um gesto, não laço decorativo. */}
+                  <ArrowRight
+                    className="size-4 transition-transform duration-200 ease-fio group-hover:translate-x-0.5"
+                    aria-hidden="true"
+                  />
+                </span>
+              </Link>
+
               <button
                 type="button"
                 onClick={() => setAvisoVisivel(false)}
                 aria-label="Fechar aviso"
-                className="-mr-2 rounded-fio p-2 transition-colors hover:bg-white/10"
+                className="-mr-2 shrink-0 rounded-fio p-2 transition-colors duration-[180ms] ease-fio hover:bg-white/10 active:scale-90"
               >
                 <X className="size-4" aria-hidden="true" />
               </button>
             </div>
+
+            {/* A corrente costura a faixa ao cabeçalho. Fica por cima da borda,
+                não empurra layout, e some junto quando a faixa fecha. */}
+            <div
+              className="corrente corrente--claro absolute inset-x-0 bottom-0"
+              aria-hidden="true"
+            />
           </motion.div>
         ) : null}
       </AnimatePresence>
@@ -162,18 +200,32 @@ export function Navegacao({
         // fio — o suficiente para se descolar do conteúdo sem virar caixa.
         animate={{
           height: rolou ? "var(--spacing-cabecalho)" : "var(--spacing-cabecalho-lg)",
-          backgroundColor: rolou ? "rgba(251,247,239,0.88)" : "rgba(251,247,239,0)",
-          borderBottomColor: rolou ? "var(--color-borda)" : "rgba(227,216,196,0)",
           boxShadow: rolou ? "var(--shadow-peca)" : "0 0 0 rgba(0,0,0,0)",
         }}
         transition={transicao(DURACAO.media, semMovimento)}
-        // O blur só entra junto com o fundo. Antes de rolar o fundo é
-        // transparente e o `backdrop-filter` não produz efeito visível nenhum —
-        // ficava ligado 100% do tempo por nada, e é dos filtros mais caros no
-        // celular.
-        className={`sticky top-0 z-50 border-b ${rolou ? "backdrop-blur-sm" : ""}`}
+        className="sticky top-0 z-50"
       >
-        <div className="container-site flex h-full items-center justify-between gap-8">
+        {/* A superfície é uma camada própria, com opacidade animada.
+            Antes era `backgroundColor` no próprio `<header>`, o que obriga a
+            cor a ser chapada — degradê não interpola como cor. Separando, o
+            cabeçalho ganha o degradê, o fio de luz na aresta e a borda que
+            esmaece nas pontas, e continua aparecendo com o mesmo tempo de
+            antes.
+
+            O blur mora aqui junto: assim ele entra e sai com a superfície, em
+            vez de ficar ligado o tempo todo. Antes de rolar não há fundo, e
+            `backdrop-filter` sem fundo é custo puro — é dos filtros mais caros
+            no celular. */}
+        <motion.div
+          aria-hidden="true"
+          animate={{ opacity: rolou ? 1 : 0 }}
+          transition={transicao(DURACAO.media, semMovimento)}
+          className={`superficie-cabecalho pointer-events-none absolute inset-0 ${
+            rolou ? "backdrop-blur-sm" : ""
+          }`}
+        />
+
+        <div className="container-site relative flex h-full items-center justify-between gap-8">
           <Link href="/" aria-label="Crochê com Raquel — início" className="shrink-0">
             {/* A assinatura de lugar sai aqui: no cabeçalho ela mediria 5px.
                 O corpo animado vira a altura do logotipo (`h-[1em]`). */}
@@ -211,7 +263,7 @@ export function Navegacao({
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="hidden rounded-fio p-2 text-conteudo-suave transition-colors hover:bg-superficie-baixa hover:text-conteudo sm:block"
+                className="botao-de-icone hidden p-2 sm:block"
               >
                 <IconeInstagram className="size-5" />
               </a>
@@ -221,7 +273,7 @@ export function Navegacao({
               href={`https://wa.me/${whatsappNumero}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden items-center gap-btn-icone rounded-fio bg-primaria px-btn-x py-btn-y text-apoio font-medium text-sobre-primaria transition-[background-color,transform] duration-150 ease-fio active:translate-y-px hover:bg-primaria-hover sm:inline-flex"
+              className="hidden items-center gap-btn-icone rounded-fio bg-primaria px-btn-x py-btn-y text-apoio font-medium text-sobre-primaria transition-[background-color,transform] duration-[180ms] ease-fio active:translate-y-px hover:bg-primaria-hover sm:inline-flex"
             >
               <IconeZap className="size-4" />
               Falar com a Raquel
@@ -232,7 +284,7 @@ export function Navegacao({
               onClick={() => setGaveta(true)}
               aria-label="Abrir menu"
               aria-expanded={gaveta}
-              className="rounded-fio p-2 transition-colors hover:bg-superficie-baixa lg:hidden"
+              className="rounded-fio p-2 transition-colors duration-[180ms] ease-fio hover:bg-superficie-baixa lg:hidden"
             >
               <Menu className="size-6" aria-hidden="true" />
             </button>
@@ -269,11 +321,31 @@ function LinkDeMenu({
   return (
     <Link
       href={href}
-      className={`relative block rounded-fio px-3 py-2 text-apoio transition-colors ${
+      className={`group relative block rounded-fio px-3 py-2 text-apoio transition-colors duration-[180ms] ease-fio duration-[180ms] ease-fio ${
         ativo ? "text-conteudo" : "text-conteudo-suave hover:text-conteudo"
       }`}
     >
       {children}
+
+      {/* O hover PREVÊ o traço que o item vai receber.
+          Antes era só a cor escurecendo — o alvo respondia, mas não dizia o que
+          ia acontecer. Agora um fio cresce do centro para fora, na mesma
+          posição e espessura do indicador de ativo, só que apagado: o item
+          mostra de antemão para onde o traço goiaba vai deslizar.
+
+          Só nos itens inativos. No ativo o fio de verdade já está ali, e dois
+          traços sobrepostos no mesmo lugar é sujeira, não reforço.
+
+          `scaleX` e `opacity` apenas — nada que provoque layout. E como é
+          resposta a um gesto, não conta como laço: a regra de um só ciclo
+          periódico na tela continua valendo para a batida do logotipo. */}
+      {!ativo ? (
+        <span
+          aria-hidden="true"
+          className="absolute inset-x-3 -bottom-0.5 block h-px origin-center scale-x-0 bg-borda-forte opacity-0 transition-[transform,opacity] duration-200 ease-fio group-hover:scale-x-100 group-hover:opacity-100 group-focus-visible:scale-x-100 group-focus-visible:opacity-100"
+        />
+      ) : null}
+
       {ativo ? (
         // layoutId faz o traço deslizar de um item para o outro em vez de
         // piscar — é o detalhe que separa "tem indicador" de "parece feito".
@@ -325,7 +397,7 @@ function ItemComFilhos({ item, ativo }: { item: ItemDeMenu; ativo: boolean }) {
           aria-expanded={aberto}
           aria-controls={idMenu}
           aria-label={`${aberto ? "Fechar" : "Abrir"} tipos de ${item.rotulo.toLowerCase()}`}
-          className="-ml-1 rounded-fio p-1 text-conteudo-suave transition-colors hover:text-conteudo"
+          className="-ml-1 rounded-fio p-1 text-conteudo-suave transition-colors duration-[180ms] ease-fio hover:text-conteudo"
         >
           <motion.span
             className="block"
@@ -357,7 +429,7 @@ function ItemComFilhos({ item, ativo }: { item: ItemDeMenu; ativo: boolean }) {
                 >
                   <Link
                     href={filho.href}
-                    className="flex items-center justify-between gap-4 rounded-fio px-3 py-2 text-apoio transition-colors hover:bg-superficie-baixa"
+                    className="flex items-center justify-between gap-4 rounded-fio px-3 py-2 text-apoio transition-colors duration-[180ms] ease-fio hover:bg-superficie-baixa"
                   >
                     <span>{filho.rotulo}</span>
                     <span className="tabular text-legenda text-conteudo-suave">
@@ -369,7 +441,7 @@ function ItemComFilhos({ item, ativo }: { item: ItemDeMenu; ativo: boolean }) {
             </ul>
             <Link
               href={item.href}
-              className="block border-t border-borda px-5 py-3 text-apoio text-destaque-texto transition-colors hover:bg-superficie-baixa"
+              className="block border-t border-borda px-5 py-3 text-apoio text-destaque-texto transition-colors duration-[180ms] ease-fio hover:bg-superficie-baixa"
             >
               Ver todas as bolsas →
             </Link>
@@ -427,7 +499,7 @@ function Gaveta({
                 type="button"
                 onClick={aoFechar}
                 aria-label="Fechar menu"
-                className="rounded-fio p-2 transition-colors hover:bg-white/10"
+                className="rounded-fio p-2 transition-colors duration-[180ms] ease-fio hover:bg-white/10"
               >
                 <X className="size-6" aria-hidden="true" />
               </button>
@@ -475,7 +547,7 @@ function Gaveta({
                 href={`https://wa.me/${whatsappNumero}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex w-full items-center justify-center gap-btn-icone rounded-fio bg-cru px-btn-x py-btn-y font-medium transition-transform duration-150 ease-fio active:translate-y-px text-verde-cristal"
+                className="flex w-full items-center justify-center gap-btn-icone rounded-fio bg-cru px-btn-x py-btn-y font-medium transition-transform duration-[180ms] ease-fio active:translate-y-px text-verde-cristal"
               >
                 <IconeZap className="size-5" />
                 Falar com a Raquel

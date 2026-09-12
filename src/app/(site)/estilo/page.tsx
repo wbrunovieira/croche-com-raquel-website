@@ -407,7 +407,7 @@ export default async function EstiloPage() {
       >
         <div className="grid gap-x-6 gap-y-10 sm:grid-cols-3">
           {[
-            { r: "rounded-fio", n: "fio · 2px", u: "Botão, badge, input" },
+            { r: "rounded-fio", n: "fio · 6px", u: "Botão, badge, input — mesmo canto do card" },
             { r: "rounded-card", n: "card · 6px", u: "Card, foto, painel" },
             { r: "rounded-pilula", n: "pilula · 999px", u: "Só o botão flutuante" },
           ].map((f) => (

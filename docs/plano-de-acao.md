@@ -1085,6 +1085,53 @@ voltou às 7 peças de verdade, e as fotos saíram do Blob junto.
 limpar na mesma passada. O `check:painel` faz isso sozinho (tem um `limpar()` no
 `finally`); os testes que eu escrevo à mão no meio de uma conversa, não.
 
+### ✅ Etapa 28 — A faixa, o cabeçalho e a escada de cantos *(pedido do Bruno)*
+
+Primeira rodada de revisão local — ele está usando a página e passando as correções.
+**Nada foi para o ar:** commit sim, push só quando ele pedir.
+
+**1. O branco na borracha da rolagem.** Puxando a home para cima, aparecia fundo
+branco atrás do topo. Não é o `body` — é o elemento raiz, cuja cor de fundo é a que
+o navegador propaga para a *canvas*, inclusive a área de `overscroll`. Um
+`html { background-color: var(--color-verde-fundo) }` resolve.
+
+**2. A faixa de aviso.** Ela estava correta e sem mão nenhuma. Agora a faixa inteira
+é o link para `/#encomendas`, traz o símbolo da marca, o fundo tem `.trama` com
+`luz-de-janela`, o fecho é "Me conte →" com a seta deslizando no hover, e uma
+`.corrente` fecha a base. É a primeira coisa que a pessoa vê; valia parecer feita.
+
+**3. O cabeçalho.** Ele pediu que continuasse limpo — ele separa a faixa do hero — mas
+com hover de gente grande e alguma profundidade. A superfície virou uma camada
+própria com gradiente e um fio branco interno, animada por opacidade conforme a
+rolagem (medido: 0 no topo, 1 rolado). Os itens de menu ganharam uma linha-fantasma
+que se desenha do centro no hover (medido: `scale-x` 0 → 1, 73px). E o botão do
+Instagram largou o quadrado bege-quente por um `.botao-de-icone` circular com 8% do
+verde da marca — o rosa que ele apontou vinha de herdar a cor da marca do Instagram,
+que não é cor desta casa.
+
+**4. A escada de cantos, que tinha uma voz a mais.** Ele perguntou se card
+arredondado com botão pontiagudo era erro de design. Não é — imagem expressiva com
+controle contido é sistema legítimo. O problema era outro: `--radius-fio` valia
+**2px**, e 2px é um valor indeciso. Não é 0, que leria como reto de propósito, nem 6,
+que conversa com o card; no tamanho de um botão ninguém lê 2px como escolha, lê como
+arredondamento pela metade. E o degrau aparecia toda vez que um botão de 2px morava
+dentro de um card de 6px. Ele escolheu **6px para tudo**: controle e superfície agora
+falam a mesma língua, e o 999px do arco fica sendo o único gesto expressivo — que é o
+que faz o arco significar alguma coisa.
+
+*Correção minha no caminho:* eu havia apontado uma inconsistência entre o CTA de
+WhatsApp do cabeçalho (2px) e o flutuante (999px). Falei sem conferir — a variante
+pílula só existe na página `/estilo`. Não havia inconsistência no site.
+
+**5. As curvas do cabeçalho, que eram quatro.** Um levantamento mostrou `0.18s` da
+marca convivendo com `0.15s` e com a curva padrão do Tailwind em sete hovers que
+usavam `transition-colors` pelado. Tudo unificado em 180ms na `--ease-fio` (os dois
+`200ms` que sobraram são gestos de desenho — a seta e a linha-fantasma —, mais lentos
+de propósito que uma troca de cor).
+
+Verificado: `build`, `lint`, `check:classes` (372 classes), `check:espaco`,
+`check:whatsapp`, `check:seo` (as 6 âncoras chegando) e `check:produto`.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a
