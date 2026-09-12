@@ -1568,6 +1568,39 @@ Verificado: `build`, `lint`, `check:classes` (390), `check:espaco`, `check:whats
 do catálogo apontando para `categoria=mesa`, e a página de uma peça de exemplo
 respondendo 200.
 
+### ✅ Etapa 39 — O acabamento que faltava na vitrine de categorias *(cobrança do Bruno)*
+
+*"Esqueceu de fazer um design sênior na seção e nos cards."* Justo: na etapa 38 eu
+resolvi o problema de DADOS e a estrutura, e parei ali. Os cartões de categoria eram o
+card de peça com outro texto dentro, e cinco iguais em fila é uma lista, não uma
+composição.
+
+**A categoria deixou de usar o card da peça.** Eram idênticos — retângulo branco, foto em
+cima, nome embaixo. Mas um card de peça convida a COMPRAR aquilo e um azulejo de
+categoria convida a ENTRAR: dois gestos diferentes, e com a mesma forma a página vira uma
+lista só, mais longa. Agora a foto é o cartão inteiro e o nome mora dentro dela.
+
+**O véu escuro não é estética, é legibilidade.** As capas saem do acervo e não dá para
+saber se a próxima será clara ou escura — a de Mesa tem xícara branca, as de exemplo são
+verde-escuro. Texto creme sobre foto qualquer é aposta; sobre o véu é garantia. Medido no
+azulejo mais claro: **11,86:1**. Ele é degradê e não cor chapada porque só precisa existir
+onde há texto — no topo da foto a peça aparece limpa.
+
+**O desencontro vertical é o trabalho de composição.** Cinco retângulos alinhados pelo
+topo leem como saída de um `for`; alternando a altura, a fila parece arrumada por alguém.
+Um degrau só, e só a partir de `lg` — abaixo disso a grade tem duas ou três colunas e o
+desencontro viraria buraco. Conferido em 390, 768, 1024 e 1440: nenhum transbordo.
+
+**O movimento é resposta, não enfeite.** Sem zoom na foto (identidade §7.1: são recortes
+de capa de reel, e ampliar mostra o artefato de compressão, não a peça). Quem responde é
+o véu, que adensa; o cartão, que sobe 3px; o nome, que sobe **2** — a diferença entre os
+dois é o que faz o nome parecer apoiado na foto em vez de impresso nela. E a seta não
+fica esperando: ela entra quando o ponteiro chega, porque seta parada em cinco cartões é
+cinco vezes o mesmo enfeite.
+
+Verificado: `build`, `lint`, `check:classes` (399), `check:espaco`, `check:whatsapp`,
+`check:seo`, `check:produto`; elevação medida (0 → −3px) e contraste do nome em 11,86:1.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

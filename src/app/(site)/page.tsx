@@ -236,27 +236,57 @@ export default async function Home({ searchParams }: PageProps<"/">) {
              * cinco, mais estreita e mais baixa, lê como OUTRA coisa — que é o
              * que ela é. Repetir a mesma grade diria que o conteúdo é o mesmo.
              */}
+            {/**
+             * **Cinco azulejos, e não cinco cards iguais.**
+             *
+             * Aqui havia UM card de texto: título, descrição e um link —
+             * sozinho, num terço da largura, com dois terços de creme vazio ao
+             * lado. Quatro das seis categorias estavam sem peça, e categoria sem
+             * peça não aparece. Não parecia inacabado: estava.
+             *
+             * A capa de cada uma sai da primeira peça publicada dela, e isso é
+             * decisão de arquitetura, não de layout — não existe campo "foto da
+             * categoria" no banco, então a vitrine nunca envelhece em relação ao
+             * acervo. A Raquel troca a foto da peça e esta seção acompanha.
+             *
+             * **O desencontro vertical é de propósito.** Cinco retângulos
+             * alinhados pelo topo leem como saída de um `for`; alternando a
+             * altura, a fila passa a parecer arrumada por alguém. É um degrau só,
+             * e só a partir de `lg` — abaixo disso a grade tem duas ou três
+             * colunas e o desencontro viraria buraco.
+             */}
             <ul className="mt-bloco grid grid-cols-2 gap-x-grade-col gap-y-grade-linha md:grid-cols-3 lg:grid-cols-5">
               {outrasCategorias.map((c, i) => (
-                <Revelar as="li" key={c.slug} atraso={0.06 * i}>
+                <Revelar
+                  as="li"
+                  key={c.slug}
+                  atraso={0.07 * i}
+                  className={i % 2 === 1 ? "lg:mt-respiro" : undefined}
+                >
                   {/* Categoria virou filtro do catálogo, não página. */}
                   <Link
                     href={`/?categoria=${c.slug}#catalogo`}
-                    className="card-peca group flex h-full flex-col rounded-card border border-borda bg-superficie p-card"
+                    className="azulejo-categoria group block"
                   >
-                    <div className="placa-da-peca">
-                      <Foto imagem={c.capa} dentroDeCard />
+                    <Foto imagem={c.capa} className="rounded-none" />
+                    {/* `relative` e `z-10`: a legenda mora ACIMA do véu, que é um
+                        `::after` do próprio azulejo. Sem isso o degradê passaria
+                        por cima do texto que ele existe para tornar legível. */}
+                    <div className="legenda-do-azulejo absolute inset-x-0 bottom-0 z-10 p-card">
+                      <h3 className="font-display text-lead leading-tight text-cru">
+                        {c.nome}
+                      </h3>
+                      <span className="mt-1 flex items-center gap-2 text-legenda uppercase tracking-[0.1em] text-cru/70">
+                        {c.totalDeProdutos} {c.totalDeProdutos === 1 ? "peça" : "peças"}
+                        {/* A seta não fica esperando: ela ENTRA quando o ponteiro
+                            chega. Seta parada em cinco cartões é cinco vezes o
+                            mesmo enfeite; seta que aparece é resposta. */}
+                        <ArrowRight
+                          aria-hidden="true"
+                          className="size-3.5 -translate-x-1 opacity-0 transition-[transform,opacity] duration-[240ms] ease-fio group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
+                        />
+                      </span>
                     </div>
-                    <h3 className="mt-3 font-display text-lead leading-tight">{c.nome}</h3>
-                    {/* A costura aparece no hover, igual à do menu e à da
-                        etiqueta: é o mesmo gesto dizendo "este é o alvo". */}
-                    <span
-                      aria-hidden="true"
-                      className="ponto-corrido mt-1 block w-5 origin-left scale-x-0 text-destaque opacity-0 transition-[transform,opacity] duration-[320ms] ease-fio group-hover:scale-x-100 group-hover:opacity-100 group-focus-visible:scale-x-100 group-focus-visible:opacity-100"
-                    />
-                    <span className="mt-2 text-apoio text-conteudo-suave">
-                      {c.totalDeProdutos} {c.totalDeProdutos === 1 ? "peça" : "peças"}
-                    </span>
                   </Link>
                 </Revelar>
               ))}

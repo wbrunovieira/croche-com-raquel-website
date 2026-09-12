@@ -331,6 +331,71 @@
   }
 
   /**
+   * Azulejo de categoria.
+   *
+   * **Por que não é o card de peça.** Eles estavam idênticos: retângulo branco,
+   * foto em cima, nome embaixo. Mas um card de peça convida a COMPRAR aquilo, e
+   * um azulejo de categoria convida a ENTRAR — são dois gestos diferentes, e
+   * quando têm a mesma forma a página vira uma lista só, mais longa.
+   *
+   * Aqui a foto é o cartão inteiro e o nome mora dentro dela. Some a moldura,
+   * some a legenda, e cinco deles em fila leem como uma estante em vez de mais
+   * cinco produtos.
+   *
+   * **O véu escuro não é estética, é legibilidade.** As capas vêm do acervo e
+   * não dá para saber se a próxima será clara ou escura — a de Mesa tem xícara
+   * branca, as de exemplo são verde-escuro. Texto creme sobre foto qualquer é
+   * aposta; sobre o véu é garantia. Ele é degradê e não cor chapada porque só
+   * precisa existir onde há texto: no topo da foto a peça aparece limpa.
+   *
+   * **Sem zoom na foto** — identidade §7.1. As fotos são recorte de capa de
+   * reel e ampliar mostra o artefato de compressão, não a peça. Quem responde
+   * ao ponteiro é o véu, que adensa, e o nome, que sobe alguns pixels.
+   */
+  .azulejo-categoria {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    box-shadow: 0 1px 2px rgba(36, 29, 22, 0.06);
+    transition:
+      transform 240ms var(--ease-fio),
+      box-shadow 240ms var(--ease-fio);
+  }
+  .azulejo-categoria::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: linear-gradient(
+      to top,
+      rgba(8, 30, 20, 0.88) 0%,
+      rgba(8, 30, 20, 0.62) 26%,
+      rgba(8, 30, 20, 0.08) 58%,
+      transparent 78%
+    );
+    transition: opacity 240ms var(--ease-fio);
+  }
+  .azulejo-categoria:hover,
+  .azulejo-categoria:focus-visible {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-alta);
+  }
+  .azulejo-categoria:active {
+    transform: translateY(0) scale(0.99);
+    transition-duration: 100ms;
+  }
+  /* O texto sobe junto, mas menos que o cartão: o cartão anda 3px e ele anda 2.
+     A diferença é o que dá a impressão de que o nome está APOIADO na foto, e
+     não impresso nela. */
+  .azulejo-categoria .legenda-do-azulejo {
+    transition: transform 240ms var(--ease-fio);
+  }
+  .azulejo-categoria:hover .legenda-do-azulejo,
+  .azulejo-categoria:focus-visible .legenda-do-azulejo {
+    transform: translateY(-2px);
+  }
+
+  /**
    * O botão secundário.
    *
    * Era contorno e nada mais: linha em volta, fundo do que estivesse atrás,
