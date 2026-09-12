@@ -1286,6 +1286,37 @@ Verificado: `build`, `lint`, `check:classes` (386), `check:espaco`, `check:whats
 não alcançou — ainda estava em `duration-150` com a cor antiga. Passou a usar
 `.botao-primario`.
 
+### ✅ Etapa 33 — As bolas do cabeçalho *(pedido do Bruno)*
+
+O véu da etapa 31 ficou sutil demais para o gosto dele. Ele pediu para **manter** o
+véu e somar uma **forma** — "uma bola".
+
+**Por que `circle <raio>` e não porcentagem.** Raio em porcentagem faz o degradê
+esticar junto com a caixa, e numa caixa de 1280 × 104 isso vira faixa, não bola. Com
+raio fixo a forma continua redonda; o raio fica abaixo da altura do cabeçalho (104px
+no topo, 80 rolado) para a bola caber inteira.
+
+**Elas moram nas margens porque o meio é do texto.** Mapeei onde cada coisa fica:
+logo 8–27%, menu 33–66%, Instagram 73–76%, botão verde 76–93%. A bola da esquerda, em
+9%, cai atrás do logotipo — que é linha, então ela aparece ATRAVÉS do desenho, e é o
+melhor lugar da faixa para ela.
+
+*A da direita eu pus errado primeiro.* Em 91% ela ficava quase toda debaixo do botão
+verde, que é opaco: ΔE **4,7**, invisível. Só medindo a posição dos elementos ficou
+claro o porquê. Em 97% ela sobra para fora do botão e lê como luz entrando pela quina.
+
+**As duas são verdes, por escolha dele** — a primeira era goiaba. A da direita ficou
+mais fraca de propósito: o verde é bem mais escuro que a goiaba, e as duas no mesmo
+percentual dariam dois pesos iguais em lados opostos, o que lê como simetria e não como
+luz. Uma manda, a outra responde.
+
+*Medido:* ΔE **10,3** na esquerda e **8,5** na direita contra o fundo neutro — bem
+acima do véu de antes (4,6 de ponta a ponta), que era exatamente a queixa. Nenhuma
+encosta no menu.
+
+Verificado: `build`, `lint`, `check:classes` (386), `check:espaco`, `check:whatsapp`,
+`check:seo`.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

@@ -381,6 +381,42 @@
      sendo o lugar mais quieto da tela. */
   .brilho-cabecalho {
     background-image:
+      /* As duas BOLAS. `circle <raio>` em vez de porcentagem: porcentagem faz
+         o degradê se esticar com a caixa e virar faixa — o raio fixo mantém a
+         forma redonda, que é o ponto. O raio fica abaixo da altura do
+         cabeçalho (104px no topo, 80 rolado) para a bola caber inteira e ser
+         lida como bola.
+
+         Elas moram nas margens, não no meio: no meio passariam por baixo do
+         menu e do logotipo, e fundo que atravessa texto rouba legibilidade.
+         Encostadas nas bordas, entram como luz vindo de fora do quadro.
+
+         O núcleo é forte o bastante para se ver e cai rápido para transparente
+         — é a queda que faz a forma parecer volume em vez de adesivo. */
+      radial-gradient(
+        circle 132px at 9% 46%,
+        color-mix(in srgb, var(--color-primaria) 17%, transparent) 0%,
+        color-mix(in srgb, var(--color-primaria) 7%, transparent) 46%,
+        transparent 72%
+      ),
+      /* A segunda bola também é verde, por escolha dele. Fica mais fraca que a
+         da esquerda de propósito: o verde é bem mais escuro que a goiaba, e as
+         duas no mesmo percentual dariam dois pesos iguais em lados opostos —
+         que lê como simetria, não como luz. Uma manda, a outra responde.
+
+         A posição saiu de 91% para 97% depois de medir onde cada coisa mora:
+         o botão verde ocupa de 76% a 93%, então a bola estava quase toda
+         debaixo dele — ΔE 4,7, invisível. No canto ela sobra para fora do
+         botão e lê como luz entrando pela quina, que é o par da bola da
+         esquerda, atrás do logotipo. */
+      radial-gradient(
+        circle 118px at 97% 58%,
+        color-mix(in srgb, var(--color-primaria) 14%, transparent) 0%,
+        color-mix(in srgb, var(--color-primaria) 5%, transparent) 46%,
+        transparent 74%
+      ),
+      /* E o véu de antes, que ele pediu para manter: continua sendo a deriva
+         de temperatura de um canto ao outro, por baixo das bolas. */
       radial-gradient(
         110% 190% at 6% 0%,
         color-mix(in srgb, var(--color-primaria) 7%, transparent) 0%,
