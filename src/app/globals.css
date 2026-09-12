@@ -266,7 +266,7 @@
    * O hover era `bg-superficie-baixa`, um bege quente. Isolado passa; ao lado
    * do verde do botão de WhatsApp ele puxa para rosado e lê como cor de outro
    * sistema. A marca tem uma cor para "isto respondeu": o verde. Uma lavagem
-   * de 8% dele não compete com nada e pertence à paleta.
+   * dele não compete com nada e pertence à paleta.
    *
    * Redondo, e não quadrado arredondado: alvo de ícone é um ponto, e círculo
    * é a forma que diz isso. O quadrado sugeria uma caixa que não existe.
@@ -275,17 +275,39 @@
    * Tailwind — a diferença é pequena num elemento, e some quando todo o
    * cabeçalho responde no mesmo tempo e com a mesma curva.
    */
+  /* O lavado de 8% dava ΔE 5,5 contra o creme — em teoria, diferença que se lê
+     sem esforço. Na prática não se via, e o motivo não era a opacidade: o
+     lavado mora num círculo de 36px quase todo ocupado pelo ícone, e um tom
+     SEM ARESTA em área pequena não dá ao olho onde pegar. O anel resolve o que
+     mais opacidade não resolveria — ele desenha a borda do alvo. */
   .botao-de-icone {
     border-radius: var(--radius-pilula);
     color: var(--color-conteudo-suave);
     transition:
-      color 180ms var(--ease-fio),
-      background-color 180ms var(--ease-fio);
+      color 240ms var(--ease-fio),
+      background-color 240ms var(--ease-fio),
+      box-shadow 240ms var(--ease-fio);
+    box-shadow: inset 0 0 0 1px transparent;
   }
   .botao-de-icone:hover,
   .botao-de-icone:focus-visible {
     color: var(--color-primaria);
-    background-color: color-mix(in srgb, var(--color-primaria) 8%, transparent);
+    background-color: color-mix(in srgb, var(--color-primaria) 11%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primaria) 22%, transparent);
+  }
+
+  /* Ponto corrido — a costura à mão, que é o gesto da casa.
+     O indicador do menu era um fio liso de 1px: correto e mudo. Em pontinhos
+     ele passa a dizer de que ofício é este site, e continua custando dois
+     pixels de altura. O hover usa o MESMO desenho, só que apagado, então o
+     item inativo mostra de antemão a costura que vai receber. */
+  .ponto-corrido {
+    height: 2px;
+    background-image: repeating-linear-gradient(
+      to right,
+      currentColor 0 3px,
+      transparent 3px 6px
+    );
   }
 
   /**

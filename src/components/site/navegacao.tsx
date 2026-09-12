@@ -181,7 +181,7 @@ export function Navegacao({
                     para nada. O balão de fala também diz o que a seta não dizia
                     — a seta significa "vai para algum lugar", e o que se quer
                     prometer aqui é conversa: contar o que se tem em mente. */}
-                <span className="hidden shrink-0 items-center gap-1.5 rounded-fio border border-cru/25 bg-white/10 px-3 py-1.5 text-apoio font-medium transition-colors duration-[180ms] ease-fio group-hover:border-cru/45 group-hover:bg-white/20 sm:inline-flex">
+                <span className="hidden shrink-0 items-center gap-1.5 rounded-fio border border-cru/25 bg-white/10 px-3 py-1.5 text-apoio font-medium transition-colors duration-[240ms] ease-fio group-hover:border-cru/45 group-hover:bg-white/20 sm:inline-flex">
                   <MessageCircle className="size-4" aria-hidden="true" />
                   Me conte
                 </span>
@@ -199,7 +199,7 @@ export function Navegacao({
                 type="button"
                 onClick={() => setAvisoVisivel(false)}
                 aria-label="Fechar aviso"
-                className="-mr-2 shrink-0 rounded-fio p-2 transition-colors duration-[180ms] ease-fio hover:bg-white/10 active:scale-90"
+                className="-mr-2 shrink-0 rounded-fio p-2 transition-colors duration-[240ms] ease-fio hover:bg-white/10 active:scale-90"
               >
                 <X className="size-4" aria-hidden="true" />
               </button>
@@ -278,6 +278,13 @@ export function Navegacao({
           </nav>
 
           <div className="flex items-center gap-2">
+            {/* Navegar e agir são duas coisas, e no cabeçalho estavam no mesmo
+                fluxo: o ícone do Instagram flutuava entre "Sob medida" e o botão
+                verde sem pertencer a nenhum dos dois. Um fio de 1px dá a divisão
+                — é a mesma solução da faixa acima, e pesa o que um fio pesa.
+                Só aparece com o menu: sem ele, não há dois grupos a separar. */}
+            <span aria-hidden="true" className="mx-1 hidden h-5 w-px bg-borda lg:block" />
+
             {instagramUrl ? (
               <a
                 href={instagramUrl}
@@ -294,7 +301,7 @@ export function Navegacao({
               href={`https://wa.me/${whatsappNumero}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden items-center gap-btn-icone rounded-fio bg-primaria px-btn-x py-btn-y text-apoio font-medium text-sobre-primaria transition-[background-color,transform] duration-[180ms] ease-fio active:translate-y-px hover:bg-primaria-hover sm:inline-flex"
+              className="hidden items-center gap-btn-icone rounded-fio bg-primaria px-btn-x py-btn-y text-apoio font-medium text-sobre-primaria transition-[background-color,transform] duration-[240ms] ease-fio active:translate-y-px hover:bg-primaria-hover sm:inline-flex"
             >
               <IconeZap className="size-4" />
               Falar com a Raquel
@@ -305,7 +312,7 @@ export function Navegacao({
               onClick={() => setGaveta(true)}
               aria-label="Abrir menu"
               aria-expanded={gaveta}
-              className="rounded-fio p-2 transition-colors duration-[180ms] ease-fio hover:bg-superficie-baixa lg:hidden"
+              className="rounded-fio p-2 transition-colors duration-[240ms] ease-fio hover:bg-superficie-baixa lg:hidden"
             >
               <Menu className="size-6" aria-hidden="true" />
             </button>
@@ -342,7 +349,7 @@ function LinkDeMenu({
   return (
     <Link
       href={href}
-      className={`group relative block rounded-fio px-3 py-2 text-apoio transition-colors duration-[180ms] ease-fio duration-[180ms] ease-fio ${
+      className={`group relative block rounded-fio px-3 py-2 text-apoio transition-colors duration-[240ms] ease-fio ${
         ativo ? "text-conteudo" : "text-conteudo-suave hover:text-conteudo"
       }`}
     >
@@ -363,7 +370,7 @@ function LinkDeMenu({
       {!ativo ? (
         <span
           aria-hidden="true"
-          className="absolute inset-x-3 -bottom-0.5 block h-px origin-center scale-x-0 bg-borda-forte opacity-0 transition-[transform,opacity] duration-200 ease-fio group-hover:scale-x-100 group-hover:opacity-100 group-focus-visible:scale-x-100 group-focus-visible:opacity-100"
+          className="ponto-corrido absolute inset-x-3 -bottom-0.5 block origin-center scale-x-0 text-borda-forte opacity-0 transition-[transform,opacity] duration-[320ms] ease-fio group-hover:scale-x-100 group-hover:opacity-100 group-focus-visible:scale-x-100 group-focus-visible:opacity-100"
         />
       ) : null}
 
@@ -372,7 +379,7 @@ function LinkDeMenu({
         // piscar — é o detalhe que separa "tem indicador" de "parece feito".
         <motion.span
           layoutId="indicador-do-menu"
-          className="absolute inset-x-3 -bottom-0.5 block h-px bg-destaque"
+          className="ponto-corrido absolute inset-x-3 -bottom-0.5 block text-destaque"
           transition={transicao(DURACAO.media, semMovimento)}
         />
       ) : null}
@@ -418,7 +425,7 @@ function ItemComFilhos({ item, ativo }: { item: ItemDeMenu; ativo: boolean }) {
           aria-expanded={aberto}
           aria-controls={idMenu}
           aria-label={`${aberto ? "Fechar" : "Abrir"} tipos de ${item.rotulo.toLowerCase()}`}
-          className="-ml-1 rounded-fio p-1 text-conteudo-suave transition-colors duration-[180ms] ease-fio hover:text-conteudo"
+          className="-ml-1 rounded-fio p-1 text-conteudo-suave transition-colors duration-[240ms] ease-fio hover:text-conteudo"
         >
           <motion.span
             className="block"
@@ -450,7 +457,7 @@ function ItemComFilhos({ item, ativo }: { item: ItemDeMenu; ativo: boolean }) {
                 >
                   <Link
                     href={filho.href}
-                    className="flex items-center justify-between gap-4 rounded-fio px-3 py-2 text-apoio transition-colors duration-[180ms] ease-fio hover:bg-superficie-baixa"
+                    className="flex items-center justify-between gap-4 rounded-fio px-3 py-2 text-apoio transition-colors duration-[240ms] ease-fio hover:bg-superficie-baixa"
                   >
                     <span>{filho.rotulo}</span>
                     <span className="tabular text-legenda text-conteudo-suave">
@@ -462,7 +469,7 @@ function ItemComFilhos({ item, ativo }: { item: ItemDeMenu; ativo: boolean }) {
             </ul>
             <Link
               href={item.href}
-              className="block border-t border-borda px-5 py-3 text-apoio text-destaque-texto transition-colors duration-[180ms] ease-fio hover:bg-superficie-baixa"
+              className="block border-t border-borda px-5 py-3 text-apoio text-destaque-texto transition-colors duration-[240ms] ease-fio hover:bg-superficie-baixa"
             >
               Ver todas as bolsas →
             </Link>
@@ -520,7 +527,7 @@ function Gaveta({
                 type="button"
                 onClick={aoFechar}
                 aria-label="Fechar menu"
-                className="rounded-fio p-2 transition-colors duration-[180ms] ease-fio hover:bg-white/10"
+                className="rounded-fio p-2 transition-colors duration-[240ms] ease-fio hover:bg-white/10"
               >
                 <X className="size-6" aria-hidden="true" />
               </button>
@@ -568,7 +575,7 @@ function Gaveta({
                 href={`https://wa.me/${whatsappNumero}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex w-full items-center justify-center gap-btn-icone rounded-fio bg-cru px-btn-x py-btn-y font-medium transition-transform duration-[180ms] ease-fio active:translate-y-px text-verde-cristal"
+                className="flex w-full items-center justify-center gap-btn-icone rounded-fio bg-cru px-btn-x py-btn-y font-medium transition-transform duration-[240ms] ease-fio active:translate-y-px text-verde-cristal"
               >
                 <IconeZap className="size-5" />
                 Falar com a Raquel

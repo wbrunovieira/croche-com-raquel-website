@@ -1163,6 +1163,42 @@ dando à corrente espaço próprio: 14px de ar em cima, 12px até ela embaixo.
 Verificado: `build`, `lint`, `check:classes` (377), `check:espaco`, `check:whatsapp`
 e `check:seo`.
 
+### ✅ Etapa 30 — O cabeçalho ganha mão *(pedido do Bruno)*
+
+**1. O hover do Instagram não se via — e o problema não era o que parecia.** Medi o
+lavado de 8% do verde contra o creme: **ΔE 5,5**, que em teoria é diferença que se lê
+sem esforço. Subir a opacidade seria tratar o sintoma errado. O que falta num alvo de
+36px quase todo ocupado pelo ícone é **aresta**: um tom sem borda, em área pequena,
+não dá ao olho onde pegar. Entrou um anel de 1px a 22% junto com o lavado (agora 11%),
+e o alvo passou a existir.
+
+*Lição que vale além daqui:* quando um estado não é percebido, medir o contraste
+responde só metade. A outra metade é se a forma tem contorno.
+
+**2. Os hovers ficaram mais lentos.** Ele pediu para suavizar. Os do cabeçalho foram
+de 180ms para **240ms**, e a costura que se desenha no hover do menu, para **320ms** —
+tinta que espalha, não interruptor que estala. A curva continua a `--ease-fio`.
+
+*Corrigi um defeito meu da etapa 28 no caminho:* o `LinkDeMenu` estava com
+`duration-[180ms] ease-fio` **duplicado** — meu `sed` daquela rodada somou a curva a
+uma classe que já a tinha.
+
+**3. O plus de design: o indicador virou ponto corrido.** Era um fio liso de 1px —
+correto e mudo. Agora é uma **costura à mão** (`.ponto-corrido`, um
+`repeating-linear-gradient` de 3px cheio, 3px vazio, 2px de altura): o menu passa a
+dizer de que ofício é este site, e custa um pixel a mais de altura. O hover usa o
+mesmo desenho, apagado, então o item inativo mostra de antemão a costura que vai
+receber — o traço goiaba continua deslizando entre os itens com `layoutId`.
+
+**4. E um fio separa navegar de agir.** O ícone do Instagram flutuava entre "Sob
+medida" e o botão verde sem pertencer a nenhum grupo. Uma divisória de 1px resolve —
+mesma solução da faixa acima, e só aparece quando o menu aparece: sem ele não há dois
+grupos a separar.
+
+Verificado: `build`, `lint`, `check:classes` (382), `check:espaco`, `check:whatsapp`,
+`check:seo`, `check:produto`, e o indicador acompanhando a rolagem (Início → Catálogo
+→ Sob medida).
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a
