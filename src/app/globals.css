@@ -280,6 +280,40 @@
      lavado mora num círculo de 36px quase todo ocupado pelo ícone, e um tom
      SEM ARESTA em área pequena não dá ao olho onde pegar. O anel resolve o que
      mais opacidade não resolveria — ele desenha a borda do alvo. */
+  /* Botão primário.
+
+     Era um retângulo de cor chapada que trocava de cor no hover. Duas
+     mudanças, nenhuma barulhenta:
+
+     Um brilho fixo no topo — luz vindo de cima, que é o que faz uma superfície
+     parecer superfície em vez de recorte. Ele é ESTÁTICO de propósito:
+     `background-image` não interpola, então quem anima é a cor por baixo, e
+     tentar animar o degradê daria um salto no meio da transição.
+
+     E o hover deixou de ser só troca de cor: o botão sobe um pixel e ganha a
+     sombra verde da marca. É o gesto de "isto está ao alcance" — e como o
+     `active:translate-y-px` do Tailwind escreve em `translate`, propriedade
+     separada de `transform`, o clique soma +1px sobre o -1px do hover e o
+     botão volta ao lugar ao ser pressionado, sem nenhuma conta. */
+  .botao-primario {
+    background-color: var(--color-primaria);
+    background-image: linear-gradient(
+      to bottom,
+      color-mix(in srgb, white 11%, transparent),
+      transparent 58%
+    );
+    box-shadow: 0 1px 2px rgba(10, 46, 31, 0.18);
+  }
+  .botao-primario:hover,
+  .botao-primario:focus-visible {
+    background-color: var(--color-primaria-hover);
+    box-shadow: var(--shadow-zap);
+    transform: translateY(-1px);
+  }
+  .botao-primario:active {
+    box-shadow: 0 1px 2px rgba(10, 46, 31, 0.18);
+  }
+
   .botao-de-icone {
     border-radius: var(--radius-pilula);
     color: var(--color-conteudo-suave);
@@ -329,6 +363,36 @@
    * Fica num elemento próprio, e não no `background` do `<header>`, porque a
    * entrada é animada por opacidade — degradê não interpola como cor.
    */
+  /* O degradê que dá chão ao cabeçalho.
+
+     Camada PRÓPRIA, sempre visível, e é isso que a separa da
+     `.superficie-cabecalho`: aquela é a superfície opaca que entra com a
+     rolagem, esta é um véu de cor que existe desde o topo. Duas manchas
+     radiais muito fracas — o verde da marca atrás do logotipo, a goiaba atrás
+     dos botões — dão ao creme uma deriva de temperatura de um canto ao outro,
+     em vez de um bloco de cor chapado.
+
+     Fica POR CIMA da superfície de propósito: assim o mesmo véu tinge tanto o
+     creme da página (antes de rolar) quanto o papel da superfície (depois),
+     e o cabeçalho não muda de caráter no meio do caminho.
+
+     As porcentagens são de um dígito porque o objetivo é ser sentido, não
+     visto — acima disso vira faixa colorida, e o cabeçalho precisa continuar
+     sendo o lugar mais quieto da tela. */
+  .brilho-cabecalho {
+    background-image:
+      radial-gradient(
+        110% 190% at 6% 0%,
+        color-mix(in srgb, var(--color-primaria) 7%, transparent) 0%,
+        transparent 62%
+      ),
+      radial-gradient(
+        85% 170% at 96% 100%,
+        color-mix(in srgb, var(--color-destaque) 5%, transparent) 0%,
+        transparent 58%
+      );
+  }
+
   .superficie-cabecalho {
     background-image: linear-gradient(
       to bottom,

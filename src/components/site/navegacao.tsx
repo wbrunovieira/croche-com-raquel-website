@@ -246,6 +246,11 @@ export function Navegacao({
           }`}
         />
 
+        {/* O véu de cor vem DEPOIS da superfície: assim ele tinge tanto o creme
+            da página, antes de rolar, quanto o papel da superfície, depois — e
+            o cabeçalho não troca de caráter no meio do percurso. */}
+        <div aria-hidden="true" className="brilho-cabecalho pointer-events-none absolute inset-0" />
+
         <div className="container-site relative flex h-full items-center justify-between gap-8">
           <Link href="/" aria-label="Crochê com Raquel — início" className="shrink-0">
             {/* A assinatura de lugar sai aqui: no cabeçalho ela mediria 5px.
@@ -301,7 +306,7 @@ export function Navegacao({
               href={`https://wa.me/${whatsappNumero}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden items-center gap-btn-icone rounded-fio bg-primaria px-btn-x py-btn-y text-apoio font-medium text-sobre-primaria transition-[background-color,transform] duration-[240ms] ease-fio active:translate-y-px hover:bg-primaria-hover sm:inline-flex"
+              className="botao-primario hidden items-center gap-btn-icone rounded-fio px-btn-x py-btn-y text-apoio font-medium text-sobre-primaria transition-[background-color,box-shadow,transform] duration-[240ms] ease-fio active:translate-y-px sm:inline-flex"
             >
               <IconeZap className="size-4" />
               Falar com a Raquel

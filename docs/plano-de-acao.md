@@ -1199,6 +1199,49 @@ Verificado: `build`, `lint`, `check:classes` (382), `check:espaco`, `check:whats
 `check:seo`, `check:produto`, e o indicador acompanhando a rolagem (Início → Catálogo
 → Sob medida).
 
+### ✅ Etapa 31 — O chão do cabeçalho e o botão que responde *(pedido do Bruno)*
+
+**1. Um degradê que dá chão ao cabeçalho.** Entrou como camada própria
+(`.brilho-cabecalho`), e o que a separa da `.superficie-cabecalho` é o tempo: aquela
+é a superfície opaca que chega com a rolagem, esta é um véu de cor que existe **desde
+o topo**. São duas manchas radiais fraquíssimas — o verde da marca atrás do logotipo,
+a goiaba atrás dos botões —, de modo que o creme ganha uma deriva de temperatura de um
+canto ao outro em vez de ser um bloco chapado.
+
+Ela fica **por cima** da superfície de propósito: assim o mesmo véu tinge tanto o creme
+da página, antes de rolar, quanto o papel da superfície, depois — e o cabeçalho não
+troca de caráter no meio do percurso.
+
+*Medido no pixel:* ΔE **4,57** da esquerda para a direita, com ~2,5 entre pontos
+vizinhos. É a faixa certa: 2,3 é a "diferença apenas notável", então a deriva se
+percebe atravessando a largura sem que nenhum trecho isolado leia como cor. As
+porcentagens são de um dígito porque o cabeçalho precisa continuar sendo o lugar mais
+quieto da tela.
+
+**2. O botão primário deixou de ser um retângulo chapado.** Ele pediu pelo "Falar com
+a Raquel", mas aquele botão *é* um primário — tratá-lo sozinho criaria dois desenhos
+para o mesmo papel. A mudança entrou em `.botao-primario` e vale para os três do site.
+
+Ganhou um brilho fixo no topo, que é o que faz uma superfície parecer superfície e não
+recorte. Ele é **estático de propósito**: `background-image` não interpola, então quem
+anima é a cor por baixo — animar o degradê daria um salto no meio da transição. E o
+hover deixou de ser só troca de cor: o botão sobe um pixel e ganha a sombra verde da
+marca.
+
+*Detalhe que caiu bem:* o `active:translate-y-px` do Tailwind v4 escreve em
+`translate`, propriedade **separada** de `transform`. Como o hover usa `transform`, o
+clique soma +1px sobre o −1px e o botão volta ao lugar ao ser pressionado, sem
+nenhuma conta a fazer.
+
+*Armadilha de camada, registrada:* utilitário vence camada de componente. Manter
+`bg-primaria` na variante apagaria a cor e o brilho de `.botao-primario`, então a
+variante passou a só nomear a classe. Pelo mesmo motivo, a transição mora no `base` do
+`classesDeBotao` (agora com `box-shadow` na lista e 240ms), não na classe de
+componente — senão o utilitário a sobrescreveria.
+
+Verificado: `build`, `lint`, `check:classes` (385), `check:espaco`, `check:whatsapp`,
+`check:seo`, `check:produto`, e os três botões primários do site com o brilho aplicado.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

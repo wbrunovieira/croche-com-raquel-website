@@ -4,8 +4,10 @@ export type VarianteDeBotao = "primaria" | "secundaria" | "texto" | "zap" | "cla
 export type TamanhoDeBotao = "sm" | "md" | "lg";
 
 const VARIANTES: Record<VarianteDeBotao, string> = {
-  primaria:
-    "bg-primaria text-sobre-primaria hover:bg-primaria-hover rounded-fio",
+  // A cor e a sombra moram em `.botao-primario` (globals.css): utilitário
+  // vence camada de componente, então deixar `bg-primaria` aqui apagaria o
+  // brilho e o degradê de lá.
+  primaria: "botao-primario text-sobre-primaria rounded-fio",
   secundaria:
     "border border-borda-forte text-conteudo hover:bg-superficie-baixa rounded-fio",
   // Fundo claro sobre as seções verdes.
@@ -33,7 +35,7 @@ export function classesDeBotao(
   // (ele mora atrás de `@media (hover: hover)`). `disabled:active` volta a zero
   // para o botão desabilitado não fingir que respondeu.
   const base =
-    "inline-flex items-center justify-center font-texto font-medium transition-[color,background-color,border-color,transform] duration-150 ease-fio active:translate-y-px disabled:active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed";
+    "inline-flex items-center justify-center font-texto font-medium transition-[color,background-color,border-color,box-shadow,transform] duration-[240ms] ease-fio active:translate-y-px disabled:active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed";
   if (variante === "texto") return `${base} py-2 -my-2 ${VARIANTES.texto}`;
   return `${base} ${VARIANTES[variante]} ${TAMANHOS[tamanho]}`;
 }
