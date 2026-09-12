@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Logo } from "@/components/brand/logo";
 import { IconeInstagram } from "@/components/ui/icone-instagram";
 import { IconeZap } from "@/components/ui/icone-zap";
+import { AssinaturaWB } from "@/components/ui/assinatura-wb";
 import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
 import { listarCategorias } from "@/lib/queries/categorias";
 import { SLUG_BOLSAS } from "@/lib/queries/tipos";
@@ -96,9 +97,16 @@ export async function Rodape() {
         </div>
 
         <div className="corrente corrente--claro mt-respiro" aria-hidden="true" />
-        <p className="mt-bloco text-legenda text-inv-suave">
-          © {new Date().getFullYear()} Crochê com Raquel · {config.cidade}
-        </p>
+        {/* Copyright e assinatura dividem a MESMA linha — são as duas notas de
+            rodapé do rodapé, e empilhá-las daria a uma delas um peso que nenhuma
+            tem. No celular quebram e ficam uma sobre a outra, que é o certo
+            quando não cabem lado a lado. */}
+        <div className="mt-bloco flex flex-wrap items-center justify-between gap-x-8 gap-y-3 text-legenda text-inv-suave">
+          <p>
+            © {new Date().getFullYear()} Crochê com Raquel · {config.cidade}
+          </p>
+          <AssinaturaWB />
+        </div>
       </div>
     </footer>
   );
