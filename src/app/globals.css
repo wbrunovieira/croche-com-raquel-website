@@ -331,6 +331,83 @@
   }
 
   /**
+   * O chão do catálogo.
+   *
+   * A seção de cima acaba no creme quente e texturizado. Repetir a trama aqui
+   * faria as duas lerem como a mesma seção — e a instrução era o contrário:
+   * mesma língua, personalidade própria.
+   *
+   * Então o catálogo usa OUTRA técnica da mesma família: em vez de textura, um
+   * degradê que nasce no creme quente de cima e desmaia no creme base em pouco
+   * mais de uma tela. A emenda deixa de ser uma aresta e vira uma passagem, e o
+   * resto da seção fica liso de propósito — aqui a pessoa compara quinze peças,
+   * e fundo com assunto próprio disputa com a tarefa.
+   *
+   * É o argumento inverso do da vitrine de categorias, e os dois estão certos:
+   * lá o fundo precisava de presença porque havia cinco cartões e muito ar; aqui
+   * precisa de silêncio porque há quinze peças e nenhum.
+   */
+  .chao-do-catalogo {
+    background-image: linear-gradient(
+      to bottom,
+      var(--color-superficie-baixa) 0%,
+      color-mix(in srgb, var(--color-superficie-baixa) 45%, var(--color-fundo)) 38%,
+      var(--color-fundo) 88%
+    );
+    background-repeat: no-repeat;
+    background-size: 100% 1100px;
+  }
+
+  /**
+   * Filtro do catálogo.
+   *
+   * É o que só esta seção tem, então é daqui que sai o caráter dela. Eram
+   * retângulos de contorno, todos iguais e sem repouso próprio — lista de links
+   * com borda. Agora cada um é uma superfície que pousa na página, com a mesma
+   * gramática dos outros controles do site: brilho fixo no topo no ativo, e o
+   * inativo subindo um pixel quando o ponteiro chega.
+   *
+   * A contagem fica em algarismo tabular e num degrau de tamanho abaixo: ela é
+   * informação secundária, e em fonte proporcional os números dançam de um chip
+   * para o outro.
+   */
+  .chip-de-filtro {
+    background-color: var(--color-superficie);
+    border: 1px solid var(--color-borda-forte);
+    box-shadow: 0 1px 2px rgba(36, 29, 22, 0.05);
+    transition:
+      background-color 240ms var(--ease-fio),
+      border-color 240ms var(--ease-fio),
+      box-shadow 240ms var(--ease-fio),
+      transform 240ms var(--ease-fio);
+  }
+  .chip-de-filtro:hover,
+  .chip-de-filtro:focus-visible {
+    background-color: var(--color-papel);
+    border-color: color-mix(in srgb, var(--color-conteudo) 38%, transparent);
+    box-shadow: 0 4px 12px -3px rgba(36, 29, 22, 0.16);
+    transform: translateY(-1px);
+  }
+  .chip-de-filtro[aria-current] {
+    background-color: var(--color-primaria);
+    background-image: linear-gradient(
+      to bottom,
+      color-mix(in srgb, white 11%, transparent),
+      transparent 58%
+    );
+    border-color: var(--color-primaria);
+    color: var(--color-sobre-primaria);
+    box-shadow: 0 1px 2px rgba(10, 46, 31, 0.28);
+  }
+  /* O ativo não sobe: ele já é o lugar onde se está. Levantar o estado atual
+     diria "clique aqui" sobre a coisa que já está clicada. */
+  .chip-de-filtro[aria-current]:hover {
+    transform: none;
+    background-color: var(--color-primaria);
+    box-shadow: 0 1px 2px rgba(10, 46, 31, 0.28);
+  }
+
+  /**
    * Trama para fundo CLARO.
    *
    * A `.trama` das seções verdes desenha o tecido em linhas de creme a 5% —

@@ -1627,6 +1627,62 @@ dele está errado. Em cima estão as fotos das peças.
 Verificado: `build`, `lint`, `check:classes` (401), `check:espaco`, `check:whatsapp`,
 `check:seo`, `check:produto`.
 
+### ✅ Etapa 41 — O catálogo ganha cara de índice, e paginação *(pedidos do Bruno)*
+
+*"Retrabalhe a seção catálogo; não pode ser igual acima, mas o padrão da página, com
+personalidade própria."* E, no meio do caminho: *"essa seção merece paginação, se a
+Raquel cadastrar muitos produtos pode ficar gigante."*
+
+**O problema era repetição estrutural.** O cabeçalho do catálogo era idêntico ao da
+vitrine de bolsas — etiqueta, título e linha de apoio à esquerda, grade de quatro embaixo
+— e as duas seções ficavam com a mesma cara mudando só o texto. Mas elas não fazem a
+mesma coisa: lá é curadoria, aqui é o **índice**, o único lugar da página que mostra tudo
+e o único que filtra.
+
+**A contagem virou número grande à direita.** É a assinatura de índice, e é informação de
+verdade porque muda com o filtro: quem clica em "Mesa" vê o 15 virar 3 e entende o que
+aconteceu sem ler nada. Um fio embaixo separa o que a seção É do que ela FAZ — título e
+contagem em cima, controles embaixo. Reto e fino de propósito: a `corrente` é a costura
+ENTRE seções, e usá-la dentro de uma diria que ali começa outra.
+
+**O filtro ganhou desenho porque é o que só esta seção tem.** Eram retângulos de
+contorno, todos iguais e sem repouso próprio. Agora cada um é superfície que pousa na
+página, com a gramática dos outros controles do site. *O ativo não sobe no hover:* ele já
+é o lugar onde se está, e levantá-lo diria "clique aqui" sobre a coisa que já está
+clicada.
+
+**O fundo usa outra técnica, não outra textura.** A seção de cima acaba no creme quente e
+texturizado; repetir a trama faria as duas lerem como a mesma seção. Aqui é um degradê que
+nasce naquele creme e desmaia no creme base — a emenda deixa de ser aresta e vira
+passagem. E o resto fica liso de propósito: *é o argumento inverso do da vitrine de
+categorias, e os dois estão certos.* Lá o fundo precisava de presença porque havia cinco
+cartões e muito ar; aqui precisa de silêncio porque há quinze peças e nenhum.
+
+**A paginação.** Doze por página, três fileiras de quatro. Números e não "carregar mais":
+o "carregar mais" precisa de estado no cliente, some ao atualizar e não dá endereço para
+mandar a ninguém — com número na URL o botão de voltar acerta e a Raquel manda o link
+pronto. O controle é mais quieto que o filtro de propósito: o filtro é escolha, a
+paginação é só deslocamento dentro da escolha já feita.
+
+*Dois defeitos meus, achados testando os extremos:*
+
+1. **`?pagina=99` mostrava zero peças** dizendo "página 2 de 2" — a pessoa lia "nenhuma
+   peça" num catálogo cheio. Eu disparava contagem e busca em paralelo e prendia ao
+   intervalo só o número DEVOLVIDO, enquanto o `skip` usava o 99 e pulava 1.176 linhas.
+   Prender o `skip` exige saber o total, e saber o total exige contar primeiro: a
+   contagem passou a vir antes, e custa um ida-e-volta. *O paralelo era mais rápido e
+   mentia.*
+2. **Trocar de categoria mantinha a página.** Quem estava na página 3 de "Todas" e
+   clicava em "Mesa" — que tem uma página só — caía numa lista vazia. O parâmetro de
+   página pertence ao filtro atual, não à sessão: o link de filtro zera a página.
+
+Conferido em `/`, `?pagina=2`, `?pagina=99`, `?pagina=-2`, `?pagina=abc` e
+`?categoria=mesa`; clicar na página 2 leva de volta ao catálogo (topo a 104px, sob o
+cabeçalho) e não ao topo da página.
+
+Verificado: `build`, `lint`, `check:classes` (406), `check:espaco`, `check:whatsapp`,
+`check:seo`, `check:produto`.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

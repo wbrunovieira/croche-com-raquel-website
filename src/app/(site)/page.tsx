@@ -44,8 +44,10 @@ export const metadata: Metadata = {
 export default async function Home({ searchParams }: PageProps<"/">) {
   // Um `?cor=` antigo na URL simplesmente não é lido: o filtro por cor saiu
   // junto com os grupos de opção, e link velho da Raquel não pode quebrar.
-  const { categoria } = await searchParams;
+  const { categoria, pagina } = await searchParams;
   const categoriaAtual = typeof categoria === "string" ? categoria : undefined;
+  // `?pagina=abc` e `?pagina=-3` viram 1. A consulta prende ao total depois.
+  const paginaAtual = Math.max(1, Number.parseInt(String(pagina ?? "1"), 10) || 1);
 
   const [
     config,
@@ -299,7 +301,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         </section>
       ) : null}
 
-      <SecaoCatalogo categoria={categoriaAtual} />
+      <SecaoCatalogo categoria={categoriaAtual} pagina={paginaAtual} />
       <SecaoQuemFaz config={config} historia={historia} />
       <SecaoCuidados pagina={cuidados} />
       <SecaoPerguntas grupos={grupos} whatsappNumero={config.whatsappNumero} />
