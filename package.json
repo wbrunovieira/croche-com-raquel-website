@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "_comentario_build": "`prisma generate` explícito, e não só no postinstall: o cliente é gerado em src/generated (fora de node_modules) e é gitignored, então nunca vem no repositório. Quando o Vercel restaura o cache de dependências ele pula o install — e o postinstall junto —, e o build quebra com 'Can't resolve @/generated/prisma/client'. Onze deploys desta lista falharam assim.",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "check:espaco": "./scripts/check-espacamento.sh",
