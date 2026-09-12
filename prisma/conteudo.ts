@@ -49,13 +49,17 @@ Peças pequenas de mesa e cozinha aceitam máquina em ciclo delicado, dentro de 
 
 ## Secagem
 
-Seque **deitada, à sombra**. Esta é a parte que mais importa: peça de crochê pendurada no varal estica com o próprio peso da água e perde o formato para sempre. Sol direto desbota.
+Seque **deitada, à sombra**. Esta é a parte que mais importa: peça de crochê pendurada no varal estica com o próprio peso da água, e o que estica demais não volta. Sol direto desbota.
+
+**Espere secar por completo antes de guardar.** Bolsa de fio de malha é grossa e segura água no meio do ponto: guardada ainda úmida, cria mofo e um cheiro que depois não sai.
+
+**Se a peça desalinhou, dá para recuperar.** Molhe de leve, modele deitada no formato certo e deixe secar assim. É o que o crochê tem de melhor — ele volta. Não salva peça que esticou demais, mas resolve a maioria dos casos.
 
 ## Bolsas
 
 Se a bolsa tem forro, lave só a parte de fora com pano úmido e sabão neutro sempre que der. Lavagem completa, só quando precisar mesmo.
 
-Guarde com papel amassado ou um pano dentro, para ela manter o corpo. Bolsa guardada vazia e amassada no fundo do armário achata.
+Guarde com um pano ou papel **sem tinta** dentro, para ela manter o corpo. Jornal não: a tinta passa para o algodão e o papel amarela a peça com o tempo. Bolsa guardada vazia e amassada no fundo do armário achata.
 
 ## Macramê
 

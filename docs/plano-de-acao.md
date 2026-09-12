@@ -1683,6 +1683,42 @@ cabeçalho) e não ao topo da página.
 Verificado: `build`, `lint`, `check:classes` (406), `check:espaco`, `check:whatsapp`,
 `check:seo`, `check:produto`.
 
+### ✅ Etapa 42 — Auditoria dos cuidados com as peças *(pedido do Bruno)*
+
+Ele disse que a seção está boa e pediu para eu conferir se os conselhos são realmente
+bons. Li os textos contra o que é correto para algodão, fio de malha e corda de macramê.
+
+**A base está certa, e uma coisa está notavelmente certa:** a linha de abertura diz que o
+que encurta a vida da peça é a **secagem**, não a lavagem. É verdade, e quase nenhum site
+de artesanato acerta — a maioria enche de regra de lavagem e esquece que pendurar peça
+molhada é o que de fato destrói. Água fria, sabão neutro, sem alvejante, "não torça,
+pressione entre toalhas": tudo correto. Os `careText` de cada peça, o FAQ e esta página
+dizem a mesma coisa, sem contradição.
+
+**Seis achados, de gravidade bem diferente. O Bruno escolheu implementar os três
+objetivos** — aqueles que são propriedade do algodão e não dependem de confirmação da
+Raquel:
+
+1. **"Guarde com papel amassado" era objetivamente arriscado.** Se for jornal, a tinta
+   transfere para algodão claro e o papel ácido amarela a fibra com o tempo — a peça sai
+   manchada depois de uma estação guardada. Agora diz papel **sem tinta**, e nomeia o
+   jornal como o que não fazer.
+2. **Faltava "seque por completo antes de guardar".** Bolsa de fio de malha é grossa e
+   segura água no meio do ponto; guardada úmida cria mofo e um cheiro que não sai.
+3. **Faltava a bloqueagem — justamente o que o crochê tem de melhor.** Umedecer e modelar
+   deitada recupera o formato. *De carona, corrigi uma frase que passaria a se
+   contradizer:* o texto dizia que pendurada a peça perde o formato "para sempre", o que
+   é forte demais. Virou "o que estica demais não volta" — mantém o peso da regra sem
+   negar que caso leve se recupera.
+
+**Não implementados, por decisão dele:** o aviso de primeira lavagem para cores saturadas
+(bordô, terracota, caramelo), que *depende dos fios que ela usa de fato* — se ela já
+pré-lava ou usa fio com boa fixação, o aviso sobra; o alerta sobre enroscar em anel,
+relógio e velcro; e a troca do secador por escova macia na limpeza do macramê.
+
+Verificado: `build`, `lint`, `check:classes` (406), `check:espaco`, `check:whatsapp`,
+`check:seo`, `check:produto`, e as quatro frases novas conferidas no ar.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a
