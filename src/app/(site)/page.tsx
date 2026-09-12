@@ -12,7 +12,6 @@ import { SecaoCatalogo } from "@/components/site/secoes/catalogo";
 import { SecaoQuemFaz } from "@/components/site/secoes/quem-faz";
 import { SecaoCuidados } from "@/components/site/secoes/cuidados";
 import { SecaoPerguntas } from "@/components/site/secoes/perguntas";
-import { SecaoEncomendas } from "@/components/site/secoes/encomendas";
 import { SecaoContato } from "@/components/site/secoes/contato";
 import {
   DadosEstruturados,
@@ -305,7 +304,6 @@ export default async function Home({ searchParams }: PageProps<"/">) {
       <SecaoQuemFaz config={config} historia={historia} />
       <SecaoCuidados pagina={cuidados} />
       <SecaoPerguntas grupos={grupos} whatsappNumero={config.whatsappNumero} />
-      <SecaoEncomendas whatsappNumero={config.whatsappNumero} />
       <SecaoContato config={config} />
     </main>
   );

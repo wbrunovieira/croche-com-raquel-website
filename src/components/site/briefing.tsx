@@ -39,17 +39,19 @@ export function Briefing({ numeroDoWhatsapp }: { numeroDoWhatsapp: string }) {
       <label htmlFor="pedido" className="block text-apoio font-medium">
         O que você tem em mente?
       </label>
-      {/* `inv-suave`, e não `conteudo-suave`: este bloco vive na faixa verde,
-            e a cor do tema claro dava 2,15:1 de contraste — abaixo do mínimo de
-            4,5:1, praticamente ilegível. O rótulo passava porque herda a cor
-            invertida da seção; estes dois parágrafos não herdavam nada. */}
-      <p className="mt-1 text-legenda text-inv-suave">
+      {/* Foi `inv-suave` enquanto o briefing morava na faixa verde. Ele se
+          mudou para o creme junto com a fusão das seções, e a cor invertida
+          aqui daria creme sobre creme. Cor de texto é do LUGAR, não do
+          componente — e este componente mudou de lugar. */}
+      <p className="mt-1 text-legenda text-conteudo-suave">
         Escreva do seu jeito. Se souber a cor, o tamanho ou a data, conte — se
         não souber, a Raquel ajuda a decidir na conversa.
       </p>
-      {/* `text-conteudo` explícito: o campo tem fundo claro mas mora na faixa
-            verde, então herdava a cor invertida e o que ela digitava saía creme
-            sobre creme — 1,08:1, invisível. Fundo próprio pede cor própria. */}
+      {/* `text-conteudo` continua explícito. Na faixa verde ele era obrigatório
+          — o campo tem fundo claro e herdava a cor invertida, 1,08:1. Aqui não
+          faz falta, mas também não custa: campo com fundo próprio declarando a
+          própria cor é o que impede este defeito de voltar na próxima mudança
+          de lugar. */}
       <textarea
         id="pedido"
         rows={5}
@@ -69,7 +71,7 @@ export function Briefing({ numeroDoWhatsapp }: { numeroDoWhatsapp: string }) {
           <IconeZap className="size-5" />
           Enviar pelo WhatsApp
         </a>
-        <p className="mt-3 text-apoio text-inv-suave">
+        <p className="mt-3 text-apoio text-conteudo-suave">
           Nada é enviado daqui: o botão abre o seu WhatsApp com a mensagem
           pronta. Você lê antes de mandar.
         </p>

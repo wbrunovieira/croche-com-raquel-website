@@ -14,9 +14,12 @@ export async function Rodape() {
 
   const institucional = [
     { rotulo: "Quem faz", href: "/#quem-faz" },
-    { rotulo: "Encomenda sob medida", href: "/#encomendas" },
     { rotulo: "Perguntas frequentes", href: "/#perguntas" },
     { rotulo: "Cuidados com as peças", href: "/#cuidados" },
+    // "Encomenda sob medida" saiu daqui junto com a fusão: ela e "Contato"
+    // passaram a levar ao mesmo lugar. A âncora `#encomendas` continua viva na
+    // página para os endereços que já circulam por aí — o que não faz sentido é
+    // oferecer duas portas iguais no mesmo rodapé.
     { rotulo: "Contato", href: "/#contato" },
   ];
 

@@ -33,7 +33,9 @@ export async function Cabecalho() {
     { rotulo: "Quem faz", href: "/#quem-faz" },
     { rotulo: "Cuidados", href: "/#cuidados" },
     { rotulo: "Dúvidas", href: "/#perguntas" },
-    { rotulo: "Sob medida", href: "/#encomendas" },
+    // "Sob medida" saiu: ela e "Contato" passaram a levar ao mesmo lugar
+    // depois da fusão, e dois itens de menu para o mesmo destino é o tipo de
+    // coisa que faz a pessoa clicar duas vezes procurando a diferença.
     { rotulo: "Contato", href: "/#contato" },
   ];
 

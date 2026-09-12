@@ -1763,6 +1763,55 @@ Verificado: `build`, `lint`, `check:classes` (406), `check:espaco`, `check:whats
 `check:seo`, `check:produto`; as nove perguntas conferidas no ar e a frase falsa
 confirmada como removida.
 
+### ✅ Etapa 44 — "Sob medida" e "Contato" viram uma seção só *(pedido do Bruno)*
+
+**Eram a mesma conversa em dois lugares.** "Sob medida" dizia *"me conte o que você tem em
+mente"* e oferecia um campo; "Contato" dizia *"toda peça começa numa conversa"* e oferecia
+um botão. Quem chegava ao fim da página encontrava dois convites seguidos para falar com a
+mesma pessoa, pelo mesmo WhatsApp, e tinha de escolher entre duas portas sem saber a
+diferença — que não existia.
+
+Unificadas, a seção oferece os **dois jeitos de começar**, lado a lado e rotulados:
+"Conte pelo site" (o formulário) e "Ou chame no WhatsApp". Quem sabe o que quer escreve;
+quem tem uma dúvida solta manda mensagem.
+
+**`#encomendas` continua viva como âncora-irmã**, vazia e sem altura. A faixa de aviso
+aponta para ela, o `check:seo` a exige, e um endereço que a Raquel já pode ter mandado
+para alguém não morre por causa de reorganização interna. As duas âncoras levam ao mesmo
+lugar — o que agora é verdade.
+
+**A seção ficou no creme, e isso não foi escolha de gosto:** o rodapé é `verde-musgo`, e
+uma faixa verde imediatamente acima dele viraria uma mancha só. Por isso o briefing teve
+de trocar de lado do contraste — ele carregava `text-inv-suave` porque MORAVA na faixa
+verde. *Cor de texto é do lugar, não do componente, e este componente mudou de lugar.*
+
+**A copy de revenda entrou como bloco separado.** Lojista não quer uma peça, quer um lote,
+e é o único público que chega atrás de preço por quantidade. Misturar a oferta com o
+convite à cliente final confundiria os dois — quem quer uma bolsa leria "quantidade" e
+acharia que precisa comprar várias. O bloco é contido e mais quieto que o resto da seção:
+quem é lojista está varrendo a página atrás exatamente disso e acha; quem não é passa por
+cima sem tropeçar.
+
+*Três defeitos corrigidos no caminho, todos de repetição:*
+
+1. **O menu tinha dois itens para o mesmo destino** — "Sob medida" e "Contato". Saiu um.
+   *De carona, o menu caiu de sete para seis itens*, o que alivia o aperto que me obrigou
+   a subir o breakpoint para `xl` na etapa 35.
+2. **O rodapé tinha a mesma duplicação** ("Encomenda sob medida" + "Contato"). Saiu um.
+3. **O título repetia o rótulo do campo:** "Me conte o que você tem em mente" em cima de
+   "O que você tem em mente?". Ler a mesma frase duas vezes em dois tamanhos faz a pessoa
+   achar que perdeu alguma coisa. O título passou a dizer o CAMINHO, o rótulo diz o que
+   escrever.
+
+E dois de layout: a coluna da direita boiava num vazio de meia tela ao lado de um
+formulário alto — virou cartão, com `self-start` para não esticar; e o botão dela quebrava
+em "Falar no / WhatsApp" porque estava em tamanho `lg` dentro de uma coluna de 20rem.
+*Tamanho de botão é do lugar, não do papel.*
+
+Verificado: `build`, `lint`, `check:classes` (402), `check:espaco`, `check:whatsapp`,
+`check:seo` (as 6 âncoras, incluindo `#encomendas`), `check:produto`; e nenhum botão da
+seção quebrando linha.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a
