@@ -1601,6 +1601,32 @@ cinco vezes o mesmo enfeite.
 Verificado: `build`, `lint`, `check:classes` (399), `check:espaco`, `check:whatsapp`,
 `check:seo`, `check:produto`; elevação medida (0 → −3px) e contraste do nome em 11,86:1.
 
+### ✅ Etapa 40 — O chão da vitrine de categorias *(pedido do Bruno)*
+
+*"Falta o bg lindo aqui, está simples."* Estava: creme chapado.
+
+**Entrou a trama para fundo claro.** A `.trama` das seções verdes desenha o tecido em
+linhas de creme a 5% — ela CLAREIA um fundo escuro, e sobre creme some. A `.trama-clara`
+faz o inverso: linhas de tinta, na mesma diagonal cruzada e no mesmo passo. É o mesmo
+tecido visto sob outra luz, não uma textura nova — o site já tinha o motivo, faltava a
+versão para este lado do contraste.
+
+**A luz de canto vem junto porque textura sozinha não resolve:** um fundo
+uniformemente texturizado continua sendo uniforme. Duas manchas muito fracas — verde no
+alto à direita, goiaba embaixo à esquerda — dão ao creme um lado mais quente e outro mais
+fresco, e é a diferença entre os dois cantos que o olho lê como profundidade. *Medido:*
+**ΔE 5,49** de canto a canto, acima dos 4,6 que ele achou sutis demais no cabeçalho.
+
+**E a corrente costura a emenda.** Ela já separa a faixa de aviso do cabeçalho e fecha o
+pé do hero; aqui marca onde a seção das bolsas termina e esta começa. Uma linha reta seria
+uma linha reta em qualquer site — a corrente é desta casa.
+
+Percentuais de um dígito em tudo: isto é chão, e chão que compete com o que está em cima
+dele está errado. Em cima estão as fotos das peças.
+
+Verificado: `build`, `lint`, `check:classes` (401), `check:espaco`, `check:whatsapp`,
+`check:seo`, `check:produto`.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

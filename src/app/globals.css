@@ -331,6 +331,53 @@
   }
 
   /**
+   * Trama para fundo CLARO.
+   *
+   * A `.trama` das seções verdes desenha o tecido em linhas de creme a 5% —
+   * clareia um fundo escuro. Sobre creme ela some. Esta faz o inverso: linhas
+   * de tinta, na mesma diagonal cruzada e no mesmo passo, escurecendo de leve.
+   * É o mesmo tecido visto sob outra luz, não uma textura nova.
+   *
+   * A luz de canto vem junto porque textura sozinha deixa o fundo uniforme —
+   * uniformemente texturizado continua sendo uniforme. As duas manchas dão ao
+   * creme um lado mais quente e outro mais fresco, e é a diferença entre os
+   * dois cantos que o olho lê como profundidade.
+   *
+   * Percentuais de um dígito: isto é chão, e chão que compete com o que está
+   * em cima dele está errado. Aqui em cima estão as fotos das peças.
+   */
+  .trama-clara {
+    position: relative;
+    isolation: isolate;
+  }
+  .trama-clara::before,
+  .trama-clara::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+  }
+  .trama-clara::before {
+    background-image:
+      repeating-linear-gradient(45deg, rgba(36, 29, 22, 0.035) 0 1px, transparent 1px 7px),
+      repeating-linear-gradient(-45deg, rgba(36, 29, 22, 0.035) 0 1px, transparent 1px 7px);
+  }
+  .trama-clara::after {
+    background-image:
+      radial-gradient(
+        58% 76% at 90% 14%,
+        color-mix(in srgb, var(--color-primaria) 7%, transparent) 0%,
+        transparent 68%
+      ),
+      radial-gradient(
+        52% 70% at 6% 94%,
+        color-mix(in srgb, var(--color-destaque) 5%, transparent) 0%,
+        transparent 66%
+      );
+  }
+
+  /**
    * Azulejo de categoria.
    *
    * **Por que não é o card de peça.** Eles estavam idênticos: retângulo branco,

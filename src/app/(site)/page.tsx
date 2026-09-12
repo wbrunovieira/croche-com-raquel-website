@@ -206,7 +206,11 @@ export default async function Home({ searchParams }: PageProps<"/">) {
           chapada, e não da falta de uma quarta cor. Meio tom abaixo basta
           para "isto é outro assunto", e não tira nada das fotos. */}
       {outrasCategorias.length > 0 ? (
-        <section className="bg-superficie-baixa">
+        <section className="trama-clara relative overflow-hidden bg-superficie-baixa">
+          {/* A corrente costura esta seção à de cima, como faz na faixa de aviso
+              e no pé do hero. É a divisória da marca — uma linha reta aqui seria
+              uma linha reta em qualquer site. */}
+          <div className="corrente absolute inset-x-0 top-0 opacity-60" aria-hidden="true" />
           <div className="container-site secao--densa">
             <Revelar entrada="ponto" className="max-w-texto">
               <Etiqueta>Também faço</Etiqueta>
