@@ -1242,6 +1242,50 @@ componente — senão o utilitário a sobrescreveria.
 Verificado: `build`, `lint`, `check:classes` (385), `check:espaco`, `check:whatsapp`,
 `check:seo`, `check:produto`, e os três botões primários do site com o brilho aplicado.
 
+### ✅ Etapa 32 — A cor do site: medir antes de opinar *(pergunta do Bruno)*
+
+Ele perguntou se o site ser tão monocromático é erro de UI inexperiente ou estratégia,
+e se valia adicionar uma cor de contraste. Antes de responder, medi a home inteira
+(9.944px) classificando cada pixel por família de matiz.
+
+**O argumento a favor da casca neutra é dele, e é o mais forte:** o site vai ter muita
+foto, e a casca não pode brigar com elas. As peças da Raquel são caramelo, bordô,
+terracota, marrom — **todas quentes**. Hoje o quente da página *são as fotos*, e não
+disputam com nada porque não existe segundo quente na tela. Uma cor de contraste na
+interface brigaria com cada foto do catálogo, e brigaria pior justamente nas peças mais
+saturadas, que são as melhores. Não é monocromia por omissão: é a decisão certa.
+
+**Mas a medição achou um defeito real, e não é "falta cor".** O acento da marca tinha
+**um papel só** — "link" —, que é o papel de MENOR área possível numa tela: letra fina
+sublinhada. Uma paleta que declara um acento e o deixa só ali não está contida, está
+sub-utilizada. E os três degraus de creme já existiam como token: `papel`, `cru`,
+`cru-fundo`. O sistema estava desenhado e não aplicado.
+
+**O que entrou.** O acento ganhou um segundo papel, disciplinado: a `<Etiqueta>` — o
+eyebrow que abre cada seção. Aparece uma vez por seção, sempre dizendo a mesma coisa
+("aqui começa um assunto"), nunca em área grande. Com um tracinho de `ponto-corrido`
+antes do texto, o mesmo desenho de costura que marca "onde você está" no menu. E duas
+das três seções claras seguidas passaram para o creme de baixo — degrau de tom, não de
+matiz.
+
+*Contraste conferido no ar, nas oito etiquetas:* 5,17 a 6,65:1, todas passando. O tom
+de texto é o `goiaba-tinta` e não a goiaba pura — medido, a goiaba dá 4,25:1 sobre o
+creme e reprovaria; no lado invertido quem passa é o rosa-fio, com 6,65:1.
+
+**Onde eu errei a métrica, e fica registrado.** Ao propor o caminho eu prometi levar a
+goiaba "de 0,04% para 0,3–0,8% da tela". Medido depois: **0,02% antes e 0,02% depois**
+— não se moveu. O motivo é que texto fino é quase todo pixel anti-serrilhado, que perde
+croma e não conta como cor em nenhuma medição de área. *Área nunca foi a métrica certa
+para isto.* A que serve é a variação ENTRE seções, e essa foi de **9 para 11** trocas de
+fundo ao longo da página. A pontuação por seção se vê na tela; no histograma, não.
+
+Verificado: `build`, `lint`, `check:classes` (386), `check:espaco`, `check:whatsapp`,
+`check:seo`, `check:produto`.
+
+*De carona:* o botão de `perguntas.tsx` era um primário escrito à mão que a etapa 31
+não alcançou — ainda estava em `duration-150` com a cor antiga. Passou a usar
+`.botao-primario`.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

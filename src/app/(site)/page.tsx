@@ -130,35 +130,41 @@ export default async function Home({ searchParams }: PageProps<"/">) {
       </section>
 
       
+      {/* Degrau de creme, não de matiz. Três seções claras vinham seguidas
+          com exatamente o mesmo fundo — é disso que vem a sensação de página
+          chapada, e não da falta de uma quarta cor. Meio tom abaixo basta
+          para "isto é outro assunto", e não tira nada das fotos. */}
       {outrasCategorias.length > 0 ? (
-        <section className="container-site secao--densa">
-          <Revelar entrada="ponto">
-            <Etiqueta>Para a casa</Etiqueta>
-            <h2 className="mt-2 font-display text-t2">Além das bolsas</h2>
-          </Revelar>
-          <ul className="mt-bloco grid gap-x-grade-col gap-y-grade-linha sm:grid-cols-2 lg:grid-cols-3">
-            {outrasCategorias.map((c, i) => (
-              <Revelar as="li" key={c.slug} atraso={0.06 * i}>
-                {/* Categoria virou filtro do catálogo, não página. */}
-                <Link
-                  href={`/?categoria=${c.slug}#catalogo`}
-                  className="card-peca group flex h-full flex-col rounded-card border border-borda bg-superficie p-painel"
-                >
-                  <h3 className="font-display text-t3">{c.nome}</h3>
-                  {c.descricao ? (
-                    <p className="mt-3 flex-1 text-apoio text-conteudo-suave">{c.descricao}</p>
-                  ) : null}
-                  <span className="mt-6 inline-flex items-center gap-2 text-apoio text-destaque-texto">
-                    Ver {c.totalDeProdutos} {c.totalDeProdutos === 1 ? "peça" : "peças"}
-                    <ArrowRight
-                      className="size-4 transition-transform group-hover:translate-x-1"
-                      aria-hidden="true"
-                    />
-                  </span>
-                </Link>
-              </Revelar>
-            ))}
-          </ul>
+        <section className="bg-superficie-baixa">
+          <div className="container-site secao--densa">
+            <Revelar entrada="ponto">
+              <Etiqueta>Para a casa</Etiqueta>
+              <h2 className="mt-2 font-display text-t2">Além das bolsas</h2>
+            </Revelar>
+            <ul className="mt-bloco grid gap-x-grade-col gap-y-grade-linha sm:grid-cols-2 lg:grid-cols-3">
+              {outrasCategorias.map((c, i) => (
+                <Revelar as="li" key={c.slug} atraso={0.06 * i}>
+                  {/* Categoria virou filtro do catálogo, não página. */}
+                  <Link
+                    href={`/?categoria=${c.slug}#catalogo`}
+                    className="card-peca group flex h-full flex-col rounded-card border border-borda bg-superficie p-painel"
+                  >
+                    <h3 className="font-display text-t3">{c.nome}</h3>
+                    {c.descricao ? (
+                      <p className="mt-3 flex-1 text-apoio text-conteudo-suave">{c.descricao}</p>
+                    ) : null}
+                    <span className="mt-6 inline-flex items-center gap-2 text-apoio text-destaque-texto">
+                      Ver {c.totalDeProdutos} {c.totalDeProdutos === 1 ? "peça" : "peças"}
+                      <ArrowRight
+                        className="size-4 transition-transform group-hover:translate-x-1"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </Link>
+                </Revelar>
+              ))}
+            </ul>
+          </div>
         </section>
       ) : null}
 
