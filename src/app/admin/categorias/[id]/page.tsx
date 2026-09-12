@@ -37,7 +37,10 @@ export default async function EditarCategoria({ params }: PageProps<"/admin/cate
   if (!categoria) notFound();
 
   return (
-    <>
+    // O layout do painel NÃO dá container aos filhos: cada tela se envolve no
+    // próprio `<main>`. Sem ele, o conteúdo encosta nas duas bordas da janela e
+    // o botão do canto sai cortado.
+    <main className="container-site secao">
       <Link
         href="/admin/categorias"
         className="inline-flex items-center gap-2 text-apoio text-conteudo-suave transition-colors duration-[240ms] ease-fio hover:text-conteudo"
@@ -48,7 +51,7 @@ export default async function EditarCategoria({ params }: PageProps<"/admin/cate
 
       <div className="mt-4">
         <Etiqueta>Catálogo</Etiqueta>
-        <h1 className="mt-2 font-display text-t2">{categoria.name}</h1>
+        <h1 className="mt-2 font-display text-t1">{categoria.name}</h1>
         <p className="mt-2 text-apoio text-conteudo-suave">
           {categoria._count.products}{" "}
           {categoria._count.products === 1 ? "peça" : "peças"} nesta categoria.
@@ -85,6 +88,6 @@ export default async function EditarCategoria({ params }: PageProps<"/admin/cate
           />
         </div>
       </div>
-    </>
+    </main>
   );
 }

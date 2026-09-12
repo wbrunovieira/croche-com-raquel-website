@@ -87,6 +87,26 @@ async function main() {
       );
     }
 
+    /**
+     * Toda tela precisa do seu próprio `<main className="container-site secao">`.
+     *
+     * O layout do painel **não** dá container aos filhos — cada tela se envolve.
+     * Quem esquece não quebra build, lint nem tipo: a página abre 200, o
+     * conteúdo cola nas duas bordas da janela e o botão do canto sai cortado.
+     * Aconteceu nas três telas de categoria assim que elas nasceram.
+     *
+     * A verificação é por POSIÇÃO e não por classe: o que importa é o título
+     * não encostar na borda, qualquer que seja o caminho até lá.
+     */
+    for (const rota of TELAS) {
+      await p.goto(BASE + rota, { waitUntil: "networkidle" });
+      const margem = await p.evaluate(() => {
+        const h = document.querySelector("main h1");
+        return h ? Math.round(h.getBoundingClientRect().left) : -1;
+      });
+      ok(`${rota} tem respiro na lateral`, margem >= 16, `título a ${margem}px da borda`);
+    }
+
     // Nenhum link do painel pode apontar para tela que não existe mais. A tela
     // de início ficou com um atalho para `/admin/perguntas` depois que ela foi
     // removida: link morto não quebra build, lint nem tipo — só o dia da

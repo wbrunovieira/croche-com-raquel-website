@@ -41,11 +41,14 @@ export default async function ListaDeCategorias() {
   });
 
   return (
-    <>
+    // O layout do painel NÃO dá container aos filhos: cada tela se envolve no
+    // próprio `<main>`. Sem ele, o conteúdo encosta nas duas bordas da janela e
+    // o botão do canto sai cortado.
+    <main className="container-site secao">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <Etiqueta>Catálogo</Etiqueta>
-          <h1 className="mt-2 font-display text-t2">Categorias</h1>
+          <h1 className="mt-2 font-display text-t1">Categorias</h1>
           <p className="mt-2 text-apoio text-conteudo-suave">
             A categoria organiza o catálogo e vira um filtro no site. Só aparece
             lá se tiver peça ativa dentro.
@@ -87,6 +90,6 @@ export default async function ListaDeCategorias() {
           );
         })}
       </ul>
-    </>
+    </main>
   );
 }

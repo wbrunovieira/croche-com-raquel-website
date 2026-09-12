@@ -1902,6 +1902,24 @@ banco ficou como estava.
 Verificado: `build`, `lint`, `check:classes` (420), `check:espaco`, `check:seo`,
 `check:produto`, `check:painel` e `check:telas`.
 
+### ✅ Etapa 48 — O respiro que faltava nas telas novas
+
+As três telas de categoria abriam **coladas nas duas bordas da janela**, com o botão do
+canto cortado. A causa: **o layout do painel não dá container aos filhos** — cada tela se
+envolve no próprio `<main className="container-site secao">`, e as minhas nasceram com
+fragmento.
+
+É o tipo de erro que não quebra nada: build passa, lint passa, tipo passa, a página
+responde 200. Só a tela fica errada.
+
+*Por isso a `check:telas` ganhou um dente novo:* para cada tela, o título não pode encostar
+na borda. A verificação é por **posição** e não por classe — o que importa é o resultado,
+não o caminho até ele. **Provado quebrando de propósito:** removi o container de uma tela e
+a checagem apontou "título a 0px da borda" contra os 96px das outras.
+
+De carona, os títulos das telas novas passaram de `text-t2` para `text-t1`, o degrau que a
+tela de peças já usava.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a
