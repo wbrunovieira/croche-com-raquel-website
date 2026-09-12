@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { Hero } from "@/components/site/hero";
 import { Revelar } from "@/components/ui/revelar";
 import { Etiqueta } from "@/components/ui/etiqueta";
+import { Foto } from "@/components/ui/foto";
 import { GradeDeProdutos } from "@/components/produto/card-de-produto";
 import { Simbolo } from "@/components/brand/simbolo";
 import { SecaoCatalogo } from "@/components/site/secoes/catalogo";
@@ -207,28 +208,54 @@ export default async function Home({ searchParams }: PageProps<"/">) {
       {outrasCategorias.length > 0 ? (
         <section className="bg-superficie-baixa">
           <div className="container-site secao--densa">
-            <Revelar entrada="ponto">
-              <Etiqueta>Para a casa</Etiqueta>
-              <h2 className="mt-2 font-display text-t2">Além das bolsas</h2>
+            <Revelar entrada="ponto" className="max-w-texto">
+              <Etiqueta>Também faço</Etiqueta>
+              <h2 className="mt-2 font-display text-t2">Não é só bolsa</h2>
+              <p className="mt-3 text-apoio text-conteudo-suave">
+                A mesma mão que faz as bolsas faz peça de mesa, de casa e de
+                bebê. Escolha por onde começar.
+              </p>
             </Revelar>
-            <ul className="mt-bloco grid gap-x-grade-col gap-y-grade-linha sm:grid-cols-2 lg:grid-cols-3">
+
+            {/**
+             * **Cinco cartões com foto, e não um cartão de texto.**
+             *
+             * Aqui havia UM card: título, descrição e um link — sozinho, num
+             * terço da largura, com dois terços de creme vazio ao lado. Quatro
+             * das seis categorias estavam sem peça, e categoria sem peça não
+             * aparece; sobrava só Mesa. Não parecia inacabado: estava.
+             *
+             * A capa de cada categoria sai da primeira peça publicada dela, e
+             * isso é decisão de arquitetura, não de layout — não existe campo
+             * "foto da categoria" no banco, então a vitrine nunca envelhece em
+             * relação ao acervo. A Raquel troca a foto da peça e esta seção
+             * acompanha sozinha.
+             *
+             * Cinco colunas no desktop de propósito: a seção das bolsas, logo
+             * acima, é uma grade de quatro peças grandes. Uma prateleira de
+             * cinco, mais estreita e mais baixa, lê como OUTRA coisa — que é o
+             * que ela é. Repetir a mesma grade diria que o conteúdo é o mesmo.
+             */}
+            <ul className="mt-bloco grid grid-cols-2 gap-x-grade-col gap-y-grade-linha md:grid-cols-3 lg:grid-cols-5">
               {outrasCategorias.map((c, i) => (
                 <Revelar as="li" key={c.slug} atraso={0.06 * i}>
                   {/* Categoria virou filtro do catálogo, não página. */}
                   <Link
                     href={`/?categoria=${c.slug}#catalogo`}
-                    className="card-peca group flex h-full flex-col rounded-card border border-borda bg-superficie p-painel"
+                    className="card-peca group flex h-full flex-col rounded-card border border-borda bg-superficie p-card"
                   >
-                    <h3 className="font-display text-t3">{c.nome}</h3>
-                    {c.descricao ? (
-                      <p className="mt-3 flex-1 text-apoio text-conteudo-suave">{c.descricao}</p>
-                    ) : null}
-                    <span className="mt-6 inline-flex items-center gap-2 text-apoio text-destaque-texto">
-                      Ver {c.totalDeProdutos} {c.totalDeProdutos === 1 ? "peça" : "peças"}
-                      <ArrowRight
-                        className="size-4 transition-transform group-hover:translate-x-1"
-                        aria-hidden="true"
-                      />
+                    <div className="placa-da-peca">
+                      <Foto imagem={c.capa} dentroDeCard />
+                    </div>
+                    <h3 className="mt-3 font-display text-lead leading-tight">{c.nome}</h3>
+                    {/* A costura aparece no hover, igual à do menu e à da
+                        etiqueta: é o mesmo gesto dizendo "este é o alvo". */}
+                    <span
+                      aria-hidden="true"
+                      className="ponto-corrido mt-1 block w-5 origin-left scale-x-0 text-destaque opacity-0 transition-[transform,opacity] duration-[320ms] ease-fio group-hover:scale-x-100 group-hover:opacity-100 group-focus-visible:scale-x-100 group-focus-visible:opacity-100"
+                    />
+                    <span className="mt-2 text-apoio text-conteudo-suave">
+                      {c.totalDeProdutos} {c.totalDeProdutos === 1 ? "peça" : "peças"}
                     </span>
                   </Link>
                 </Revelar>

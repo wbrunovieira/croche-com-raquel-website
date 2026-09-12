@@ -1520,6 +1520,54 @@ Verificado: `build`, `lint`, `check:classes` (386), `check:espaco`, `check:whats
 `check:seo`, `check:produto`; quebra do título medida em 4 larguras e o botão subindo
 1px no hover.
 
+### ✅ Etapa 38 — "Além das bolsas" vira uma vitrine de verdade *(pedido do Bruno)*
+
+A seção tinha UM card: título, descrição e um link — sozinho, ocupando um terço da
+largura, com dois terços de creme vazio ao lado. Ele disse que faltava mão de UI sênior.
+Não faltava: a seção **estava inacabada**, e a causa era de dados.
+
+**Quatro das seis categorias estavam vazias** (Casa & Decoração, Macramê, Cozinha, Bebê
+& Enxoval), e categoria sem peça publicada não aparece. Sobrava Mesa. Nenhum trabalho de
+layout resolveria um card só.
+
+**Reportei um bloqueio antes de mexer:** o acervo tem 8 fotos e todas já estavam em uso
+nas 7 peças reais. Popular aquelas categorias significaria inventar produtos que a Raquel
+não faz. O Bruno autorizou peças de exemplo — para ela VER a estrutura e entender que
+pode editar, apagar e criar pelo painel.
+
+**As peças de exemplo se anunciam em três lugares**, porque placeholder que imita produto
+de verdade é pior que nenhum: o slug começa com `exemplo-`, a descrição diz o que é, e a
+foto tem "FOTO DE EXEMPLO" escrito nela. A foto é gerada por
+`scripts/gerar-foto-exemplo.mjs` — verde da marca, trama e o símbolo, tirado do próprio
+`simbolo.tsx` para acompanhar uma revetorização. É script e não JPEG solto para a próxima
+pessoa saber de onde o arquivo veio. **Os nomes saíram das descrições das próprias
+categorias, que já estavam escritas no seed** — não inventei linha de produto.
+*Registrado no board como pendência de publicação:* o prefixo no slug existe para apagar
+as oito num comando só.
+
+**A categoria "Mesa Posta" virou "Mesa"**, escolha dele: mesa posta é termo de quem já
+vive no meio da decoração, e quem chega do Instagram atrás de um sousplat não usa essa
+palavra. Entrou `scripts/renomear-categoria.ts`, que existe por um motivo específico: o
+seed faz `upsert` **por slug**, então mudar o slug no catálogo criaria uma categoria nova
+e deixaria a antiga órfã com as 3 peças dentro. Renomear a linha antes de semear leva as
+peças junto.
+
+**A seção agora é uma prateleira de cinco categorias com foto.** A capa de cada uma sai
+da primeira peça publicada dela, e isso é decisão de arquitetura e não de layout: **não
+existe campo "foto da categoria" no banco**, então a vitrine nunca envelhece em relação
+ao acervo — a Raquel troca a foto da peça e a seção acompanha sozinha. Cinco colunas no
+desktop de propósito: a seção das bolsas, logo acima, é uma grade de quatro peças
+grandes; uma prateleira mais estreita e mais baixa lê como outra coisa, que é o que ela
+é. Repetir a mesma grade diria que o conteúdo é o mesmo.
+
+O título "Além das bolsas" virou **"Não é só bolsa"** com a etiqueta "Também faço" — a
+anterior definia a seção pela negativa do que ela não é.
+
+Verificado: `build`, `lint`, `check:classes` (390), `check:espaco`, `check:whatsapp`,
+`check:seo`, `check:produto`; as 6 categorias com peça, as 5 cartas com foto, os filtros
+do catálogo apontando para `categoria=mesa`, e a página de uma peça de exemplo
+respondendo 200.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

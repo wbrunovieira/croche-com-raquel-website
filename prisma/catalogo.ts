@@ -91,7 +91,7 @@ export const PRODUTOS: {
   },
   {
     slug: "sousplat-folhas", name: "Sousplat de Folhas",
-    categoria: "mesa-posta",
+    categoria: "mesa",
     description: "Sousplat redondo em duas cores, com a borda desenhada em folhas. Fica firme na mesa e não enruga sob o prato.",
     price: null, material: "Barbante de algodão",
     careText: "Máquina em ciclo delicado, dentro de saquinho. Não use alvejante.",
@@ -103,7 +103,7 @@ export const PRODUTOS: {
   },
   {
     slug: "jogo-mandala-mesa", name: "Jogo de Sousplat e Porta-copos",
-    categoria: "mesa-posta",
+    categoria: "mesa",
     description: "Jogo de mesa em mandala: as voltas alternam as duas cores do centro para a borda, e o porta-copos repete o mesmo desenho em escala menor.",
     price: null, material: "Barbante de algodão",
     careText: "Máquina em ciclo delicado, dentro de saquinho. Não use alvejante.",
@@ -113,8 +113,101 @@ export const PRODUTOS: {
     ],
   },
   {
+    slug: "exemplo-manta-de-sofa", name: "Manta de Sofá",
+    categoria: "casa-decoracao",
+    description:
+      "Peça de exemplo, só para mostrar como esta categoria aparece no site. A Raquel troca a foto, o texto e o nome pelo painel — ou apaga e cadastra a dela.",
+    price: null, material: "Fio de malha",
+    careText: "Lave à mão em água fria, com sabão neutro. Seque deitada à sombra.",
+    fotos: [{ arquivo: "exemplo.jpg", alt: 'Fundo verde da marca com o símbolo do novelo e a inscrição "foto de exemplo"' }],
+    opcoes: [{ grupo: "cor", obrigatorio: true, valores: ["cru", "verde-musgo", "terracota"] }],
+  },  {
+    slug: "exemplo-almofada-trancada", name: "Almofada Trançada",
+    categoria: "casa-decoracao",
+    description:
+      "Peça de exemplo, só para mostrar como esta categoria aparece no site. A Raquel troca a foto, o texto e o nome pelo painel — ou apaga e cadastra a dela.",
+    price: null, material: "Fio de malha",
+    careText: "Lave à mão em água fria, com sabão neutro. Seque deitada à sombra.",
+    fotos: [{ arquivo: "exemplo.jpg", alt: 'Fundo verde da marca com o símbolo do novelo e a inscrição "foto de exemplo"' }],
+    opcoes: [{ grupo: "cor", obrigatorio: true, valores: ["cru", "verde-musgo", "terracota"] }],
+  },  {
+    slug: "exemplo-suporte-de-planta", name: "Suporte de Planta",
+    categoria: "macrame",
+    description:
+      "Peça de exemplo, só para mostrar como esta categoria aparece no site. A Raquel troca a foto, o texto e o nome pelo painel — ou apaga e cadastra a dela.",
+    price: null, material: "Corda de algodão",
+    careText: "Lave à mão em água fria, com sabão neutro. Seque deitada à sombra.",
+    fotos: [{ arquivo: "exemplo.jpg", alt: 'Fundo verde da marca com o símbolo do novelo e a inscrição "foto de exemplo"' }],
+    opcoes: [{ grupo: "cor", obrigatorio: true, valores: ["cru", "verde-musgo", "terracota"] }],
+  },  {
+    slug: "exemplo-painel-de-parede", name: "Painel de Parede",
+    categoria: "macrame",
+    description:
+      "Peça de exemplo, só para mostrar como esta categoria aparece no site. A Raquel troca a foto, o texto e o nome pelo painel — ou apaga e cadastra a dela.",
+    price: null, material: "Corda de algodão",
+    careText: "Lave à mão em água fria, com sabão neutro. Seque deitada à sombra.",
+    fotos: [{ arquivo: "exemplo.jpg", alt: 'Fundo verde da marca com o símbolo do novelo e a inscrição "foto de exemplo"' }],
+    opcoes: [{ grupo: "cor", obrigatorio: true, valores: ["cru", "verde-musgo", "terracota"] }],
+  },  {
+    slug: "exemplo-pegador-de-panela", name: "Pegador de Panela",
+    categoria: "cozinha",
+    description:
+      "Peça de exemplo, só para mostrar como esta categoria aparece no site. A Raquel troca a foto, o texto e o nome pelo painel — ou apaga e cadastra a dela.",
+    price: null, material: "Barbante de algodão",
+    careText: "Lave à mão em água fria, com sabão neutro. Seque deitada à sombra.",
+    fotos: [{ arquivo: "exemplo.jpg", alt: 'Fundo verde da marca com o símbolo do novelo e a inscrição "foto de exemplo"' }],
+    opcoes: [{ grupo: "cor", obrigatorio: true, valores: ["cru", "verde-musgo", "terracota"] }],
+  },  {
+    slug: "exemplo-puxa-saco", name: "Puxa-saco",
+    categoria: "cozinha",
+    description:
+      "Peça de exemplo, só para mostrar como esta categoria aparece no site. A Raquel troca a foto, o texto e o nome pelo painel — ou apaga e cadastra a dela.",
+    price: null, material: "Barbante de algodão",
+    careText: "Lave à mão em água fria, com sabão neutro. Seque deitada à sombra.",
+    fotos: [{ arquivo: "exemplo.jpg", alt: 'Fundo verde da marca com o símbolo do novelo e a inscrição "foto de exemplo"' }],
+    opcoes: [{ grupo: "cor", obrigatorio: true, valores: ["cru", "verde-musgo", "terracota"] }],
+  },  {
+    slug: "exemplo-mantinha-de-bebe", name: "Mantinha de Bebê",
+    categoria: "bebe-enxoval",
+    description:
+      "Peça de exemplo, só para mostrar como esta categoria aparece no site. A Raquel troca a foto, o texto e o nome pelo painel — ou apaga e cadastra a dela.",
+    price: null, material: "Linha antialérgica",
+    careText: "Lave à mão em água fria, com sabão neutro. Seque deitada à sombra.",
+    fotos: [{ arquivo: "exemplo.jpg", alt: 'Fundo verde da marca com o símbolo do novelo e a inscrição "foto de exemplo"' }],
+    opcoes: [{ grupo: "cor", obrigatorio: true, valores: ["cru", "verde-musgo", "terracota"] }],
+  },  {
+    slug: "exemplo-sapatinho", name: "Sapatinho de Bebê",
+    categoria: "bebe-enxoval",
+    description:
+      "Peça de exemplo, só para mostrar como esta categoria aparece no site. A Raquel troca a foto, o texto e o nome pelo painel — ou apaga e cadastra a dela.",
+    price: null, material: "Linha antialérgica",
+    careText: "Lave à mão em água fria, com sabão neutro. Seque deitada à sombra.",
+    fotos: [{ arquivo: "exemplo.jpg", alt: 'Fundo verde da marca com o símbolo do novelo e a inscrição "foto de exemplo"' }],
+    opcoes: [{ grupo: "cor", obrigatorio: true, valores: ["cru", "verde-musgo", "terracota"] }],
+  },
+  /**
+   * ── PEÇAS DE EXEMPLO ────────────────────────────────────────────────────
+   *
+   * Quatro das seis categorias estavam vazias, então o site entregue à Raquel
+   * não mostrava que elas existem. Estas peças existem para ela VER a estrutura
+   * e entender que pode editar, apagar e cadastrar as próprias — foi o pedido
+   * do Bruno, e sem isso metade do catálogo parecia não existir.
+   *
+   * **Elas se anunciam em três lugares**, porque placeholder que imita produto
+   * de verdade é pior que nenhum: o slug começa com `exemplo-`, a descrição diz
+   * o que são, e a foto tem "foto de exemplo" escrito nela.
+   *
+   * O prefixo no slug não é cosmético: é o que permite apagar todas de uma vez,
+   * sem caçar uma a uma, no dia em que o acervo real chegar.
+   *
+   *     await db.product.deleteMany({ where: { slug: { startsWith: "exemplo-" } } });
+   *
+   * Os nomes saíram das descrições das próprias categorias, que já estavam
+   * escritas no seed — não inventei linha de produto que a Raquel não faz.
+   */
+  {
     slug: "centro-de-mesa-rendado", name: "Centro de Mesa Rendado",
-    categoria: "mesa-posta",
+    categoria: "mesa",
     description: "Toalha redonda de centro em ponto rendado, com borda em bico e o contorno em cor contrastante. Vai sozinha sobre a madeira ou sob o arranjo.",
     price: null, material: "Linha de algodão",
     careText: "Lave à mão em água fria. Seque deitada, esticada, para o bico não encolher.",

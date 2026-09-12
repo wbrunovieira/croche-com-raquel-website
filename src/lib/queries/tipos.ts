@@ -47,6 +47,14 @@ export type CategoriaResumo = {
   textoLongo: string | null;
   subcategorias: { slug: string; nome: string }[];
   totalDeProdutos: number;
+  /**
+   * Capa da categoria: a foto da primeira peça publicada dela.
+   *
+   * Não é campo do banco e não deve virar um: a capa fica sempre igual ao
+   * acervo sem ninguém ter de manter mais um lugar. A Raquel troca a foto da
+   * peça e a vitrine de categorias acompanha sozinha.
+   */
+  capa: ImagemDeProduto | null;
 };
 
 export type ConfiguracoesDoSite = {

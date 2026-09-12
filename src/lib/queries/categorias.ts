@@ -25,6 +25,22 @@ export const listarCategorias = cache(async function listarCategorias(): Promise
         select: { slug: true, name: true },
       },
       _count: { select: { products: { where: { status: "PUBLISHED" } } } },
+      /**
+       * A capa sai da primeira peça publicada — destaque primeiro, depois a
+       * ordem do catálogo. Uma só: é vitrine de categoria, não galeria.
+       */
+      products: {
+        where: { status: "PUBLISHED", images: { some: {} } },
+        orderBy: [{ featured: "desc" }, { featuredPosition: "asc" }, { position: "asc" }],
+        take: 1,
+        select: {
+          images: {
+            orderBy: { position: "asc" },
+            take: 1,
+            select: { id: true, url: true, alt: true, hasHumanScale: true },
+          },
+        },
+      },
     },
   });
 
@@ -38,6 +54,12 @@ export const listarCategorias = cache(async function listarCategorias(): Promise
       textoLongo: c.longDescription,
       subcategorias: c.subcategories.map((s) => ({ slug: s.slug, nome: s.name })),
       totalDeProdutos: c._count.products,
+      capa: (() => {
+        const foto = c.products[0]?.images[0];
+        return foto
+          ? { id: foto.id, url: foto.url, alt: foto.alt, temEscalaHumana: foto.hasHumanScale }
+          : null;
+      })(),
     }));
 });
 

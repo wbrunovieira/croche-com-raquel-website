@@ -51,7 +51,9 @@ const CATEGORIAS: {
       "O carro-chefe. Feitas à mão em fio de malha, na cor e no tamanho que você escolher.",
     longDescription: TEXTO_LONGO_BOLSAS,
   },
-  { slug: "mesa-posta", name: "Mesa Posta", position: 1, description: "Jogo americano, porta-copos e trilhos para deixar a mesa com cara de casa." },
+  // "Mesa Posta" era termo de quem já vive no meio da decoração; quem chega
+  // do Instagram atrás de um sousplat não usa essa palavra. Decisão do Bruno.
+  { slug: "mesa", name: "Mesa", position: 1, description: "Sousplat, porta-copos e centro de mesa para deixar a mesa com cara de casa." },
   { slug: "casa-decoracao", name: "Casa & Decoração", position: 2, description: "Mantas, almofadas e cestos que dão o toque único no seu lar." },
   { slug: "macrame", name: "Macramê", position: 3, description: "Suportes de planta e painéis de parede em nós feitos um a um." },
   { slug: "cozinha", name: "Cozinha", position: 4, description: "Pegadores, puxa-saco e capas que resolvem e enfeitam." },
