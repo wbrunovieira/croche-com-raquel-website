@@ -189,8 +189,16 @@ export function Hero({
                 </motion.div>
               </div>
 
+              {/* No celular os pontinhos e as duas setas ficavam empilhados no canto
+                  direito, com meia tela vazia à esquerda — seis alvos amontoados
+                  numa quina. Espalhados, cada grupo ganha o seu lado: os pontinhos
+                  dizem ONDE você está, as setas MUDAM onde você está, e separá-los
+                  é o que torna isso legível sem rótulo.
+
+                  No desktop volta a `justify-end`: ali a coluna da foto tem 21rem,
+                  e espalhar dentro dela só afastaria dois grupos que cabem juntos. */}
               {capas.length > 1 ? (
-                <div className="mt-3 flex items-center justify-end gap-2">
+                <div className="mt-3 flex items-center justify-between gap-4 sm:justify-end sm:gap-2">
                   <ul className="flex items-center gap-1.5">
                     {capas.map((c, i) => (
                       <li key={c.id}>

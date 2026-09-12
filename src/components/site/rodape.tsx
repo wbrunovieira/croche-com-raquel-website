@@ -33,7 +33,12 @@ export async function Rodape() {
     <footer className="trama mt-auto bg-verde-musgo text-inv-conteudo">
       {/* pb extra no mobile: a página de produto tem barra fixa de WhatsApp no
           rodapé da viewport, e sem esta folga ela cobre a linha de copyright. */}
-      <div className="container-site secao pb-barra-fixa sm:pb-0">
+      {/* `pb-barra-fixa` abre espaço para a barra flutuante de WhatsApp do
+          celular. O `sm:pb-0` existia para não duplicar esse espaço no desktop,
+          mas zerava o padding de baixo INTEIRO — a assinatura terminava colada
+          na borda da página. O que ele precisa desfazer é o extra da barra, não
+          o respiro do rodapé. */}
+      <div className="container-site secao pb-barra-fixa sm:pb-secao">
         <div className="grid gap-x-coluna gap-y-grade-linha sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <Logo className="h-16" />
