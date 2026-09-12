@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AnimatePresence,
   motion,
@@ -10,7 +10,7 @@ import {
   useReducedMotion,
   useScroll,
 } from "motion/react";
-import { ChevronDown, Menu, MessageCircle, X } from "lucide-react";
+import { Menu, MessageCircle, X } from "lucide-react";
 import { DURACAO, transicao } from "@/lib/movimento";
 import { Logo } from "@/components/brand/logo";
 import { Simbolo } from "@/components/brand/simbolo";
@@ -20,8 +20,6 @@ import { IconeZap } from "@/components/ui/icone-zap";
 export type ItemDeMenu = {
   rotulo: string;
   href: string;
-  /** Só "Bolsas" tem filhos — é o carro-chefe e merece o desdobramento. */
-  filhos?: { rotulo: string; href: string; total: number }[];
 };
 
 export function Navegacao({
@@ -98,24 +96,50 @@ export function Navegacao({
     // velho aqui não pinta nada — e zerar em efeito dispara render em cascata.
     if (caminho !== "/") return;
 
-    // Só os itens de primeiro nível que apontam para uma seção. Os filhos de
-    // "Bolsas" são filtros (`/?categoria=…#catalogo`): compartilham a âncora
-    // `#catalogo` com o item "Catálogo" e acenderiam o traço junto com ele.
+    /**
+     * **`#topo` fica de fora de propósito.** Ele é o `<main>`, ou seja, a página
+     * INTEIRA — está sempre intersectando, e entrava na conta o tempo todo. Com
+     * ele na lista, "a seção mais alta visível" quase sempre era ele. "Início"
+     * acende por rolagem perto do topo, logo abaixo, que é o que ele significa.
+     */
     const alvos = itens
-      .filter((i) => !i.href.includes("?"))
       .map((i) => i.href.split("#")[1])
-      .filter((id): id is string => Boolean(id))
+      .filter((id): id is string => Boolean(id) && id !== "topo")
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => Boolean(el));
 
     if (alvos.length === 0) return;
 
+    /**
+     * **O observador guarda o estado de TODAS as seções, não só o do lote.**
+     *
+     * Era aqui o defeito que fazia o indicador saltar para trás: o
+     * `IntersectionObserver` entrega em cada chamada apenas as entradas que
+     * MUDARAM desde a anterior, e o código escolhia "a mais alta visível" dentro
+     * desse lote parcial. Se a seção certa não tivesse mudado naquele quadro,
+     * ela não estava no lote e perdia para outra que estava — medido: descendo
+     * a home, em `#perguntas` o menu acendia "Início".
+     *
+     * Com o mapa, cada chamada só ATUALIZA o que mudou e a decisão é tomada
+     * sobre o conjunto todo. É a diferença entre "o que acabou de mudar" e "onde
+     * eu estou".
+     */
+    const visiveis = new Map<string, number>();
+
     const observador = new IntersectionObserver(
       (entradas) => {
-        const visivel = entradas
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-        if (visivel) setSecaoAtiva(visivel.target.id);
+        for (const e of entradas) {
+          if (e.isIntersecting) visiveis.set(e.target.id, e.boundingClientRect.top);
+          else visiveis.delete(e.target.id);
+        }
+        // A mais alta das visíveis é a que a pessoa está lendo.
+        const atual = [...visiveis.entries()].sort((a, b) => a[1] - b[1])[0];
+        /**
+         * Sem nenhuma seção na faixa, quem acende é "Início" — e não o item
+         * anterior. Deixar o último aceso era mentir: atravessando um trecho que
+         * não é seção nenhuma, o menu afirmava um lugar onde a pessoa não estava.
+         */
+        setSecaoAtiva(atual ? atual[0] : "topo");
       },
       { rootMargin: "-40% 0px -55% 0px" }
     );
@@ -124,8 +148,9 @@ export function Navegacao({
   }, [caminho, itens]);
 
   const ativo = (href: string) => {
-    // Link com `?` é filtro de catálogo, não seção — nunca acende pela rolagem.
-    const ancora = href.includes("?") ? undefined : href.split("#")[1];
+    // Todo item do menu é uma âncora da home; o `?` sumiu junto com os itens de
+    // categoria, que não eram lugares da página.
+    const ancora = href.split("#")[1];
     if (ancora) return caminho === "/" && secaoAtiva === ancora;
     return href === "/" ? caminho === "/" : caminho.startsWith(href);
   };
@@ -266,19 +291,21 @@ export function Navegacao({
             </motion.span>
           </Link>
 
-          <nav aria-label="Principal" className="hidden lg:block">
+          {/* `xl`, e não `lg`. Medido: com sete itens o cabeçalho transborda 89px a
+              1024px de largura, e só para de transbordar a partir de 1120 — largura
+              que não é breakpoint de ninguém. Dava para espremer (padding menor,
+              Instagram escondido) e caber, mas espremer contradiz o que este
+              cabeçalho tem de melhor, que é ser o lugar quieto da tela. Entre 1024
+              e 1279 quem atende é o hambúrguer, que lista os mesmos sete. */}
+          <nav aria-label="Principal" className="hidden xl:block">
             <ul className="flex items-center gap-1">
-              {itens.map((item) =>
-                item.filhos?.length ? (
-                  <ItemComFilhos key={item.href} item={item} ativo={ativo(item.href)} />
-                ) : (
-                  <li key={item.href}>
-                    <LinkDeMenu href={item.href} ativo={ativo(item.href)}>
-                      {item.rotulo}
-                    </LinkDeMenu>
-                  </li>
-                )
-              )}
+              {itens.map((item) => (
+                <li key={item.href}>
+                  <LinkDeMenu href={item.href} ativo={ativo(item.href)}>
+                    {item.rotulo}
+                  </LinkDeMenu>
+                </li>
+              ))}
             </ul>
           </nav>
 
@@ -288,7 +315,7 @@ export function Navegacao({
                 verde sem pertencer a nenhum dos dois. Um fio de 1px dá a divisão
                 — é a mesma solução da faixa acima, e pesa o que um fio pesa.
                 Só aparece com o menu: sem ele, não há dois grupos a separar. */}
-            <span aria-hidden="true" className="mx-1 hidden h-5 w-px bg-borda lg:block" />
+            <span aria-hidden="true" className="mx-1 hidden h-5 w-px bg-borda xl:block" />
 
             {instagramUrl ? (
               <a
@@ -306,7 +333,7 @@ export function Navegacao({
               href={`https://wa.me/${whatsappNumero}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="botao-primario hidden items-center gap-btn-icone rounded-fio px-btn-x py-btn-y text-apoio font-medium text-sobre-primaria transition-[background-color,box-shadow,transform] duration-[240ms] ease-fio active:translate-y-px sm:inline-flex"
+              className="botao-primario hidden items-center gap-btn-icone whitespace-nowrap rounded-fio px-btn-x py-btn-y text-apoio font-medium text-sobre-primaria transition-[background-color,box-shadow,transform] duration-[240ms] ease-fio active:translate-y-px sm:inline-flex"
             >
               <IconeZap className="size-4" />
               Falar com a Raquel
@@ -317,7 +344,7 @@ export function Navegacao({
               onClick={() => setGaveta(true)}
               aria-label="Abrir menu"
               aria-expanded={gaveta}
-              className="rounded-fio p-2 transition-colors duration-[240ms] ease-fio hover:bg-superficie-baixa lg:hidden"
+              className="rounded-fio p-2 transition-colors duration-[240ms] ease-fio hover:bg-superficie-baixa xl:hidden"
             >
               <Menu className="size-6" aria-hidden="true" />
             </button>
@@ -354,7 +381,7 @@ function LinkDeMenu({
   return (
     <Link
       href={href}
-      className={`group relative block rounded-fio px-3 py-2 text-apoio transition-colors duration-[240ms] ease-fio ${
+      className={`group relative block whitespace-nowrap rounded-fio px-3 py-2 text-apoio transition-colors duration-[240ms] ease-fio ${
         ativo ? "text-conteudo" : "text-conteudo-suave hover:text-conteudo"
       }`}
     >
@@ -392,99 +419,6 @@ function LinkDeMenu({
   );
 }
 
-function ItemComFilhos({ item, ativo }: { item: ItemDeMenu; ativo: boolean }) {
-  const [aberto, setAberto] = useState(false);
-  const fechar = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const idMenu = useId();
-  const semMovimento = useReducedMotion();
-
-  // Pequeno atraso ao sair: sem ele o menu fecha no meio do caminho entre o
-  // rótulo e a lista, e a pessoa precisa acertar o mouse em linha reta.
-  function agendarFechamento() {
-    fechar.current = setTimeout(() => setAberto(false), 120);
-  }
-  function cancelarFechamento() {
-    if (fechar.current) clearTimeout(fechar.current);
-  }
-
-  return (
-    <li
-      className="relative"
-      onMouseEnter={() => {
-        cancelarFechamento();
-        setAberto(true);
-      }}
-      onMouseLeave={agendarFechamento}
-      onFocus={() => setAberto(true)}
-      onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node)) setAberto(false);
-      }}
-    >
-      <div className="flex items-center">
-        <LinkDeMenu href={item.href} ativo={ativo}>
-          {item.rotulo}
-        </LinkDeMenu>
-        <button
-          type="button"
-          onClick={() => setAberto((v) => !v)}
-          aria-expanded={aberto}
-          aria-controls={idMenu}
-          aria-label={`${aberto ? "Fechar" : "Abrir"} tipos de ${item.rotulo.toLowerCase()}`}
-          className="-ml-1 rounded-fio p-1 text-conteudo-suave transition-colors duration-[240ms] ease-fio hover:text-conteudo"
-        >
-          <motion.span
-            className="block"
-            animate={{ rotate: aberto ? 180 : 0 }}
-            transition={transicao(DURACAO.curta, semMovimento)}
-          >
-            <ChevronDown className="size-4" aria-hidden="true" />
-          </motion.span>
-        </button>
-      </div>
-
-      <AnimatePresence>
-        {aberto ? (
-          <motion.div
-            id={idMenu}
-            initial={semMovimento ? { opacity: 0 } : { opacity: 0, y: -8 }}
-            animate={semMovimento ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            exit={semMovimento ? { opacity: 0 } : { opacity: 0, y: -8 }}
-            transition={transicao(DURACAO.curta, semMovimento)}
-            className="absolute left-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-card border border-borda bg-superficie shadow-alta"
-          >
-            <ul className="p-2">
-              {item.filhos?.map((filho, i) => (
-                <motion.li
-                  key={filho.href}
-                  initial={semMovimento ? false : { opacity: 0, x: -6 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ ...transicao(DURACAO.curta, semMovimento), delay: semMovimento ? 0 : 0.02 * i }}
-                >
-                  <Link
-                    href={filho.href}
-                    className="flex items-center justify-between gap-4 rounded-fio px-3 py-2 text-apoio transition-colors duration-[240ms] ease-fio hover:bg-superficie-baixa"
-                  >
-                    <span>{filho.rotulo}</span>
-                    <span className="tabular text-legenda text-conteudo-suave">
-                      {filho.total}
-                    </span>
-                  </Link>
-                </motion.li>
-              ))}
-            </ul>
-            <Link
-              href={item.href}
-              className="block border-t border-borda px-5 py-3 text-apoio text-destaque-texto transition-colors duration-[240ms] ease-fio hover:bg-superficie-baixa"
-            >
-              Ver todas as bolsas →
-            </Link>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
-    </li>
-  );
-}
-
 function Gaveta({
   aberta,
   aoFechar,
@@ -513,7 +447,7 @@ function Gaveta({
             exit={{ opacity: 0 }}
             transition={transicao(DURACAO.curta, semMovimento)}
             onClick={aoFechar}
-            className="fixed inset-0 z-50 bg-verde-musgo/50 lg:hidden"
+            className="fixed inset-0 z-50 bg-verde-musgo/50 xl:hidden"
           />
           <motion.div
             key="gaveta"
@@ -524,7 +458,7 @@ function Gaveta({
             animate={semMovimento ? { opacity: 1 } : { x: 0 }}
             exit={semMovimento ? { opacity: 0 } : { x: "100%" }}
             transition={transicao(0.32, semMovimento)}
-            className="trama fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col bg-inv-fundo text-inv-conteudo lg:hidden"
+            className="trama fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col bg-inv-fundo text-inv-conteudo xl:hidden"
           >
             <div className="flex items-center justify-between p-painel">
               <Logo className="h-14" />
@@ -556,20 +490,6 @@ function Gaveta({
                     >
                       {item.rotulo}
                     </Link>
-                    {item.filhos?.length ? (
-                      <ul className="pb-4 -mt-1">
-                        {item.filhos.map((filho) => (
-                          <li key={filho.href}>
-                            <Link
-                              href={filho.href}
-                              className="block py-1.5 text-apoio text-inv-suave"
-                            >
-                              {filho.rotulo}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : null}
                   </motion.li>
                 ))}
               </ul>

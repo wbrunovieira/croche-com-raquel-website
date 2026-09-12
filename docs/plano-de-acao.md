@@ -1317,6 +1317,54 @@ encosta no menu.
 Verificado: `build`, `lint`, `check:classes` (386), `check:espaco`, `check:whatsapp`,
 `check:seo`.
 
+### ✅ Etapa 35 — O menu passa a listar lugares que existem *(achado do Bruno)*
+
+Ele notou que ao descer a página o indicador não acendia em todos os itens, e
+diagnosticou a causa: *"o mesa posta acho que nao existe e bolsas tambem nao existe
+essas secoes"*. Exato.
+
+**O menu era montado a partir do banco.** `Início + cada categoria + Catálogo + Sob
+medida`. Só que categoria não é lugar da página: "Bolsas" leva a `/bolsas`, outra
+página, e "Mesa Posta" é um filtro (`/?categoria=…#catalogo`). Não havia para onde
+rolar, então os dois nunca acendiam — e, pior, **cada categoria nova que a Raquel
+cadastrasse viraria mais um item morto no menu**.
+
+Medindo, achei mais três defeitos que nada tinham a ver com composição:
+
+1. **`#topo` é o `<main>`** — a página inteira. Estava na lista de observados, sempre
+   intersectando, poluindo a conta o tempo todo.
+2. **O observador decidia pelo lote errado.** O `IntersectionObserver` entrega em cada
+   chamada só as entradas que MUDARAM, e o código escolhia "a mais alta visível" dentro
+   desse lote parcial. Medido: descendo a home, em `#perguntas` o menu acendia
+   "Início" — saltava para trás. Agora um `Map` guarda o estado de todas as seções e a
+   decisão é tomada sobre o conjunto: é a diferença entre "o que acabou de mudar" e
+   "onde eu estou".
+3. **Nada apagava.** Quem-faz, Cuidados, Perguntas e Contato eram seções sem item de
+   menu; atravessá-las deixava o item anterior aceso, afirmando um lugar onde a pessoa
+   não estava.
+
+**O menu agora tem sete itens, todos seções reais:** Início, Catálogo, Quem faz,
+Cuidados, Dúvidas, Sob medida, Contato. As bolsas continuam a um clique pelo botão do
+hero, pelo "Ver todas as bolsas" dos destaques e pelo rodapé.
+
+**E sete itens não cabiam.** Transbordo horizontal de 89px a 1024px de largura — a
+página rolava para o lado. *A minha primeira medição não pegou isso:* ela via folga
+positiva justamente PORQUE os itens quebravam em duas linhas em vez de transbordar
+("Iní-cio", "Dú-vi-das"). Número sem imagem mente. Com `whitespace-nowrap` o
+transbordo apareceu, e medindo largura a largura o limiar é **1120px** — que não é
+breakpoint de ninguém. Dava para espremer e caber em 1024; espremer contradiz o que
+este cabeçalho tem de melhor, que é ser o lugar quieto da tela. O menu subiu para
+`xl`, e entre 1024 e 1279 quem atende é o hambúrguer, que lista os mesmos sete.
+
+*De carona:* o CTA passou a quebrar em três linhas quando o menu cresceu — resolvido
+com `nowrap`. E `ItemComFilhos` virou código morto junto com "Bolsas", que era o único
+item com filhos: saiu, com o submenu do celular e os imports órfãos.
+
+Verificado: `build`, `lint`, `check:classes` (381), `check:espaco`, `check:whatsapp`,
+`check:seo`, `check:produto`; zero transbordo de 390 a 1920px; e a rolagem de ponta a
+ponta acendendo **Início → Catálogo → Quem faz → Cuidados → Dúvidas → Sob medida →
+Contato**, sem buraco e sem salto para trás.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a
