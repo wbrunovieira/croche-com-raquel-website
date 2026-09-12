@@ -1365,6 +1365,60 @@ Verificado: `build`, `lint`, `check:classes` (381), `check:espaco`, `check:whats
 ponta acendendo **Início → Catálogo → Quem faz → Cuidados → Dúvidas → Sob medida →
 Contato**, sem buraco e sem salto para trás.
 
+### ✅ Etapa 34 — Os corações saem de trás do novelo *(pedido do Bruno)*
+
+Ele pediu uma etapa a mais na animação do logotipo: a cada **três batidas**, os três
+coraçõezinhos somem suavemente, saem de trás do novelo e voltam a parar na posição
+certa. E pediu com a razão certa — *"não devem surgir em todas as batidas porque o
+visitante não irá fixar o logo e pode ficar cansativo"*.
+
+**O nó era que os corações não existiam como elementos.** `SIMBOLO_PATH` é UM `<path>`
+com `fillRule="evenodd"`, 10.385 caracteres, 24 sub-caminhos. Renderizando cada um
+destacado, os corações são os índices **0, 1 e 5** (3, 6 e 9 são partes das agulhas e
+do novelo, que era o meu palpite errado). Agora `simbolo.tsx` deriva
+`SIMBOLO_SEM_CORACOES` e `SIMBOLO_CORACOES` do próprio `SIMBOLO_PATH` em tempo de
+execução — nada de coordenadas escritas à mão que ficariam para trás numa
+revetorização.
+
+**Três batidas = 9s, múltiplo exato da batida de 3s**, então a animação é CSS puro e se
+sincroniza sozinha, sem JS. Isso também mata o risco de embarcar `opacity: 0` no HTML
+do servidor.
+
+**Quem esconde é um recorte, não a opacidade.** Passar por trás não bastava: o símbolo
+é desenho de traço, e os corações apareceriam pelos vãos da trama, como numa gaiola. O
+`clipPath` é o envelope superior real da silhueta, então o coração de baixo sai pela
+fenda entre as duas bossas do novelo.
+
+**A naturalidade é profundidade, não ruído:** escalas iniciais 0,50 / 0,34 / 0,16 e
+atrasos 0 / 0,12s / 0,26s. O da esquerda é o que "estava mais afastado" — nasce com 16%
+do tamanho, sai por último e passa de 1,08 antes de assentar em 1.
+
+**O que eu conferi por conta própria** (relatório de agente não é prova):
+
+- *O `evenodd` sobreviveu.* Reconstruí a composição em Python a partir do mesmo
+  `SIMBOLO_PATH` e comparei com o traçado antigo no mesmo quadro: **zero pixels cheios
+  mudaram**, zero de borda acima do limiar, diferença máxima 8/255. E `SIMBOLO_PATH`
+  continua idêntico.
+- *A animação roda.* Tira de filme em tempo real no cabeçalho: repouso até ~4s,
+  desvanecem, somem, e em 6,2s voltam pequenos de trás do novelo, assentando em 6,8s.
+- *Movimento reduzido:* os três com `transform: none`, opacidade 1, visíveis.
+- *HTML do servidor:* zero `opacity:0`.
+
+*Dois enganos meus na verificação, registrados porque a lição é de método:* filtrei as
+animações por `/coracao/` e o nome é `coracoes-de-tras-do-novelo` — "coracoes" não
+contém "coracao", e conclui que nada rodava. Depois amostrei o primeiro `<svg>` da
+`/estilo`, que é um logotipo **parado**, e li 48 amostras idênticas como prova de que a
+animação estava morta. Nos dois casos o instrumento estava quebrado, não o alvo.
+
+**Achado pré-existente, conferido e NÃO corrigido:** o símbolo encosta nas bordas do
+`viewBox` do logotipo e a batida escala 1,045 — então **a ponta do coraçãozinho de cima
+é cortada a cada batida**. Medido no cabeçalho: 4 pixels de tinta encostados na linha 0
+no repouso, **35 no pico**. Vem da etapa 17. Consertar mexe em `LOGO_PROPORCAO` e no
+layout do lockup; fica para o Bruno decidir.
+
+Verificado: `build`, `lint`, `check:classes` (381), `check:espaco`, `check:whatsapp`,
+`check:seo`, `check:produto`.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

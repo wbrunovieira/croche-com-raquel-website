@@ -776,6 +776,135 @@ body::after {
   animation: batida-do-coracao 3s ease-in-out infinite;
 }
 
+/* ---------- Os coraçõezinhos saem de trás do novelo ---------- */
+/* Pedido do Bruno: depois da batida, os três coraçõezinhos de cima somem, saem
+   de trás do novelo e param de novo onde estavam — que é a posição certa do
+   logotipo. **A cada três batidas, não a toda batida**, e a razão é dele: *"o
+   visitante não irá fixar o logo e pode ficar cansativo e disputar muito a
+   atenção"*. Quem fica na tela o tempo todo tem de saber ficar quieto.
+
+   Três batidas de 3s dão 9s exatos, então isto é uma segunda animação CSS de
+   9s no mesmo elemento-irmão: sem JS, sem contador e sem nada para
+   dessincronizar, porque as duas começam juntas e 9 é múltiplo de 3. As marcas
+   abaixo, lidas no relógio de 9s: 0% e 33,3% são a 1ª e a 2ª batida, **66,7% é
+   a terceira** — a que devolve os corações.
+
+   O compasso, e o que cada instante resolve:
+
+   |          |        |                                                     |
+   |----------|--------|-----------------------------------------------------|
+   | 0 – 50%  | 0–4,5s | parados no lugar, por duas batidas inteiras          |
+   | 50 – 58% | 4,5s   | recolhem para trás do novelo desvanecendo            |
+   | 58 – 68,5% |      | escondidos, e já 0,5–0,8s antes da terceira batida   |
+   | 68,5%    | 6,17s  | a batida empurra: eles saem                          |
+   | 79 – 84% | 7,1s   | passam um triz do lugar e assentam                   |
+   | 84 – 100%| 7,6s   | parados de novo, 1,4s de calma antes do próximo ciclo |
+
+   O recolhimento cai no vale entre a 2ª e a 3ª batida, não em cima de uma
+   delas: duas coisas se mexendo ao mesmo tempo no mesmo símbolo viram borrão.
+   Já a **saída é colada na batida**: o primeiro coração parte em 6,17s e o pico
+   de 1,045 do novelo é em 6,18s — os outros dois saem 0,1s e 0,25s depois, com
+   o novelo ainda voltando ao tamanho. Aí o movimento lê como consequência da
+   batida. Antes do pico ele lê como duas animações por acaso simultâneas;
+   muito depois, como nada a ver.
+
+   A ida é `--ease-fio` (a curva da casa, .22/1/.36/1): sai rápido e demora
+   assentando, que é como algo jogado se comporta. A volta para trás é o
+   contrário — `cubic-bezier(.4,0,.8,.45)`, acelerando —, porque quem é puxado
+   para trás de alguma coisa acelera ao sumir.
+
+   **A naturalidade pedida** (*"um deles pode dar uma sensação que estava mais
+   afastado e aumentar um pouco"*) não é ruído aleatório: é cada um ter uma
+   profundidade. O `--escondido` de cada coração diz de que fundo ele vem, e o
+   `--pouso`, como ele chega:
+
+   - **baixo** — o que mora na fenda do novelo. Esconde-se raso (escala 0,5),
+     sai primeiro, sem atraso.
+   - **alto** — vem de mais fundo (0,34) e sai 0,12s depois. Chega por baixo e
+     à direita, com escala 0,99: é o único que **não** pode passar do lugar. Ele
+     encosta no topo do `viewBox` do logotipo (y 0,01 de 26,95), e qualquer
+     sobra para cima seria cortada pela viewport do SVG.
+   - **esquerdo** — o de mais longe: começa com 16% do tamanho, sai por último
+     (0,26s) e chega a 1,08 antes de assentar em 1. É o "estava mais afastado e
+     aumentou um pouco".
+
+   Os atrasos são de décimos porque é o bastante para o olho não ler os três
+   como uma peça só, e pouco para não virar fila indiana.
+
+   Por que `transform` e `opacity` e mais nada: são as duas únicas propriedades
+   que o navegador anima sem refazer layout, e este símbolo vive numa barra fixa
+   que acompanha a rolagem da página inteira.
+
+   **O repouso é o logotipo parado** — sem `transform`, opaco. A animação sai
+   dali e volta para lá, então o HTML do servidor nunca embarca ninguém
+   invisível, e o bloco de `prefers-reduced-motion` lá embaixo (que zera duração
+   e atraso) deixa os três visíveis e no lugar certo, que é o único desfecho
+   aceitável para quem pediu menos movimento.
+
+   Quem esconde os corações enquanto estão atrás do novelo é o recorte de
+   `SIMBOLO_ACIMA_DA_TINTA`, montado em `logo.tsx` — o porquê está lá. */
+@keyframes coracoes-de-tras-do-novelo {
+  0%, 50% {
+    transform: none;
+    opacity: 1;
+    animation-timing-function: cubic-bezier(.4, 0, .8, .45);
+  }
+  58%, 66.7% {
+    transform: var(--escondido);
+    opacity: 0;
+  }
+  /* A opacidade volta a 1 ainda atrás do novelo: quem revela os corações é o
+     recorte, não um esmaecimento. Aparecer por cima da tinta enquanto o
+     recorte os corta seria vê-los surgir do nada no meio do desenho. */
+  68.5% {
+    transform: var(--escondido);
+    opacity: 1;
+    animation-timing-function: var(--ease-fio);
+  }
+  79% {
+    transform: var(--pouso);
+    animation-timing-function: cubic-bezier(.33, 0, .25, 1);
+  }
+  84%, 100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.coracao-do-logo {
+  /* A origem é o centro do próprio coração: escala e giro acontecem nele, não
+     no canto do símbolo. As distâncias em `px` aqui são unidades do `viewBox`
+     do símbolo, não pixels de tela: o símbolo é medido a 60px de altura no
+     cabeçalho e 68 na `/estilo`, e nenhum destes números muda por causa disso. */
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: coracoes-de-tras-do-novelo 9s linear infinite;
+}
+
+/* `--fuga-x`/`--fuga-y` chegam de `logo.tsx`: o vetor de cada coração até o
+   miolo do novelo, medido na vetorização. O empurrãozinho somado a cada um é o
+   que os faz sair de pontos diferentes do novelo em vez de todos do mesmo. */
+.coracao-do-logo--baixo {
+  --escondido:
+    translate(calc(var(--fuga-x) * 1px + .4px), calc(var(--fuga-y) * 1px - 1.4px))
+    scale(.5) rotate(-9deg);
+  --pouso: translate(0, -.45px) scale(1.05) rotate(1.5deg);
+}
+.coracao-do-logo--alto {
+  --escondido:
+    translate(calc(var(--fuga-x) * 1px - 1.1px), calc(var(--fuga-y) * 1px))
+    scale(.34) rotate(12deg);
+  --pouso: translate(.35px, .3px) scale(.99) rotate(-2deg);
+  animation-delay: .12s;
+}
+.coracao-do-logo--esquerdo {
+  --escondido:
+    translate(calc(var(--fuga-x) * 1px + 1.6px), calc(var(--fuga-y) * 1px + 1.2px))
+    scale(.16) rotate(-18deg);
+  --pouso: translate(-.5px, -.35px) scale(1.08) rotate(-3deg);
+  animation-delay: .26s;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: .01ms !important; animation-iteration-count: 1 !important;

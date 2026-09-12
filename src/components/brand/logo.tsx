@@ -1,8 +1,12 @@
-import type { SVGProps } from "react";
+import type { CSSProperties, SVGProps } from "react";
 import {
+  SIMBOLO_ACIMA_DA_TINTA,
   SIMBOLO_BORDA_ESQ,
+  SIMBOLO_CORACOES,
+  SIMBOLO_NUCLEO,
   SIMBOLO_PATH,
   SIMBOLO_PONTA_FIO,
+  SIMBOLO_SEM_CORACOES,
   SIMBOLO_VIEWBOX,
 } from "./simbolo";
 import { CROCHE_PATH, CROCHE_VIEWBOX, RAQUEL_PATH } from "./assinatura";
@@ -157,6 +161,79 @@ export const LOGO_LINHA_PROPORCAO = LARGURA / (BASE_LINHA - TOPO);
 
 type Variante = "completo" | "linha" | "simbolo";
 
+/**
+ * Os três coraçõezinhos, soltos do novelo para poderem sumir e voltar de trás
+ * dele a cada três batidas — o pedido do Bruno, e o motivo de ser a cada três e
+ * não a cada uma: *"o visitante não irá fixar o logo e pode ficar cansativo e
+ * disputar muito a atenção"*. O ritmo, os tempos e as trajetórias estão em
+ * `globals.css`; aqui fica só o arranjo que os deixa animar.
+ *
+ * Três coisas desta montagem não são detalhe:
+ *
+ * 1. **Eles são pintados antes do resto do símbolo**, para o novelo passar por
+ *    cima. Mas ordem de pintura não bastaria: o símbolo é desenho de traço, e
+ *    entre as tramas se vê o fundo — um coração "atrás" apareceria pelos vãos.
+ *    Daí o recorte de `SIMBOLO_ACIMA_DA_TINTA`: eles só existem acima da
+ *    silhueta, e some quem entra nela.
+ * 2. **O recorte fica no `g` de fora e a animação no de dentro.** O `transform`
+ *    de um elemento leva junto o recorte dele; num `g` só, o recorte desceria
+ *    com o coração e nunca esconderia nada.
+ * 3. **Cada coração leva a própria distância até o miolo do novelo** em
+ *    `--fuga-x`/`--fuga-y`, medida da vetorização (ver `simbolo.tsx`). O CSS
+ *    descreve o *movimento*; a geometria continua vindo do desenho dela.
+ *
+ * O estado de repouso é o do logotipo parado — sem `transform` e opaco. A
+ * animação parte dali e volta para lá, então nada embarca invisível no HTML do
+ * servidor e quem pede menos movimento (a regra global zera a duração) vê os
+ * três no lugar certo. Medido: com `prefers-reduced-motion: reduce` os três
+ * ficam em x/y idênticos ao repouso, opacidade 1 e `transform: none`.
+ *
+ * **Duas coisas medidas que ficam como estão, e é melhor saber por quê:**
+ *
+ * 1. *O id do recorte é fixo.* Só o logotipo do cabeçalho bate, então há um por
+ *    página — menos na `/estilo`, que mostra um segundo de propósito. Lá os
+ *    dois `clipPath` nascem com o mesmo id e o navegador serve o primeiro aos
+ *    dois; como a geometria é a mesma, os dois recortam igual (conferido na
+ *    tela). Um id por instância exigiria `useId`, que é hook, que obrigaria o
+ *    logotipo inteiro a virar componente de cliente.
+ * 2. *A batida muda um triz enquanto os corações estão escondidos.* A escala da
+ *    batida tem origem no centro da caixa do grupo (`transform-box: fill-box`),
+ *    e essa caixa encolhe quando os corações se recolhem para dentro do novelo:
+ *    o topo dela sai de y 0,01 para y 3,04. No pico da terceira batida o topo
+ *    do novelo fica 0,066 unidade mais alto que no pico das outras duas — 0,17
+ *    pixel na página `/estilo`, menos ainda no cabeçalho. Prender a origem em
+ *    unidades do usuário custaria mais do que 0,17 pixel de erro vale.
+ */
+const RECORTE_ACIMA_DA_TINTA = "logo-acima-da-tinta";
+
+function Coracoes() {
+  return (
+    <>
+      <defs>
+        <clipPath id={RECORTE_ACIMA_DA_TINTA}>
+          <path d={SIMBOLO_ACIMA_DA_TINTA} />
+        </clipPath>
+      </defs>
+      <g clipPath={`url(#${RECORTE_ACIMA_DA_TINTA})`}>
+        {SIMBOLO_CORACOES.map((coracao) => (
+          <g
+            key={coracao.nome}
+            className={`coracao-do-logo coracao-do-logo--${coracao.nome}`}
+            style={
+              {
+                "--fuga-x": (SIMBOLO_NUCLEO.x - coracao.cx).toFixed(2),
+                "--fuga-y": (SIMBOLO_NUCLEO.y - coracao.cy).toFixed(2),
+              } as CSSProperties
+            }
+          >
+            <path d={coracao.d} />
+          </g>
+        ))}
+      </g>
+    </>
+  );
+}
+
 export function Logo({
   variante = "completo",
   className = "",
@@ -207,7 +284,11 @@ export function Logo({
           num `g` só, a batida jogaria o novelo para o canto. */}
       <g transform={`translate(${SIMBOLO_X} ${SIMBOLO_Y}) scale(${SIMBOLO_ESC})`}>
         <g className={batendo ? "batida-do-coracao" : undefined}>
-          <path d={SIMBOLO_PATH} fillRule="evenodd" />
+          {batendo ? <Coracoes /> : null}
+          <path
+            d={batendo ? SIMBOLO_SEM_CORACOES : SIMBOLO_PATH}
+            fillRule="evenodd"
+          />
         </g>
       </g>
       <g transform={`translate(${CROCHE_X - CROCHE_X0} 0)`}>
