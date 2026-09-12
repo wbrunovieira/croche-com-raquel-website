@@ -10,7 +10,7 @@ import {
   useReducedMotion,
   useScroll,
 } from "motion/react";
-import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown, Menu, MessageCircle, X } from "lucide-react";
 import { DURACAO, transicao } from "@/lib/movimento";
 import { Logo } from "@/components/brand/logo";
 import { Simbolo } from "@/components/brand/simbolo";
@@ -148,7 +148,12 @@ export function Navegacao({
                conjunto, não um aviso pregado por cima. */
             className="trama luz-de-janela relative overflow-hidden bg-primaria text-sobre-primaria"
           >
-            <div className="container-site flex items-center gap-4 py-2.5">
+            {/* Respiro assimétrico de propósito. A `corrente` do rodapé tem 12px e
+                mora absoluta DENTRO deste padding, então um `py-2.5` simétrico
+                deixava 14px de ar em cima e 2px embaixo — o botão encostava nos
+                festões. O que a pessoa enxerga como respiro é a distância até a
+                decoração, não até a borda da faixa. */}
+            <div className="container-site flex items-center gap-4 pt-2.5 pb-5">
               {/* A faixa INTEIRA é o link. O texto convidava — "é só contar o
                   que você tem em mente" — e não havia como contar: a pessoa
                   lia um convite e ficava sem porta. Agora ela leva para a
@@ -163,16 +168,32 @@ export function Navegacao({
                   {aviso}
                 </p>
 
-                <span className="hidden shrink-0 items-center gap-2 text-apoio font-medium underline-offset-4 group-hover:underline sm:inline-flex">
+                {/* Isto precisa PARECER um controle, e não parecia: era texto
+                    pelado com um sublinhado que só aparecia no hover — quem não
+                    passa o mouse nunca descobre que ali havia uma porta. Ganhou
+                    contorno, fundo e respiro, que é o que faz alguém reconhecer
+                    um botão sem ter que testar.
+
+                    E o ícone mudou de lado e de desenho. A seta ficava à
+                    direita, encostada no ✕, e uma seta aponta: ela apontava
+                    para o botão de fechar, de modo que "Me conte →" lia como se
+                    o destino fosse sair da faixa. À esquerda, o ícone não aponta
+                    para nada. O balão de fala também diz o que a seta não dizia
+                    — a seta significa "vai para algum lugar", e o que se quer
+                    prometer aqui é conversa: contar o que se tem em mente. */}
+                <span className="hidden shrink-0 items-center gap-1.5 rounded-fio border border-cru/25 bg-white/10 px-3 py-1.5 text-apoio font-medium transition-colors duration-[180ms] ease-fio group-hover:border-cru/45 group-hover:bg-white/20 sm:inline-flex">
+                  <MessageCircle className="size-4" aria-hidden="true" />
                   Me conte
-                  {/* A seta anda no hover — é o único movimento aqui, e é
-                      resposta a um gesto, não laço decorativo. */}
-                  <ArrowRight
-                    className="size-4 transition-transform duration-200 ease-fio group-hover:translate-x-0.5"
-                    aria-hidden="true"
-                  />
                 </span>
               </Link>
+
+              {/* Um fio entre o botão e o ✕: agora que "Me conte" tem contorno,
+                  os dois encostados leriam como um par de controles irmãos, e
+                  fechar o aviso não é irmão de encomendar. */}
+              <span
+                aria-hidden="true"
+                className="hidden h-5 w-px shrink-0 bg-cru/20 sm:block"
+              />
 
               <button
                 type="button"

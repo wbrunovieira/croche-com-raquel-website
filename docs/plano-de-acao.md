@@ -1132,6 +1132,37 @@ de propósito que uma troca de cor).
 Verificado: `build`, `lint`, `check:classes` (372 classes), `check:espaco`,
 `check:whatsapp`, `check:seo` (as 6 âncoras chegando) e `check:produto`.
 
+### ✅ Etapa 29 — O convite da faixa *(pedido do Bruno)*
+
+Ele olhou a faixa que acabou de nascer e achou três coisas, todas certas.
+
+**1. A seta apontava para o botão de fechar.** "Me conte →" tinha a seta à direita,
+encostada no ✕. Seta aponta — e essa apontava para sair da faixa, de modo que o
+convite lia como se o destino fosse fechá-la. O ícone foi para a **esquerda**, onde
+não aponta para nada.
+
+**2. E virou balão de fala.** A seta significa "vai para algum lugar"; o que se quer
+prometer aqui é conversa — contar o que se tem em mente. O balão diz isso, e diz
+sem prometer WhatsApp, que seria mentira: a faixa leva para a seção de encomenda,
+não para o aplicativo.
+
+**3. "Me conte" não parecia clicável.** Era texto pelado com sublinhado que só
+aparecia no hover — quem não passa o mouse nunca descobria que ali havia uma porta.
+Ganhou contorno, fundo e respiro. Um fio vertical separa o botão do ✕: agora que
+"Me conte" tem forma, os dois encostados leriam como controles irmãos, e fechar o
+aviso não é irmão de encomendar.
+
+**4. O respiro abaixo do botão, que o padding não explicava.** Ele apontou que
+faltava ar embaixo, e o padding era simétrico — 14px em cima, 14 embaixo. O culpado
+era a `corrente` do rodapé: 12px de altura, absoluta DENTRO desse padding, deixando
+**2px** entre o botão e os festões. *O que a pessoa enxerga como respiro é a
+distância até a decoração, não até a borda do elemento* — quando há um ornamento
+posicionado por cima, o padding simétrico mente. O respiro de baixo virou `pb-5`,
+dando à corrente espaço próprio: 14px de ar em cima, 12px até ela embaixo.
+
+Verificado: `build`, `lint`, `check:classes` (377), `check:espaco`, `check:whatsapp`
+e `check:seo`.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a
