@@ -330,6 +330,37 @@
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primaria) 22%, transparent);
   }
 
+  /**
+   * O botão secundário.
+   *
+   * Era contorno e nada mais: linha em volta, fundo do que estivesse atrás,
+   * hover trocando de cor de fundo. Sobre o creme da página isso lê como texto
+   * dentro de um retângulo, não como botão — e "Ver todas as bolsas" estava
+   * pior ainda, um link sublinhado onde cabia um botão.
+   *
+   * Ganha o que o primário tem, na intensidade de quem é segundo: uma
+   * superfície própria (o papel, mais claro que a página, então ele POUSA nela),
+   * a mesma sombra de repouso do card, e no hover sobe um pixel com a borda
+   * fechando um tom. Sem preenchimento de cor: o que separa o secundário do
+   * primário é a cor, não o gesto — quem lê a página deve reconhecer os dois
+   * como botões e saber qual manda.
+   */
+  .botao-secundario {
+    background-color: var(--color-superficie);
+    border: 1px solid var(--color-borda-forte);
+    box-shadow: 0 1px 2px rgba(36, 29, 22, 0.05);
+  }
+  .botao-secundario:hover,
+  .botao-secundario:focus-visible {
+    background-color: var(--color-papel);
+    border-color: color-mix(in srgb, var(--color-conteudo) 38%, transparent);
+    box-shadow: 0 4px 12px -3px rgba(36, 29, 22, 0.16);
+    transform: translateY(-1px);
+  }
+  .botao-secundario:active {
+    box-shadow: 0 1px 2px rgba(36, 29, 22, 0.05);
+  }
+
   /* A família clara: os mesmos gestos do `.botao-primario`, do outro lado do
      contraste.
 
@@ -768,7 +799,52 @@ body::after {
    O estilo mora no `<a>`, e não no `<article>` em volta: o Safari do iPhone só
    aplica `:active` de forma confiável em elementos clicáveis. */
 @layer components {
+  /**
+   * O card deixa de ser um retângulo branco.
+   *
+   * Medido antes de mexer: o card dava **ΔE 4,16** contra a página — nem lê
+   * como superfície pousada nela, nem some dentro dela. Esse meio-termo é
+   * exatamente o que o olho registra como "padrão de fábrica". E não havia
+   * sombra nenhuma em repouso: parado, o card era um preenchimento com uma
+   * linha em volta.
+   *
+   * Duas correções, e a segunda é a que importa. A sombra de repouso dá
+   * espessura — agora o card ESTÁ sobre a página, em vez de ser um recorte
+   * dela. E o degradê levíssimo tira o chapado: papel em cima, um sopro do
+   * creme de baixo embaixo, que é luz caindo numa superfície.
+   */
+  /**
+   * A placa onde a peça pousa.
+   *
+   * Era esse o defeito de verdade, e ele é de figura e fundo: as fotos da
+   * Raquel têm fundo branco, o card era quase branco, então a bolsa flutuava
+   * num campo indiferenciado — só o arco a separava. **Uma peça de crochê
+   * fotografada precisa pousar em alguma coisa.**
+   *
+   * A placa é o creme de baixo com a trama da marca, e sobra alguns pixels em
+   * volta da foto: o arco passa a ser recortado de um tecido, não de vazio. O
+   * mesmo pedaço de trama que veste as seções verdes, aqui em linhas escuras,
+   * porque ali ela clareia um fundo escuro e aqui precisa escurecer um claro.
+   *
+   * A sobra existe também para as peças que NÃO são bolsa: sem arco a foto é
+   * retangular e preencheria a placa inteira, e o tratamento valeria só para as
+   * bolsas. Meia solução num elemento que se repete é pior que nenhuma.
+   */
+  .placa-da-peca {
+    padding: 5px;
+    background-color: var(--color-cru-fundo);
+    background-image:
+      repeating-linear-gradient(45deg, rgba(36, 29, 22, 0.04) 0 1px, transparent 1px 6px),
+      repeating-linear-gradient(-45deg, rgba(36, 29, 22, 0.04) 0 1px, transparent 1px 6px);
+  }
+
   .card-peca {
+    background-image: linear-gradient(
+      to bottom,
+      transparent 45%,
+      color-mix(in srgb, var(--color-cru-fundo) 45%, transparent)
+    );
+    box-shadow: 0 1px 2px rgba(36, 29, 22, 0.05);
     transition:
       transform     .18s var(--ease-fio),
       box-shadow    .18s var(--ease-fio),
@@ -778,6 +854,11 @@ body::after {
   .card-peca:focus-visible {
     transform: translateY(-2px);
     box-shadow: var(--shadow-peca);
+    background-image: linear-gradient(
+      to bottom,
+      transparent 45%,
+      color-mix(in srgb, var(--color-cru-fundo) 25%, transparent)
+    );
     border-color: color-mix(in oklab, var(--color-borda-forte) 45%, transparent);
   }
   /* Afundar sob o dedo. Escala mínima e por um instante: é a peça cedendo ao

@@ -29,12 +29,16 @@ export function CardDeProduto({
         href={`/produtos/${produto.slug}`}
         className="card-peca block h-full rounded-card border border-borda bg-superficie p-card"
       >
-        <Foto
-          imagem={produto.capa}
-          arco={produto.ehBolsa}
-          dentroDeCard
-          prioridade={prioridade}
-        />
+        {/* A placa: a peça precisa pousar em alguma coisa. Ver `.placa-da-peca`
+            no `globals.css` — o porquê está lá. */}
+        <div className="placa-da-peca">
+          <Foto
+            imagem={produto.capa}
+            arco={produto.ehBolsa}
+            dentroDeCard
+            prioridade={prioridade}
+          />
+        </div>
         <p className="mt-3 text-etiqueta uppercase text-conteudo-suave">
           {produto.subcategoria?.nome ?? produto.categoria.nome}
         </p>

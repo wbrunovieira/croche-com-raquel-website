@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { classesDeBotao } from "@/components/ui/botao";
 import { ArrowRight } from "lucide-react";
 import { Hero } from "@/components/site/hero";
 import { Revelar } from "@/components/ui/revelar";
@@ -68,6 +69,13 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   // tenha uma; sem nenhuma, o Hero mostra o placeholder.
   const comFoto = (p: { capa: ImagemDeProduto | null }) => p.capa !== null;
   const capasDeBolsa = destaques.filter((p) => p.ehBolsa).filter(comFoto);
+  /**
+   * A vitrine abaixo da dobra é **só de bolsas**. Antes mostrava `destaques`
+   * cru — o que o banco marcou como destaque, misturando bolsa com sousplat —,
+   * e por isso o título precisava ser genérico. As peças que saem daqui não
+   * somem do site: continuam no Catálogo, logo abaixo.
+   */
+  const bolsasEmDestaque = destaques.filter((p) => p.ehBolsa);
   const capasDoHero = (capasDeBolsa.length > 0 ? capasDeBolsa : destaques.filter(comFoto))
     .slice(0, 5)
     .map((p) => p.capa)
@@ -107,24 +115,86 @@ export default async function Home({ searchParams }: PageProps<"/">) {
               chegam em cascata curta, um ponto depois do outro. */}
           <Revelar
             entrada="ponto"
-            className="flex flex-wrap items-end justify-between gap-4"
+            className="flex flex-wrap items-start justify-between gap-x-8 gap-y-4"
           >
-            <div>
-              <Etiqueta>Escolhidas por ela</Etiqueta>
-              <h2 className="mt-2 font-display text-t2">Peças em destaque</h2>
+            {/* **Esta seção é das bolsas, e o título passou a dizer isso.**
+
+                Era "Peças em destaque", que é genérico porque o conteúdo era
+                misto — vinham as peças marcadas como destaque no banco, o que
+                incluía um sousplat. Agora a seção filtra bolsas: o carro-chefe
+                tem lugar próprio logo abaixo da dobra, e o título não precisa
+                mais ser vago para caber em tudo.
+
+                *Por que este título e não "Bolsas de crochê feitas à mão":*
+                essa frase já é o `<title>` e o H1 da página `/bolsas`. Repetir
+                faria as duas competirem pelo mesmo termo, e a home perderia
+                para a página mais específica — ou pior, nenhuma das duas
+                venceria. Aqui o termo vem com o diferencial que a `/bolsas`
+                NÃO usa no H1 dela: sob encomenda, na cor de quem pede.
+
+                Antes, "bolsa de crochê" não aparecia em nenhum título da home:
+                nem no `<title>`, nem no H1, nem em H2 nenhum. O produto que
+                mais importa não estava declarado em lugar que o buscador leia
+                com peso. */}
+            <div className="max-w-texto">
+              {/* "O carro-chefe" saiu: era o modo como o Bruno me explicou o
+                  negócio, não como a Raquel fala com quem compra. Jargão de
+                  briefing não vai para a vitrine.
+
+                  A etiqueta agora carrega o MODELO de venda e o título carrega
+                  o produto — assim os dois níveis dizem coisas diferentes, em
+                  vez de um repetir o outro em corpo menor. */}
+              <Etiqueta>Sob encomenda</Etiqueta>
+              {/* Encurtado até caber numa linha só, e essa foi a saída depois de
+                  medir: "Bolsas de crochê na cor que você escolher" não tinha
+                  NENHUMA largura que a quebrasse em duas linhas decentes — ou
+                  sobrava "que" pendurado, ou virava três linhas. Título que
+                  precisa de largura calibrada para não tropeçar é título
+                  comprido demais.
+
+                  O que saiu do título não se perdeu: "você escolhe o tom e o
+                  tamanho" está na linha de apoio, que é onde cabe explicar. O
+                  título diz O QUE É, o apoio diz COMO FUNCIONA. */}
+              <h2 className="mt-2 font-display text-t2">Bolsas de crochê na sua cor</h2>
+              {/* Sem prazo em número aqui. O FAQ diz "de 7 a 15 dias para
+                  bolsas", e no FAQ isso é resposta a quem foi procurar; na
+                  vitrine vira promessa, e promessa de prazo queima confiança se
+                  estiver errada. Entra quando a Raquel confirmar. */}
+              <p className="mt-3 text-apoio text-conteudo-suave">
+                Nenhuma sai pronta da prateleira — a Raquel começa a sua depois
+                que você escolhe o tom e o tamanho.
+              </p>
             </div>
+            {/* Era um link sublinhado onde cabia um botão: ele fica ao lado de um
+                título de seção, à direita, e é a saída para o hub do carro-chefe
+                — peso de botão, não de nota de rodapé. A seta desliza no hover,
+                e aqui ela pode apontar: à direita dela não há nada, então o que
+                ela indica é "adiante", que é para onde o link leva. */}
+            {/* O `<div>` não é enfeite de layout: sem ele o botão é filho DIRETO
+                do `Revelar`, que anima os filhos com `animation-fill-mode: both`
+                — e animação preenchida **sobrescreve declaração de CSS**. O
+                `transform` ficava cravado no valor final do keyframe, e o
+                `translateY(-1px)` do hover simplesmente não valia. Medido: o
+                primário do cabeçalho e o claro do hero subiam, este ficava em
+                zero. Com o invólucro, quem recebe a animação é o `<div>` e o
+                botão volta a mandar no próprio transform. */}
+            <div className="shrink-0">
             <Link
               href="/bolsas"
-              className="inline-flex items-center gap-2 py-2 -my-2 text-apoio text-destaque-texto underline underline-offset-4 hover:no-underline"
+              className={`${classesDeBotao("secundaria", "sm")} group`}
             >
               Ver todas as bolsas
-              <ArrowRight className="size-4" aria-hidden="true" />
+              <ArrowRight
+                className="size-4 transition-transform duration-[240ms] ease-fio group-hover:translate-x-0.5"
+                aria-hidden="true"
+              />
             </Link>
+            </div>
           </Revelar>
           {/* A vitrine só aparece — nada se desloca na frente de quem compara
               peças. Sem cascata: a grade não se monta item a item. */}
           <Revelar entrada="grade" atraso={0.08} className="mt-bloco">
-            <GradeDeProdutos produtos={destaques} />
+            <GradeDeProdutos produtos={bolsasEmDestaque} />
           </Revelar>
         </div>
       </section>

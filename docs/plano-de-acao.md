@@ -1458,6 +1458,68 @@ Verificado: `build`, `lint`, `check:classes` (385), `check:espaco`, `check:whats
 `check:seo`, `check:produto`; hovers medidos (sombra e −1px de elevação nos três
 controles) e o "voltar" indo de 1 para 4.
 
+### ✅ Etapa 37 — Os cards e a seção das bolsas *(pedidos do Bruno)*
+
+**1. "Esse bg branco dos cards dá a sensação que nenhum UI trabalhou ali."** Medido
+antes de mexer: o card dava **ΔE 4,16** contra a página — nem lê como superfície
+pousada nela, nem some dentro dela, e esse meio-termo é o que o olho registra como
+padrão de fábrica. Não havia sombra nenhuma em repouso.
+
+*Mas o defeito de verdade era de figura e fundo:* **a foto não pousava em nada**. As
+fotos da Raquel têm fundo branco, o card era quase branco, então a bolsa flutuava num
+campo indiferenciado — só o arco a separava. Entrou a `.placa-da-peca`: o creme de
+baixo com a trama da marca, sobrando 5px em volta da foto. O arco passa a ser recortado
+de um tecido. A sobra existe também para as peças que **não** são bolsa: sem arco a
+foto preencheria a placa inteira e o tratamento valeria só para as bolsas — meia solução
+num elemento que se repete é pior que nenhuma. Ficou ΔE 8,22 entre placa e card.
+
+**2. "Ver todas as bolsas está um texto sem UI."** Era um link sublinhado ao lado de um
+título de seção. A correção entrou na variante `secundaria` inteira e não só ali — se eu
+embelezasse um caso, criaria dois desenhos para o mesmo papel.
+
+*E aqui achei um bug sutil que valia a caçada:* o botão **não subia no hover**, embora
+sombra e borda respondessem. Causa: ele era filho DIRETO do `<Revelar>`, cuja animação
+de entrada usa `animation-fill-mode: both` — e **animação preenchida sobrescreve
+declaração de CSS**. O `transform` ficava cravado no valor final do keyframe. O primário
+do cabeçalho e o claro do hero subiam porque neles a animação está num invólucro, não no
+próprio botão. Resolvido com um `<div>` em volta.
+
+**3. A seção "Peças em destaque" virou a seção das bolsas.** Ele notou que ela *é* de
+bolsas e merece lugar próprio por ser o carro-chefe. Ela mostrava `destaques` cru — o que
+o banco marcou como destaque, misturando bolsa com sousplat —, e por isso o título
+precisava ser genérico. Agora filtra bolsas.
+
+*O achado de SEO foi maior que o título:* **"bolsa de crochê" não aparecia em nenhum
+título da home** — nem no `<title>`, nem no H1, nem em H2 nenhum. O produto que mais
+importa não estava declarado em lugar que o buscador leia com peso. E a `/bolsas` já é
+dona de "Bolsas de crochê feitas à mão" (title e H1), então repetir faria as duas
+competirem pelo mesmo termo.
+
+**4. Duas correções de linguagem, ambas dele.** "O carro-chefe" era como ele me explicou
+o negócio, não como a Raquel fala com quem compra — jargão de briefing não vai para a
+vitrine. E o título quebrava mal. Medi seis larguras: *nenhuma* quebrava "Bolsas de
+crochê na cor que você escolher" em duas linhas decentes — ou sobrava "que" pendurado,
+ou virava três linhas. **Título que precisa de largura calibrada para não tropeçar é
+título comprido demais.** Encurtei para "Bolsas de crochê na sua cor", que cabe numa
+linha de 390 a 1440px, e o que saiu foi para a linha de apoio: o título diz o que é, o
+apoio diz como funciona. O botão subiu para o nível do título — antes alinhava com o
+parágrafo e flutuava sem pertencer a nível nenhum.
+
+**Um erro meu, e feio.** Na prévia da opção que ele escolheu, eu escrevi "Leva de 7 a 15
+dias" sem ter conferido — texto de preenchimento para a prévia parecer completa. Ele
+perguntou de onde eu tinha tirado e eu respondi que havia inventado. **As duas coisas
+estavam erradas:** o número está publicado no FAQ do site desde a etapa 8 ("de 7 a 15
+dias para bolsas"), então não era invenção; e eu afirmei que era, de novo sem verificar.
+Acertei por acaso na primeira e errei a correção na segunda. *O prazo NÃO entrou na
+seção:* o `conteudo.ts` foi commitado por nós dois e o git não distingue o que veio da
+Raquel do que foi redigido numa sessão minha e aprovado junto. No FAQ um prazo é resposta
+a quem foi procurar; na vitrine vira promessa, e promessa de prazo queima confiança se
+estiver errada. Entra quando ela confirmar.
+
+Verificado: `build`, `lint`, `check:classes` (386), `check:espaco`, `check:whatsapp`,
+`check:seo`, `check:produto`; quebra do título medida em 4 larguras e o botão subindo
+1px no hover.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

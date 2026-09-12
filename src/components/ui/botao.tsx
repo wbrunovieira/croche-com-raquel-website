@@ -8,8 +8,9 @@ const VARIANTES: Record<VarianteDeBotao, string> = {
   // vence camada de componente, então deixar `bg-primaria` aqui apagaria o
   // brilho e o degradê de lá.
   primaria: "botao-primario text-sobre-primaria rounded-fio",
-  secundaria:
-    "border border-borda-forte text-conteudo hover:bg-superficie-baixa rounded-fio",
+  // Cor, borda e sombra moram em `.botao-secundario` (globals.css) — mesma
+  // razão do primário: utilitário vence camada de componente.
+  secundaria: "botao-secundario text-conteudo rounded-fio",
   // Fundo claro sobre as seções verdes.
   clara: "bg-cru text-verde-cristal hover:bg-papel rounded-fio",
   // Único lugar do site com o verde-médio: o flutuante do mobile.
