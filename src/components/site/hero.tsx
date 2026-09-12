@@ -10,9 +10,10 @@ import {
   useScroll,
   useTransform,
 } from "motion/react";
-import { ChevronRight, Hand, Package, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, Hand, Package, Sparkles } from "lucide-react";
 import { Foto } from "@/components/ui/foto";
 import { IconeZap } from "@/components/ui/icone-zap";
+import { Etiqueta } from "@/components/ui/etiqueta";
 import { DURACAO, transicao } from "@/lib/movimento";
 import type { ImagemDeProduto } from "@/lib/queries/tipos";
 
@@ -61,6 +62,17 @@ export function Hero({
     setAtual((i) => (i + 1) % Math.max(capas.length, 1));
   }, [capas.length]);
 
+  /**
+   * Só havia "próxima". Com quatro fotos, rever a anterior custava TRÊS cliques
+   * dando a volta inteira — e a foto é o que vende a peça, então voltar para
+   * olhar de novo é o gesto mais provável de quem está decidindo. Os pontinhos
+   * permitiam pular direto, mas exigem mirar um alvo de 6px; a seta não exige
+   * mira nenhuma.
+   */
+  const voltar = useCallback(() => {
+    setAtual((i) => (i - 1 + Math.max(capas.length, 1)) % Math.max(capas.length, 1));
+  }, [capas.length]);
+
   useEffect(() => {
     // `semMovimento` desliga o rodízio inteiro — quem pediu menos movimento no
     // sistema não pediu uma foto trocando sozinha. O chevron continua valendo.
@@ -83,9 +95,13 @@ export function Hero({
                 candidato a LCP: ele saía do servidor com `opacity: 0` e só
                 aparecia depois da hidratação. Em keyframes, pinta no primeiro
                 quadro. Ver `globals.css`. */}
-            <p className="surgir font-texto text-etiqueta uppercase text-inv-suave">
+            {/* Era o único abre-seção do site fora da `<Etiqueta>`: um `<p>`
+                solto que ficou para trás quando a etiqueta ganhou o acento e a
+                costura. O hero é a primeira coisa que a pessoa lê — se o
+                vocabulário começa diferente aqui, ele não é vocabulário. */}
+            <Etiqueta tom="invertido" className="surgir">
               {cidade} · feito à mão
-            </p>
+            </Etiqueta>
 
             <h1 className="surgir surgir-2 mt-4 max-w-[14ch] font-display text-display">
               {titulo}
@@ -98,7 +114,7 @@ export function Hero({
             <div className="surgir surgir-4 mt-bloco flex flex-wrap gap-4">
               <Link
                 href="/bolsas"
-                className="inline-flex items-center gap-btn-icone rounded-fio bg-cru px-btn-x py-btn-y font-medium text-verde-cristal transition-[background-color,transform] duration-150 ease-fio active:translate-y-px hover:bg-papel"
+                className="botao-claro inline-flex items-center gap-btn-icone rounded-fio px-btn-x py-btn-y font-medium text-verde-cristal transition-[background-color,border-color,box-shadow,transform] duration-[240ms] ease-fio active:translate-y-px"
               >
                 Ver as bolsas
               </Link>
@@ -106,7 +122,7 @@ export function Hero({
                 href={`https://wa.me/${whatsappNumero}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-btn-icone rounded-fio border border-inv-borda px-btn-x py-btn-y font-medium transition-[background-color,transform] duration-150 ease-fio active:translate-y-px hover:bg-white/10"
+                className="botao-contorno-claro inline-flex items-center gap-btn-icone rounded-fio px-btn-x py-btn-y font-medium transition-[background-color,border-color,box-shadow,transform] duration-[240ms] ease-fio active:translate-y-px"
               >
                 <IconeZap className="size-5" />
                 Falar com a Raquel
@@ -188,7 +204,7 @@ export function Hero({
                           className="grid size-11 place-items-center"
                         >
                           <span
-                            className={`block size-1.5 rounded-pilula transition-colors ${
+                            className={`block size-1.5 rounded-pilula transition-colors duration-[240ms] ease-fio ${
                               i === atual ? "bg-cru" : "bg-cru/40"
                             }`}
                           />
@@ -198,9 +214,17 @@ export function Hero({
                   </ul>
                   <button
                     type="button"
+                    onClick={voltar}
+                    aria-label="Foto anterior"
+                    className="botao-de-icone--claro grid size-11 place-items-center transition-[background-color,border-color,box-shadow,transform] duration-[240ms] ease-fio"
+                  >
+                    <ChevronLeft className="size-5" aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
                     onClick={avancar}
                     aria-label="Próxima foto"
-                    className="grid size-11 place-items-center rounded-pilula border border-inv-borda transition-colors hover:bg-white/10"
+                    className="botao-de-icone--claro grid size-11 place-items-center transition-[background-color,border-color,box-shadow,transform] duration-[240ms] ease-fio"
                   >
                     <ChevronRight className="size-5" aria-hidden="true" />
                   </button>

@@ -1419,6 +1419,45 @@ layout do lockup; fica para o Bruno decidir.
 Verificado: `build`, `lint`, `check:classes` (381), `check:espaco`, `check:whatsapp`,
 `check:seo`, `check:produto`.
 
+### ✅ Etapa 36 — O hero fala a mesma língua do cabeçalho *(pedido do Bruno)*
+
+Ele gosta do hero e pediu só os botões — *"aplicar os hover que fizemos no header"* —
+mais uma análise de UI/UX.
+
+**Os botões.** Estavam em `0.15s`, só `background-color` e `transform`: nenhuma
+elevação, nenhuma sombra. Entrou a família clara em `globals.css` (`.botao-claro`,
+`.botao-contorno-claro`, `.botao-de-icone--claro`) — os mesmos gestos do
+`.botao-primario`, do outro lado do contraste. Sobre o verde escuro nada do lado claro
+serve tal qual: o brilho de topo do primário é branco a 11%, que sobre creme não
+aparece (aqui vai a 60%), e a sombra preta translúcida some sobre verde (aqui puxa para
+o verde-quase-preto). **O que não muda é a gramática** — brilho fixo em cima, hover sobe
+um pixel e ganha sombra, clique devolve. Quem rola do hero para o catálogo não deve
+sentir que mudou de casa.
+
+**Duas coisas que a análise achou, e a primeira é um estrago meu.** O olho do hero era
+um `<p>` solto com `text-inv-suave` — **o único abre-seção do site fora da
+`<Etiqueta>`**, e portanto o único que ficou para trás quando a etiqueta ganhou o
+acento e a costura na etapa 32. O hero é a primeira coisa que a pessoa lê; se o
+vocabulário começa diferente ali, ele não é vocabulário. Agora usa a `<Etiqueta>`, com
+6,65:1 sobre o verde.
+
+**A segunda: o carrossel só tinha "próxima".** Com quatro fotos, rever a anterior
+custava TRÊS cliques dando a volta inteira — e a foto é o que vende a peça, então
+voltar para olhar de novo é o gesto mais provável de quem está decidindo. Os pontinhos
+já permitiam pular direto, mas exigem mirar um alvo de 6px; a seta não exige mira. Os
+seis controles seguem em 44×44.
+
+*Duas leituras minhas que estavam erradas e ficam registradas:* li `transition: all 0s`
+nos pontinhos e conclui que não tinham transição — eu tinha medido a **área de toque**,
+não o ponto, que sempre transicionou. E li um vão vazio no rodapé do hero que era o meu
+recorte, não a seção. *Conferi antes de "consertar" o que não estava quebrado:* os
+pontinhos inativos a 40% dão **3,18:1** sobre o verde, acima do mínimo de 3:1 da WCAG
+1.4.11 para controle — ficaram como estavam.
+
+Verificado: `build`, `lint`, `check:classes` (385), `check:espaco`, `check:whatsapp`,
+`check:seo`, `check:produto`; hovers medidos (sombra e −1px de elevação nos três
+controles) e o "voltar" indo de 1 para 4.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a
