@@ -1719,6 +1719,50 @@ relógio e velcro; e a troca do secador por escova macia na limpeza do macramê.
 Verificado: `build`, `lint`, `check:classes` (406), `check:espaco`, `check:whatsapp`,
 `check:seo`, `check:produto`, e as quatro frases novas conferidas no ar.
 
+### ✅ Etapa 43 — O FAQ: revisão do texto e o cartão que era uma caixa branca *(pedido do Bruno)*
+
+**1. O FAQ prometia algo que nenhuma página entrega.** A resposta de prazo começava com
+*"O prazo de cada peça está escrito na página dela"*. Fui conferir: o campo existe no
+schema (`productionDaysMin/Max`), o código que o exibe existe em `page.tsx` e até na
+imagem do Open Graph — e **zero peças têm o prazo preenchido**. A ficha técnica das peças
+mostra só "Material". O FAQ mandava a pessoa procurar numa página onde não há nada.
+
+Duas saídas: preencher os prazos ou tirar a frase. Tirei a frase — preencher exige o
+número real de cada peça, que é da Raquel. E aproveitei para dar à pessoa o que ela
+realmente quer quando pergunta prazo: *"se você precisa para uma data, me diga antes e eu
+confirmo se dá"*.
+
+**2. Duas perguntas falavam com uma empresa que não existe.** *"**Vocês** têm peça pronta"*
+e *"**Vocês** enviam para todo o Brasil"* — enquanto TODA resposta é primeira pessoa
+("Aceito Pix", "Me chame", "eu digo", "costumo pedir") e a página ao lado diz "Sou a
+Raquel. Faço tudo à mão". Eram as duas perguntas mais escaneáveis da lista, e as duas
+contradiziam a premissa do site. Viraram "Você tem" e "Você envia".
+
+**3. Alinhei com a etapa 42.** A resposta de lavagem repetia "não volta ao formato" — a
+mesma frase que eu tinha acabado de corrigir na página de Cuidados por causa da
+bloqueagem. Os dois textos ficariam se contradizendo.
+
+**4. O cartão era uma caixa branca no meio de caixas brancas.** Ele não é "mais um
+conteúdo": é a única saída da seção, a porta para falar com ela. Numa coluna ao lado de
+nove perguntas, a caixa branca desaparecia.
+
+Virou superfície verde com a `trama` e a `corrente` fechando o pé. O verde é o que a
+marca usa nos momentos de VOZ — hero, quem faz, cuidados, encomenda —, e aqui a Raquel
+está dizendo "me chame": o cartão pertence àquela família, não à das superfícies neutras
+que só seguram informação. O botão passou para a família clara, porque verde sobre verde
+não existe. *Contraste do texto de apoio medido em 9,01:1.*
+
+**Ficam anotados, não implementados:** falta pergunta sobre troca/devolução (compra a
+distância tem sete dias de arrependimento no CDC, e peça sob encomenda tem nuance que só
+ela pode responder); "Aceito Pix e cartão" não diz COMO é o cartão, que é exatamente a
+próxima pergunta no WhatsApp; e a ficha técnica das peças está pobre — **uma peça de
+quinze tem medidas cadastradas, uma tem capacidade**, o que enfraquece a página que
+deveria fechar a venda.
+
+Verificado: `build`, `lint`, `check:classes` (406), `check:espaco`, `check:whatsapp`,
+`check:seo`, `check:produto`; as nove perguntas conferidas no ar e a frase falsa
+confirmada como removida.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

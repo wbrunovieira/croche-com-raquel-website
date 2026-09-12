@@ -85,10 +85,25 @@ export function SecaoPerguntas({
 
           <Revelar
             atraso={0.08}
-            className="rounded-card border border-borda bg-superficie p-painel lg:col-start-1 lg:row-start-2 lg:self-start"
+            /* **O cartão vira superfície verde, e não é decoração.**
+
+               Ele era uma caixa branca com contorno, igual a qualquer outra caixa
+               branca da página — e este cartão não é "mais um conteúdo": é a
+               única saída da seção, a porta para falar com ela. Numa coluna ao
+               lado de dez perguntas cinzas, a caixa branca desaparecia.
+
+               O verde é o que a marca usa nos momentos de VOZ — o hero, o quem
+               faz, os cuidados, a encomenda. Aqui a Raquel está dizendo "me
+               chame", então o cartão pertence àquela família, não à das
+               superfícies neutras que só seguram informação.
+
+               A `trama` vem junto porque é o que faz o verde da casa parecer
+               tecido em vez de retângulo pintado — o mesmo tratamento das seções
+               verdes, na escala de um cartão. */
+            className="trama luz-de-janela relative overflow-hidden rounded-card bg-inv-fundo p-painel text-inv-conteudo lg:col-start-1 lg:row-start-2 lg:self-start"
           >
             <h3 className="font-display text-t3">Ficou com outra dúvida?</h3>
-            <p className="mt-3 text-leitura text-conteudo-suave">
+            <p className="mt-3 text-leitura text-inv-suave">
               Me chame no WhatsApp. Prefiro responder antes de você encomendar do
               que depois.
             </p>
@@ -96,11 +111,17 @@ export function SecaoPerguntas({
               href={`https://wa.me/${whatsappNumero}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="botao-primario mt-bloco inline-flex items-center gap-btn-icone rounded-fio px-btn-x py-btn-y font-medium text-sobre-primaria transition-[background-color,box-shadow,transform] duration-[240ms] ease-fio active:translate-y-px"
+              className="botao-claro mt-bloco inline-flex items-center gap-btn-icone rounded-fio px-btn-x py-btn-y font-medium text-verde-cristal transition-[background-color,border-color,box-shadow,transform] duration-[240ms] ease-fio active:translate-y-px"
             >
               <IconeZap className="size-5" />
               Falar com a Raquel
             </a>
+            {/* A corrente fecha o pé do cartão como fecha o das seções verdes:
+                o verde da casa nunca termina numa aresta lisa. */}
+            <div
+              className="corrente corrente--claro absolute inset-x-0 bottom-0"
+              aria-hidden="true"
+            />
           </Revelar>
         </div>
       </div>

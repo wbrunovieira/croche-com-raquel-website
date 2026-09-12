@@ -126,7 +126,7 @@ export const PERGUNTAS = [
   },
   {
     topic: "Encomenda",
-    question: "Vocês têm peça pronta para envio imediato?",
+    question: "Você tem peça pronta para envio imediato?",
     answer:
       "Não. Tudo aqui é feito sob encomenda, uma peça de cada vez, depois que você escolhe cor e tamanho. É por isso que a peça sai do jeito que você quer — e é por isso que tem prazo.",
   },
@@ -146,11 +146,11 @@ export const PERGUNTAS = [
     topic: "Prazo",
     question: "Quanto tempo leva para ficar pronta?",
     answer:
-      "O prazo de cada peça está escrito na página dela. Em geral, de 7 a 15 dias para bolsas, de 3 a 10 para peças de mesa e cozinha, e até 30 dias para mantas grandes. Em novembro e dezembro o prazo aumenta.",
+      "Em geral, de 7 a 15 dias para bolsas, de 3 a 10 para peças de mesa e cozinha, e até 30 dias para mantas grandes. Em novembro e dezembro o prazo aumenta — se você precisa para uma data, me diga antes e eu confirmo se dá.",
   },
   {
     topic: "Envio",
-    question: "Vocês enviam para todo o Brasil?",
+    question: "Você envia para todo o Brasil?",
     answer:
       "Sim, pelos Correios. O frete é calculado pelo seu CEP no momento da encomenda. Em Petrópolis também combino entrega pessoalmente, sem frete.",
   },
@@ -164,7 +164,7 @@ export const PERGUNTAS = [
     topic: "Cuidados",
     question: "Como lavo a peça sem estragar?",
     answer:
-      "À mão, água fria, sabão neutro, e seque deitada à sombra. O erro que mais estraga peça de crochê é pendurar molhada no varal: ela estica com o peso da água e não volta ao formato.",
+      "À mão, água fria, sabão neutro, e seque deitada à sombra. O erro que mais estraga peça de crochê é pendurar molhada no varal: ela estica com o peso da água, e o que estica demais não volta.",
   },
   {
     topic: "Cor",
