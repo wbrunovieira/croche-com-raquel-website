@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
-import { Home, ShoppingBag } from "lucide-react";
+import { FolderTree, Home, ShoppingBag } from "lucide-react";
 import { DURACAO, transicao } from "@/lib/movimento";
 
 // Duas telas, e só. "Cores e opções" saiu junto com os grupos de opção: o site
@@ -11,6 +11,7 @@ import { DURACAO, transicao } from "@/lib/movimento";
 const ITENS = [
   { href: "/admin", rotulo: "Início", Icone: Home },
   { href: "/admin/produtos", rotulo: "Peças", Icone: ShoppingBag },
+  { href: "/admin/categorias", rotulo: "Categorias", Icone: FolderTree },
 ];
 
 export function NavegacaoDoAdmin() {

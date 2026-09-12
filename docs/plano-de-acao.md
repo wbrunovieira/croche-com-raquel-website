@@ -1859,6 +1859,49 @@ Verificado: `build`, `lint`, `check:classes` (410), `check:espaco`, `check:seo`,
 `check:produto`; as quatro frases novas conferidas no ar e a frase antiga confirmada como
 removida.
 
+### ✅ Etapa 47 — O cadastro de categorias volta ao painel *(pedido do Bruno)*
+
+Categorias tinham sido removidas do painel. A Raquel precisa delas — nem que seja para
+editar as que já existem: escolher a capa, ajustar o texto, mudar a ordem.
+
+**Três telas:** lista, criação e edição, com desativar e apagar.
+
+**O slug não é campo de formulário, e isso é decisão de produto.** Ele é gerado do nome
+uma vez, na criação, e nunca mais muda. A Raquel não sabe o que é slug e não deveria
+precisar saber; e o slug está nas URLs de filtro (`/?categoria=mesa`), que ela manda para
+clientes pelo WhatsApp. Renomear "Mesa" para "Mesa e Casa" troca o que aparece na tela e
+deixa o endereço quieto. *Foi a lição da etapa 38:* mudar o slug de uma categoria exigiu
+um script próprio, porque o seed faz `upsert` por slug e a categoria antiga ficava órfã
+com as peças dentro. **O caminho que dá trabalho não deve estar a um clique de distância.**
+
+**Apagar só quando está vazia.** Categoria com peça não é apagada — as peças iriam junto,
+e peça é semana de crochê. O caminho é desativar, que some do site e não perde nada. A
+verificação mora na ação de servidor, não só na tela: *botão escondido não é regra, porque
+a ação é uma URL.* E a tela explica a diferença em vez de só bloquear.
+
+**A capa da categoria: ela escolhe a PEÇA, não sobe uma foto.** Foi a opção que o Bruno
+escolheu, e é a que preserva o que a etapa 38 estabeleceu — não existe imagem duplicada,
+então trocar a foto da peça atualiza a vitrine sozinho e nada envelhece. Vazio significa
+"escolha por mim": a primeira publicada, destaque primeiro. No banco é
+`capaProdutoId` com `onDelete: SetNull`, porque apagar a peça escolhida não pode derrubar
+a categoria — ela só volta ao automático. E peça desativada aparece marcada na escolha:
+escolher uma peça fora do ar deixaria a categoria sem capa em silêncio.
+
+**A `check:telas` estava certa em falhar.** Ela cravava que o menu tinha *exatamente*
+Início e Peças — uma decisão que foi revertida. Atualizei e **estendi**: agora ela cobre as
+duas telas novas, a lista de rotas mortas virou array (para a próxima remoção entrar num
+lugar só) e o filtro de links aprendeu que `/admin/categorias/<id>` é rota dinâmica viva,
+não link morto.
+
+*Verificado no navegador, logado, o fluxo inteiro:* criar → editar → apagar; categoria com
+peça recusando a exclusão e oferecendo desativar; a capa escolhida persistindo e a home
+referenciando a peça certa; desativar sumindo do filtro do catálogo e reativar trazendo de
+volta. A categoria de teste foi apagada e a capa de Bolsas devolvida ao automático — o
+banco ficou como estava.
+
+Verificado: `build`, `lint`, `check:classes` (420), `check:espaco`, `check:seo`,
+`check:produto`, `check:painel` e `check:telas`.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

@@ -45,20 +45,32 @@ model User {
 // ------------------------------------------------------------ taxonomia
 
 model Category {
-  id          String  @id @default(cuid())
-  slug        String  @unique
-  name        String
+  id              String  @id @default(cuid())
+  slug            String  @unique
+  name            String
   /// Uma linha, usada no card e abaixo do título.
-  description String?
+  description     String?
   /// Texto longo da página da categoria — é o conteúdo indexável que faz a
   /// página ranquear (o hub de bolsas mira "bolsa de crochê"). Fica no banco
   /// e não no código para a Raquel poder editar no admin. Markdown simples:
   /// parágrafos separados por linha em branco, `## ` vira subtítulo.
   longDescription String?
-  position    Int     @default(0)
+  position        Int     @default(0)
   /// Desligar tira a categoria do site sem apagar nada. É o que ela usa quando
   /// a categoria tem peça: apagar levaria as peças junto, desativar não.
-  active      Boolean @default(true)
+  active          Boolean @default(true)
+
+  /// Qual peça representa a categoria na vitrine da home.
+  ///
+  /// **Não é uma foto** — é uma referência a uma peça. A capa continua saindo
+  /// da foto da peça escolhida, então não existe imagem duplicada e trocar a
+  /// foto da peça atualiza a vitrine sozinho. Nulo significa "escolha por mim":
+  /// a primeira publicada, destaque primeiro.
+  ///
+  /// `onDelete: SetNull` porque apagar a peça escolhida não pode derrubar a
+  /// categoria — ela só volta ao automático.
+  capaProdutoId String?
+  capaProduto   Product? @relation("CapaDaCategoria", fields: [capaProdutoId], references: [id], onDelete: SetNull)
 
   subcategories Subcategory[]
   products      Product[]
@@ -117,12 +129,12 @@ model Product {
   /// Medidas reais em cm, como texto — "30 × 25 × 12 cm".
   dimensions String?
   /// Fio e materiais usados.
-  material String?
+  material   String?
   /// Capacidade em linguagem de gente: "cabe carteira, celular e chaves".
   /// Reduz muito a pergunta no WhatsApp. Sobretudo em bolsas.
-  capacity String?
+  capacity   String?
   /// Cuidados com a peça (lavagem, secagem).
-  careText String?
+  careText   String?
 
   /// Prazo de produção em dias, como faixa: "pronta em 7 a 10 dias".
   productionDaysMin Int?
@@ -147,6 +159,9 @@ model Product {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  /// Categorias que usam esta peça como capa. Ver `Category.capaProdutoId`.
+  capaDe Category[] @relation("CapaDaCategoria")
 
   @@index([status, featured, featuredPosition])
   @@index([categoryId, position])
@@ -198,16 +213,16 @@ model OptionGroup {
 
 /// Valor global dentro de um grupo: "Terracota" (com hex), "P", "Transversal".
 model OptionValue {
-  id       String  @id @default(cuid())
-  groupId  String
-  slug     String
-  name     String
+  id      String  @id @default(cuid())
+  groupId String
+  slug    String
+  name    String
   /// Cor em #RRGGBB, só para o grupo de cor — é o que desenha a bolinha no
   /// seletor. No admin a Raquel escolhe pela roda de cores ou cola o código.
   /// ATENÇÃO: serve para a tela, NÃO para recomprar o fio — a mesma
   /// "terracota" muda de tom entre linhas. Quem serve para comprar são os
   /// dois campos abaixo.
-  hex      String?
+  hex     String?
 
   /// Linha do fio como vem na etiqueta: "Barroco Maxcolor 400g".
   yarnLine      String?
@@ -286,16 +301,16 @@ model Testimonial {
 /// Raquel precisa poder criar uma página nova (uma política, um aviso) sem
 /// depender de migration.
 model Page {
-  id      String  @id @default(cuid())
-  slug    String  @unique
-  title   String
+  id             String  @id @default(cuid())
+  slug           String  @unique
+  title          String
   /// Frase de apoio abaixo do título.
-  lead    String?
+  lead           String?
   /// Corpo em markdown mínimo: parágrafo, `## ` e `**negrito**`.
-  content String
+  content        String
   /// Meta description. Sem ela, o começo do corpo é usado.
   seoDescription String?
-  published Boolean @default(true)
+  published      Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -324,7 +339,7 @@ model SiteSettings {
   id String @id @default("singleton")
 
   /// Só dígitos, com país e DDD: 5524999999999.
-  whatsappNumber String
+  whatsappNumber   String
   /// Template da mensagem, com marcadores substituídos na página do produto:
   /// {produto} {codigo} {opcoes} {quantidade} {link}
   whatsappTemplate String

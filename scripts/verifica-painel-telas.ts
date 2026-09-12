@@ -23,9 +23,29 @@ const BASE = process.env.URL_BASE ?? "http://localhost:3000";
 const USUARIO = "verificacao-telas";
 const SENHA = "Verificacao#2026";
 
-// O painel tem duas telas — Início e Peças. "Cores e opções" saiu junto com os
-// grupos de opção; ela não pode voltar como rota nem como link.
-const TELAS = ["/admin", "/admin/produtos", "/admin/produtos/nova"];
+/**
+ * As telas do painel.
+ *
+ * **Categorias voltou.** Ela tinha saído junto com "Cores e opções", e esta
+ * checagem cravava que o menu tinha *exatamente* Início e Peças — o que virou
+ * mentira no dia em que a Raquel precisou editar as categorias existentes para
+ * escolher a capa e ajustar os textos. A checagem estava certa em falhar: ela
+ * guardava uma decisão que foi revertida.
+ *
+ * O que NÃO volta é "Cores e opções": aquela saiu junto com os grupos de opção
+ * e continua morta, rota e link. A diferença entre as duas é o motivo de a
+ * lista de telas vivas e a de rotas mortas serem separadas aqui.
+ */
+const TELAS = [
+  "/admin",
+  "/admin/produtos",
+  "/admin/produtos/nova",
+  "/admin/categorias",
+  "/admin/categorias/nova",
+];
+
+/** O que saiu de vez. Responder 200 aqui é regressão. */
+const ROTAS_MORTAS = ["/admin/opcoes"];
 
 const db = new PrismaClient({
   adapter: new PrismaPg({ connectionString: urlComSslVerificado(process.env.DATABASE_URL) }),
@@ -81,7 +101,15 @@ async function main() {
         ...new Set(
           hrefs
             .map((h) => h.split("?")[0]!)
-            .filter((h) => !rotasVivas.has(h) && !/^\/admin\/produtos\//.test(h))
+            // As rotas de detalhe (`/admin/produtos/<id>`, `/admin/categorias/<id>`)
+            // são dinâmicas e não cabem numa lista fixa — o que se verifica delas
+            // é o prefixo, que é o que distingue "tela viva com id" de "tela que
+            // não existe mais".
+            .filter(
+              (h) =>
+                !rotasVivas.has(h) &&
+                !/^\/admin\/(produtos|categorias)\//.test(h)
+            )
         ),
       ];
       ok(`${rota} não tem link para tela removida`, mortos.length === 0, mortos.join(" · "));
@@ -93,24 +121,23 @@ async function main() {
     ok(
       "o menu não oferece as telas removidas",
       !menu.some((i) =>
-        /Perguntas|Depoimentos|Textos do site|Categorias|Configurações|Cores e opções/.test(i)
+        /Perguntas|Depoimentos|Textos do site|Configurações|Cores e opções/.test(i)
       ),
       menu.map((i) => i.trim()).join(" · ")
     );
     ok(
-      "o menu tem exatamente Início e Peças",
-      menu.map((i) => i.trim()).join(" · ") === "Início · Peças",
+      "o menu tem exatamente Início, Peças e Categorias",
+      menu.map((i) => i.trim()).join(" · ") === "Início · Peças · Categorias",
       menu.map((i) => i.trim()).join(" · ")
     );
 
-    // A rota morta não pode continuar respondendo 200 — se responder, ela
-    // voltou por algum caminho que ninguém pediu.
-    const removida = await p.goto(`${BASE}/admin/opcoes`, { waitUntil: "domcontentloaded" });
-    ok(
-      "/admin/opcoes não existe mais",
-      removida?.status() === 404,
-      `HTTP ${removida?.status()}`
-    );
+    // Rota morta não pode continuar respondendo 200 — se responder, ela voltou
+    // por algum caminho que ninguém pediu. A lista é percorrida, e não escrita à
+    // mão aqui, para a próxima tela removida entrar num lugar só.
+    for (const rota of ROTAS_MORTAS) {
+      const removida = await p.goto(`${BASE}${rota}`, { waitUntil: "domcontentloaded" });
+      ok(`${rota} não existe mais`, removida?.status() === 404, `HTTP ${removida?.status()}`);
+    }
   } finally {
     await navegador.close();
     await db.user.deleteMany({ where: { username: USUARIO } });

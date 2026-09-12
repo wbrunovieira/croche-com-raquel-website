@@ -26,8 +26,27 @@ export const listarCategorias = cache(async function listarCategorias(): Promise
       },
       _count: { select: { products: { where: { status: "PUBLISHED" } } } },
       /**
-       * A capa sai da primeira peça publicada — destaque primeiro, depois a
-       * ordem do catálogo. Uma só: é vitrine de categoria, não galeria.
+       * A capa ESCOLHIDA pela Raquel, quando existe. Ela aponta para uma peça,
+       * não para uma foto: a imagem continua vindo da peça, então trocar a foto
+       * da peça atualiza a vitrine sem ninguém mexer aqui.
+       *
+       * Só entra se a peça ainda estiver publicada e com foto — peça escolhida
+       * que depois saiu do ar não pode deixar a categoria sem capa.
+       */
+      capaProduto: {
+        select: {
+          status: true,
+          images: {
+            orderBy: { position: "asc" },
+            take: 1,
+            select: { id: true, url: true, alt: true, hasHumanScale: true },
+          },
+        },
+      },
+      /**
+       * O automático, para quando ela não escolheu nada: a primeira peça
+       * publicada — destaque primeiro, depois a ordem do catálogo. Uma só: é
+       * vitrine de categoria, não galeria.
        */
       products: {
         where: { status: "PUBLISHED", images: { some: {} } },
@@ -55,7 +74,9 @@ export const listarCategorias = cache(async function listarCategorias(): Promise
       subcategorias: c.subcategories.map((s) => ({ slug: s.slug, nome: s.name })),
       totalDeProdutos: c._count.products,
       capa: (() => {
-        const foto = c.products[0]?.images[0];
+        const escolhida =
+          c.capaProduto?.status === "PUBLISHED" ? c.capaProduto.images[0] : undefined;
+        const foto = escolhida ?? c.products[0]?.images[0];
         return foto
           ? { id: foto.id, url: foto.url, alt: foto.alt, temEscalaHumana: foto.hasHumanScale }
           : null;
