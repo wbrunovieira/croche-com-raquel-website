@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { urlDoSite } from "@/lib/site";
 import { listarCategorias } from "@/lib/queries/categorias";
 import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
-import { ehDominioDeProducao, mostraSiteCompleto } from "@/lib/hospedagem";
+import { mostraSiteCompleto } from "@/lib/hospedagem";
 
 /**
  * `/llms.txt` — o site explicado para quem lê por máquina.
@@ -17,9 +17,15 @@ import { ehDominioDeProducao, mostraSiteCompleto } from "@/lib/hospedagem";
  * e uma lista de peças aqui envelheceria a cada cadastro. Aqui ficam as coisas
  * que não mudam — o ofício, a cidade, o modelo de venda, o caminho da encomenda.
  *
- * Segue as mesmas regras de host do resto: fora do domínio público, ou com a
- * obra ainda de pé, ele não se anuncia. Um arquivo que descreve um site que a
- * visitante não consegue ver seria uma promessa falsa.
+ * **Quem serve é quem mostra o site.** Onde a obra está de pé ele não existe:
+ * um arquivo que descreve um site que a visitante não consegue ver seria uma
+ * promessa falsa. Mas o preview serve — ele mostra o site completo, e quem o
+ * protege do buscador é o `X-Robots-Tag: noindex` que já sai em toda resposta
+ * de lá.
+ *
+ * A primeira versão exigia ser o domínio público, e isso tornava o arquivo
+ * impossível de conferir antes da estreia. Regra que não se pode verificar é
+ * regra que se descobre quebrada no dia do lançamento.
  */
 export const dynamic = "force-dynamic";
 
@@ -27,7 +33,7 @@ export async function GET() {
   const host = (await headers()).get("host") ?? "";
   const local = !process.env.VERCEL_ENV;
 
-  if (!local && (!ehDominioDeProducao(host) || !mostraSiteCompleto(host))) {
+  if (!local && !mostraSiteCompleto(host)) {
     return new Response("Not found", { status: 404 });
   }
 
