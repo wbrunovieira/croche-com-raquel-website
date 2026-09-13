@@ -79,9 +79,9 @@ export default auth(function proxy(req) {
 export const config = {
   // O site inteiro passa pelo proxy agora, porque a escolha do host precisa
   // valer em toda rota. Ficam de fora os estáticos e os arquivos que o
-  // buscador lê direto (`robots.txt`, `sitemap.xml`) — esses decidem sozinhos,
-  // pelo host, e não devem virar página de obra.
+  // buscador lê direto (`robots.txt`, `sitemap.xml`, `llms.txt`) — esses
+  // decidem sozinhos, pelo host, e não devem virar página de obra.
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|llms.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico)$).*)",
   ],
 };

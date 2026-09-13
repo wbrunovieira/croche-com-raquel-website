@@ -2001,6 +2001,43 @@ pessoas aprendem a ignorar.**
 Verificado: `build`, `lint`, `check:classes` (420), `check:espaco`, `check:seo`,
 `check:produto`, `check:hospedagem` (local e produção) e `check:performance`.
 
+### ✅ Etapa 51 — A imagem de compartilhamento, o robots e o llms.txt *(pedido do Bruno)*
+
+**1. A foto sumia da imagem de compartilhamento, e o motivo era o formato.** Medido no
+que estava no ar, correlação de **7 em 7**: toda peça com foto `.webp` gerava uma arte
+sem foto; toda `.jpg` gerava com. O Satori, que desenha essas imagens, **não lê WebP** —
+ele ignora a `<img>` em silêncio.
+
+*O alcance é o que assusta:* o painel era a única porta que produzia WebP, porque o
+`prepararFoto` preferia esse formato. Então **toda foto que a Raquel subisse produziria
+um link sem imagem no WhatsApp** — o canal de venda dela. As peças que funcionavam eram
+as do seed, em JPEG.
+
+**A troca sai de graça para quem visita o site.** O otimizador do Next reencoda a foto por
+requisição: conferido no ar, o navegador recebe `content-type: image/webp` com o original
+em JPEG. *O formato guardado é matéria-prima, não o que se serve* — guardar WebP não
+ganhava nada e quebrava o compartilhamento.
+
+**2. O peso.** Com foto, a arte dá **528 a 893 kB**. O limite que se costuma citar para o
+WhatsApp renderizar a prévia é ~300 kB — *não consegui verificar esse número daqui*, mas o
+tamanho é fato e a prévia é exibida com uns 300px de largura numa conversa. Fica
+registrado como pendência, com a medição pronta.
+
+**3. O `robots.txt` não tinha defeito** — eu suspeitei e estava errado. A ausência da linha
+do sitemap no domínio é deliberada e está documentada no código: enquanto a obra está de
+pé, apontar o sitemap mandaria o rastreador a dezenas de URLs que respondem todas com a
+mesma página. Quando `SITE_NO_AR` virar, a linha aparece sozinha.
+
+**4. Entrou o `/llms.txt`.** Cada vez mais gente pergunta a um assistente em vez de buscar.
+O assistente lê uma página feita para o olho e tem de adivinhar o que importa; o
+`llms.txt` responde direto — quem é, o que faz, onde, e como encomendar. *Ele não repete o
+catálogo:* o sitemap já faz isso, e uma lista de peças ali envelheceria a cada cadastro.
+Ficam as coisas que não mudam. Segue as mesmas regras de host do resto, e entrou na lista
+de exceções do proxy junto com `robots.txt` e `sitemap.xml` — senão viraria página de obra.
+
+Verificado: `build`, `lint`, `check:classes`, `check:espaco`, `check:hospedagem`,
+`check:performance`, `check:seo`, `check:produto`.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

@@ -16,11 +16,23 @@
  * foto abre em tela cheia e a pessoa aproxima para ver o ponto do crochê. Menos
  * que isso e a textura, que é o que vende a peça, some.
  *
- * **WebP com queda para JPEG.** WebP economiza ~30% no mesmo olhar, e todo
- * navegador que roda este painel exporta WebP. A queda existe porque
- * `toBlob` devolve PNG calado quando não conhece o tipo pedido — e PNG de foto
- * fica maior que o original, que seria o oposto do que esta função existe para
- * fazer.
+ * **JPEG, e não WebP — e o motivo não é o site.**
+ *
+ * WebP economiza ~30% no mesmo olhar, e por isso era o formato daqui. Mas o
+ * Satori, que desenha as imagens de compartilhamento (`opengraph-image`), **não
+ * lê WebP**: ele ignora a `<img>` em silêncio e a arte sai sem a peça. Medido no
+ * que estava no ar, correlação de 7 em 7 — toda peça com foto `.webp` tinha a
+ * imagem de compartilhamento sem foto, e toda `.jpg` tinha. Como o painel era a
+ * única porta que gerava WebP, **toda foto que a Raquel subisse produziria um
+ * link sem imagem no WhatsApp** — que é o canal de venda dela.
+ *
+ * E a troca sai de graça para quem visita: o otimizador do Next reencoda a foto
+ * por requisição, então o navegador continua recebendo WebP (conferido no ar:
+ * `content-type: image/webp` nas fotos da home, com o original em JPEG). O
+ * formato guardado é matéria-prima, não o que se serve.
+ *
+ * A queda de `toBlob` continua valendo por outro motivo: ele devolve PNG calado
+ * quando não conhece o tipo pedido, e PNG de foto fica maior que o original.
  */
 
 /** Lado maior da foto guardada. Ver o comentário do módulo. */
@@ -45,7 +57,7 @@ export type FotoPreparada = {
 
 function trocarExtensao(nome: string, tipo: string) {
   const base = nome.replace(/\.[^.]+$/, "");
-  return `${base}.${tipo === "image/webp" ? "webp" : "jpg"}`;
+  return `${base}.${tipo === "image/png" ? "png" : "jpg"}`;
 }
 
 async function paraBitmap(arquivo: File) {
@@ -74,18 +86,12 @@ function exportar(canvas: HTMLCanvasElement): Promise<{ blob: Blob; tipo: string
     canvas.toBlob(
       (blob) => {
         if (!blob) return rejeitar(new Error("O navegador não conseguiu ler a foto."));
-        // `toBlob` devolve PNG silenciosamente quando não conhece o tipo.
-        if (blob.type === "image/webp") return resolver({ blob, tipo: blob.type });
-        canvas.toBlob(
-          (jpg) =>
-            jpg
-              ? resolver({ blob: jpg, tipo: "image/jpeg" })
-              : rejeitar(new Error("O navegador não conseguiu ler a foto.")),
-          "image/jpeg",
-          QUALIDADE
-        );
+        // `toBlob` devolve PNG calado quando não conhece o tipo pedido, e PNG de
+        // foto fica MAIOR que o original — o oposto do que esta função faz. Se
+        // vier PNG, o arquivo é descartado e o original segue.
+        resolver({ blob, tipo: blob.type });
       },
-      "image/webp",
+      "image/jpeg",
       QUALIDADE
     );
   });
@@ -125,9 +131,10 @@ export async function prepararFoto(arquivo: File): Promise<FotoPreparada> {
 
   const { blob, tipo } = await exportar(canvas);
 
-  // Se a redução não economizou nada, fica o original: acontece com foto já
-  // otimizada, e trocar por uma recodificada só perderia qualidade.
-  if (blob.size >= arquivo.size) {
+  // Se a redução não economizou nada — ou se o navegador devolveu PNG em vez
+  // de JPEG —, fica o original: trocar por uma recodificada só perderia
+  // qualidade, e PNG de foto pesaria mais que o que entrou.
+  if (blob.size >= arquivo.size || tipo === "image/png") {
     return {
       arquivo,
       previa: URL.createObjectURL(arquivo),
