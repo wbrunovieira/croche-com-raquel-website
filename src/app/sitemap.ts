@@ -14,7 +14,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [produtos, paginas] = await Promise.all([
     db.product.findMany({
       where: { status: "PUBLISHED" },
-      select: { slug: true, updatedAt: true },
+      select: {
+        slug: true,
+        updatedAt: true,
+        // A capa decide se a peça ainda é demonstração — ver `lib/demonstracao.ts`.
+        images: { orderBy: { position: "asc" }, take: 1, select: { url: true } },
+      },
     }),
     db.page.findMany({
       where: { published: true },
@@ -35,7 +40,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...fixas,
     // Peça de demonstração não entra: ver `lib/demonstracao.ts`.
     ...produtos
-      .filter((p) => !ehDemonstracao(p.slug))
+      .filter((p) => !ehDemonstracao(p.images[0]?.url))
       .map((p) => ({
       url: `${base}/produtos/${p.slug}`,
       lastModified: p.updatedAt,

@@ -2038,6 +2038,57 @@ de exceções do proxy junto com `robots.txt` e `sitemap.xml` — senão viraria
 Verificado: `build`, `lint`, `check:classes`, `check:espaco`, `check:hospedagem`,
 `check:performance`, `check:seo`, `check:produto`.
 
+### ✅ Etapa 52 — A prévia do WhatsApp, e um estrago meu que ela revelou
+
+**A causa não era o peso.** Eu tinha registrado os 528–893 kB como suspeita e fui atrás
+dela; o Bruno confirmou que a prévia não aparece, e medindo achei outra coisa: **a página
+de obra não declara `og:image` nenhum**. Ela tem `og:title` e mais nada. Quem compartilha
+`crochecomraquel.com.br` hoje manda um link sem imagem alguma — não há o que o WhatsApp
+buscar. O site tinha a arte pronta, mas quem vê o domínio vê a obra.
+
+Entrou uma arte própria para a obra, **sem foto de propósito**: o `ImageResponse` emite
+PNG, e PNG comprime mal onde há foto (as artes com peça pesam 528–893 kB contra dezenas de
+kB quando são marca e texto). Para a página que existe para dizer "em breve", o caminho
+leve também é o honesto.
+
+*E havia uma segunda armadilha esperando:* a URL da imagem não tem extensão de arquivo, e
+o filtro do proxy exclui por extensão — então ela seria reescrita para a obra, e o WhatsApp
+receberia HTML. As rotas de `opengraph-image` passam a atravessar o proxy.
+
+**As fotos já gravadas em WebP foram convertidas.** Eram quinze, não duas — a contagem por
+capa escondia as secundárias. `scripts/converter-fotos-webp.ts`, idempotente.
+
+---
+
+**E aí a conversão revelou um estrago meu.** No meio das fotos apareceram nomes que eu não
+conhecia: "Jogo de banheiro", "Jogo de cozinha", "Bolsa de crochê infantil". **A Raquel
+transformou três peças de exemplo em peças reais pelo painel** — trocou nome e fotos, onze
+fotos só no jogo de banheiro.
+
+Mas o slug é gerado **uma vez**, na criação, e não muda ao renomear — imutabilidade de
+propósito, para não quebrar link que já circulou. E a minha regra de demonstração marcava
+pelo **prefixo do slug**. Resultado: **a regra que eu criei escondia o trabalho real dela
+do Google** — fora do sitemap e com `noindex`.
+
+*O marcador errado era o slug; o certo é a foto.* O slug é justamente a única coisa que não
+muda quando o exemplo vira peça real. A foto de exemplo é o oposto: é a primeira coisa que
+ela troca, porque é o que aparece na tela. Marcando por ela, a regra se desfaz sozinha no
+momento exato em que deixa de ser verdade.
+
+Os três endereços foram corrigidos (`exemplo-manta-de-sofa` → `jogo-de-banheiro`, etc.).
+Seguro **só agora**: o domínio ainda mostra a obra, então nenhuma dessas URLs foi
+compartilhada. Depois da estreia, mudar slug quebra link e não se faz sem redirecionamento.
+
+**Fica um problema que não é meu para resolver:** as três peças reais ainda carregam a
+descrição de exemplo — o "Jogo de banheiro", com onze fotos dela, diz à cliente *"Peça de
+exemplo, só para mostrar como esta categoria aparece no site"*. Ela trocou nome e fotos e
+não o texto. **Quem escreve a descrição de uma peça é ela**, e inventar copy de produto
+para uma artesã seria pior do que deixar o aviso. Registrado no board.
+
+Verificado: `build`, `lint`, `check:classes`, `check:seo`, `check:produto`,
+`check:hospedagem`, `check:performance`; sitemap com as três peças dela dentro e as cinco
+demonstrações fora.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

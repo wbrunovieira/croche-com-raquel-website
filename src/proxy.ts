@@ -43,6 +43,16 @@ export default auth(function proxy(req) {
     return NextResponse.redirect(apex, 308);
   }
 
+  // A imagem de compartilhamento passa mesmo com a obra de pé.
+  //
+  // Ela não tem extensão de arquivo — o caminho é `/opengraph-image-<hash>` —,
+  // então o filtro do `matcher`, que exclui por extensão, não a alcança. Sem
+  // esta linha o WhatsApp pede a imagem e recebe o HTML da obra: nenhuma prévia,
+  // exatamente o defeito que este trecho existe para consertar.
+  if (pathname.includes("opengraph-image") || pathname.includes("twitter-image")) {
+    return NextResponse.next();
+  }
+
   if (!mostraSiteCompleto(host)) {
     // Reescrita, não redirecionamento: a visitante fica na URL que digitou.
     const obra =

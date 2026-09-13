@@ -42,7 +42,7 @@ export async function generateMetadata({
     // Peça de demonstração fica visível no site e fora do buscador. O porquê
     // está em `lib/demonstracao.ts`: são oito peças com o mesmo texto e a mesma
     // foto, e a primeira impressão de um site novo não se refaz depois.
-    ...(ehDemonstracao(produto.slug) ? { robots: { index: false, follow: false } } : {}),
+    ...(ehDemonstracao(produto.imagens[0]?.url) ? { robots: { index: false, follow: false } } : {}),
     openGraph: {
       title: `${produto.nome} · Crochê com Raquel`,
       description: produto.descricao.slice(0, 200),
