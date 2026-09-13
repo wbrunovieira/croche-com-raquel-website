@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { urlDoSite } from "@/lib/site";
+import { ehDemonstracao } from "@/lib/demonstracao";
 
 /**
  * Sitemap montado do banco: peça no ar entra, peça fora do ar não. Categoria
@@ -32,7 +33,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     ...fixas,
-    ...produtos.map((p) => ({
+    // Peça de demonstração não entra: ver `lib/demonstracao.ts`.
+    ...produtos
+      .filter((p) => !ehDemonstracao(p.slug))
+      .map((p) => ({
       url: `${base}/produtos/${p.slug}`,
       lastModified: p.updatedAt,
       changeFrequency: "weekly" as const,

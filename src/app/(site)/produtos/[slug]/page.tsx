@@ -15,6 +15,7 @@ import {
   listarRelacionados,
   listarSlugsDeProduto,
 } from "@/lib/queries/produtos";
+import { ehDemonstracao } from "@/lib/demonstracao";
 import { urlDoProduto } from "@/lib/site";
 import {
   DadosEstruturados,
@@ -38,6 +39,10 @@ export async function generateMetadata({
     title: produto.nome,
     description: produto.descricao.slice(0, 160),
     alternates: { canonical: `/produtos/${produto.slug}` },
+    // Peça de demonstração fica visível no site e fora do buscador. O porquê
+    // está em `lib/demonstracao.ts`: são oito peças com o mesmo texto e a mesma
+    // foto, e a primeira impressão de um site novo não se refaz depois.
+    ...(ehDemonstracao(produto.slug) ? { robots: { index: false, follow: false } } : {}),
     openGraph: {
       title: `${produto.nome} · Crochê com Raquel`,
       description: produto.descricao.slice(0, 200),

@@ -1920,6 +1920,47 @@ a checagem apontou "título a 0px da borda" contra os 96px das outras.
 De carona, os títulos das telas novas passaram de `text-t2` para `text-t1`, o degrau que a
 tela de peças já usava.
 
+### ✅ Etapa 49 — O que precede a virada para o domínio raiz *(pedido do Bruno)*
+
+A cliente aprovou o site. O Bruno cancelou as três pendências de acervo — ela aprovou as
+fotos, e cadastrar as peças reais e apagar as de exemplo é função dela — e pediu para ir
+para testes de SEO, Search Console e a migração para o domínio.
+
+**O interruptor já existe e não é código:** `SITE_NO_AR=true` no Vercel derruba a obra e o
+domínio passa a servir o site. Reversível numa variável. Então o trabalho real é tudo o
+que precede a virada — e a auditoria achou quatro coisas.
+
+**1. Oito das dezenove URLs do sitemap eram peças de exemplo.** No primeiro rastreamento o
+Google receberia **42% do site como conteúdo repetido**: oito páginas com a mesma
+descrição e a mesma foto. A primeira impressão de um site novo não se refaz depois.
+
+*O Bruno disse que apagá-las é função da Raquel, e não apaguei.* Mantê-las fora do
+buscador é outra coisa: elas continuam no site e no painel, e o Google não as vê. Fora do
+sitemap e com `noindex` na própria página. A regra é o prefixo do slug (`lib/demonstracao.ts`),
+então no dia em que ela apagar, nada precisa mudar — sem peça com o prefixo, a regra deixa
+de valer sozinha. O sitemap foi de 19 para 11 URLs.
+
+**2. A página de obra era indexável.** O `X-Robots-Tag` de `noindex` só valia para quem
+**não** é o domínio — e a obra é servida justamente no domínio. O Google poderia ter
+guardado "Crochê com Raquel — em breve" como a descrição do site, e esse trecho sobrevive
+semanas ao lançamento. Agora a obra sai com `noindex` enquanto existir.
+
+**3. `www` e apex respondiam 200, sem redirecionar.** É conteúdo duplicado: o buscador vê
+dois sites iguais e divide a autoridade. O `canonical` apontava para o apex e segurava o
+caso, mas 308 é o que o Google pede — e é o que faz um link compartilhado com `www` somar
+no endereço certo. *Detalhe que só a medição pegou:* o `NextURL` guarda a porta separada do
+host, então trocar só o host deixava um `:3000` colado no destino. Em produção não haveria
+porta para herdar — mas um redirecionamento que só está certo em produção é um
+redirecionamento que ninguém consegue testar antes.
+
+**4. `LocalBusiness` e `FAQPage` já existiam.** Nada a fazer.
+
+A `check:hospedagem` ganhou os dois comportamentos novos — obra com `noindex` e o 308 do
+`www` guardando o caminho.
+
+Verificado: `build`, `lint`, `check:classes` (420), `check:espaco`, `check:seo`,
+`check:produto`, `check:whatsapp`, `check:hospedagem`.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

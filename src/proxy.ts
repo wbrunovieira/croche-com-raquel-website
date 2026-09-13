@@ -1,7 +1,12 @@
 import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
 import { configuracaoBase } from "@/auth.config";
-import { CAMINHO_DA_OBRA, ehDominioDeProducao, mostraSiteCompleto } from "@/lib/hospedagem";
+import {
+  CAMINHO_DA_OBRA,
+  ehDominioDeProducao,
+  ehWwwDoDominio,
+  mostraSiteCompleto,
+} from "@/lib/hospedagem";
 
 const { auth } = NextAuth(configuracaoBase);
 
@@ -24,10 +29,32 @@ export default auth(function proxy(req) {
   const host = req.headers.get("host") ?? "";
   const { pathname } = req.nextUrl;
 
+  // `www` vai para o apex, e vai ANTES de tudo: assim a decisão de obra ou site
+  // é tomada uma vez só, no endereço definitivo, e não duas vezes em hosts que
+  // deveriam ser o mesmo lugar.
+  if (ehWwwDoDominio(host)) {
+    const apex = req.nextUrl.clone();
+    apex.host = host.replace(/^www\./i, "");
+    // A porta é zerada à parte: o `NextURL` a guarda separada do host, então
+    // trocar só o host deixava um `:3000` colado no destino. Em produção não há
+    // porta para herdar, mas um redirecionamento que só está certo em produção é
+    // um redirecionamento que ninguém consegue testar antes.
+    apex.port = "";
+    return NextResponse.redirect(apex, 308);
+  }
+
   if (!mostraSiteCompleto(host)) {
     // Reescrita, não redirecionamento: a visitante fica na URL que digitou.
-    if (pathname === CAMINHO_DA_OBRA) return NextResponse.next();
-    return NextResponse.rewrite(new URL(CAMINHO_DA_OBRA, req.url));
+    const obra =
+      pathname === CAMINHO_DA_OBRA
+        ? NextResponse.next()
+        : NextResponse.rewrite(new URL(CAMINHO_DA_OBRA, req.url));
+    // A obra fica FORA do buscador enquanto existir. Sem isto o domínio é
+    // indexável — `ehDominioDeProducao` é verdadeiro para o apex — e o Google
+    // guardaria "Crochê com Raquel — em breve" como a descrição do site. Esse
+    // trecho sobrevive semanas ao lançamento.
+    obra.headers.set("X-Robots-Tag", "noindex, nofollow");
+    return obra;
   }
 
   const noAdmin = pathname.startsWith("/admin");

@@ -81,6 +81,38 @@ ok(
   `status ${admin.status}`
 );
 
+/**
+ * A obra não pode ser indexada enquanto existir.
+ *
+ * O `X-Robots-Tag` de `noindex` só vale para quem NÃO é o domínio — e a obra é
+ * servida justamente no domínio. Sem uma regra própria, o Google guarda
+ * "Crochê com Raquel — em breve" como a descrição do site, e esse trecho
+ * sobrevive semanas ao lançamento.
+ */
+const obra = await pegar("/", DOMINIO);
+ok(
+  "a obra sai com noindex",
+  (obra.cabecalhos["x-robots-tag"] ?? "").includes("noindex"),
+  obra.cabecalhos["x-robots-tag"] ?? "ausente"
+);
+
+/**
+ * `www` vai para o apex, em 308, guardando o caminho.
+ *
+ * Os dois respondendo 200 é conteúdo duplicado: o buscador vê dois sites
+ * iguais e divide a autoridade. O `canonical` segura o caso, mas o 308 é o que
+ * o Google pede — e é o que faz um link compartilhado com `www` somar no
+ * endereço certo.
+ */
+const www = await pegar("/bolsas", `www.${DOMINIO}`);
+ok(
+  "www redireciona para o apex, guardando o caminho",
+  [301, 308].includes(www.status) &&
+    (www.cabecalhos.location ?? "").includes(`${DOMINIO}/bolsas`) &&
+    !(www.cabecalhos.location ?? "").includes("www."),
+  `${www.status} → ${www.cabecalhos.location ?? "sem Location"}`
+);
+
 // O preview vê o site completo...
 const preview = await pegar("/", PREVIEW);
 ok("o preview vê o site completo", preview.corpo.includes("carrega por anos"));

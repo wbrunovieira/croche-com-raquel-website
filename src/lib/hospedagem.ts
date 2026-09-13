@@ -39,6 +39,22 @@ export function ehDominioDeProducao(host: string): boolean {
 }
 
 /**
+ * O host é a versão `www.` do domínio declarado?
+ *
+ * Serve ao 301 do proxy. `www` e apex servindo os dois com status 200 é o
+ * clássico de conteúdo duplicado: o buscador vê dois sites idênticos e divide a
+ * autoridade entre eles. O `canonical` já apontava para o apex e segura o caso
+ * — mas 301 é o que o Google pede, e é o que faz o link que alguém compartilhou
+ * com `www` somar no endereço certo em vez de num vizinho.
+ */
+export function ehWwwDoDominio(host: string): boolean {
+  const declarado = dominioDeclarado();
+  if (!declarado) return false;
+  const h = normalizar(host);
+  return h === `www.${declarado}` && h !== declarado;
+}
+
+/**
  * O host recebe o site completo, ou a página de obra?
  *
  * **Allowlist, não blocklist.** Um host novo — um domínio recém-apontado, um
