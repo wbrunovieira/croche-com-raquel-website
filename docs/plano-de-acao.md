@@ -2089,6 +2089,34 @@ Verificado: `build`, `lint`, `check:classes`, `check:seo`, `check:produto`,
 `check:hospedagem`, `check:performance`; sitemap com as três peças dela dentro e as cinco
 demonstrações fora.
 
+### ✅ Etapa 53 — A herança de exemplo nas peças reais
+
+Com aval do Bruno. As três peças que a Raquel converteu de demonstração para real
+carregavam mais do que a descrição — **herdaram tudo o que ela não trocou**.
+
+**A descrição.** O "Jogo de banheiro", com onze fotos dela, dizia à cliente *"Peça de
+exemplo, só para mostrar como esta categoria aparece no site"*. Entrou um **texto de
+espera**: cada afirmação vale para qualquer peça que ela faça, com as palavras que o site
+já usa — feito à mão, uma de cada vez, cor e tamanho à escolha, prazo combinado na
+conversa. *Nada ali descreve esta peça, e é por isso que pôde entrar sem ela.* Não é a
+descrição definitiva: quem escreve é a Raquel, e a issue continua aberta.
+
+**O texto alternativo das fotos — e este eu não tinha visto.** Ele vem do slug no momento
+do envio, então as **dezenove fotos** dela estavam descritas como "exemplo manta de sofa",
+"exemplo suporte de planta". Isso não é só busca: *é o que um leitor de tela anuncia.*
+Passou a ser o nome da peça — descrição pobre, mas verdadeira, e verdadeira é o mínimo.
+
+**O que eu NÃO toquei, de propósito: material e categoria.** O "Jogo de cozinha" está em
+**Macramê** porque o exemplo que ela editou era o "Suporte de Planta" — e isso muda onde a
+peça aparece no site. A "Bolsa de crochê infantil" está em Casa & Decoração pela mesma
+razão. Mas só ela sabe de que fio cada peça é feita e onde quer que apareça: **adivinhar
+seria inventar ficha técnica de artesã**. Registrado no board com o caminho no painel.
+
+*A lição que fica para o desenho do painel:* converter um exemplo em peça real exige
+trocar seis coisas (nome, fotos, descrição, material, categoria, e o alt que vem junto das
+fotos), e o painel só torna duas delas óbvias. Uma peça que nasce de outra herda tudo o que
+não for tocado — e o que fica herdado não avisa.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a
