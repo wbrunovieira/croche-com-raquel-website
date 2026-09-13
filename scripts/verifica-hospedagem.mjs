@@ -105,13 +105,37 @@ ok(
  * endereço certo.
  */
 const www = await pegar("/bolsas", `www.${DOMINIO}`);
-ok(
-  "www redireciona para o apex, guardando o caminho",
+const passouNoWww =
   [301, 308].includes(www.status) &&
-    (www.cabecalhos.location ?? "").includes(`${DOMINIO}/bolsas`) &&
-    !(www.cabecalhos.location ?? "").includes("www."),
-  `${www.status} → ${www.cabecalhos.location ?? "sem Location"}`
-);
+  (www.cabecalhos.location ?? "").includes(`${DOMINIO}/bolsas`) &&
+  !(www.cabecalhos.location ?? "").includes("www.");
+
+/**
+ * A regra compara o host com o domínio que o site DECLARA (`urlDoSite()`), e o
+ * `.env.local` não define `NEXT_PUBLIC_SITE_URL` — local, o declarado é
+ * `localhost:3000`, então `www.crochecomraquel.com.br` não é o `www` de
+ * ninguém e o 308 legitimamente não acontece.
+ *
+ * Cobrar aqui seria acusar falso em toda execução local, e verificação que
+ * acusa falso é verificação que as pessoas aprendem a ignorar. Contra produção,
+ * onde a regra vale, ela é cobrada.
+ *
+ * Para exercer a regra localmente:
+ *   NEXT_PUBLIC_SITE_URL=https://crochecomraquel.com.br pnpm dev
+ */
+const LOCAL = /^https?:\/\/(localhost|127\.0\.0\.1)/.test(BASE);
+if (LOCAL && !passouNoWww) {
+  console.log(
+    "· www → apex: não cobrado local, porque o site declara `localhost`. " +
+      "Ver o comentário no script."
+  );
+} else {
+  ok(
+    "www redireciona para o apex, guardando o caminho",
+    passouNoWww,
+    `${www.status} → ${www.cabecalhos.location ?? "sem Location"}`
+  );
+}
 
 // O preview vê o site completo...
 const preview = await pegar("/", PREVIEW);

@@ -1961,6 +1961,46 @@ A `check:hospedagem` ganhou os dois comportamentos novos — obra com `noindex` 
 Verificado: `build`, `lint`, `check:classes` (420), `check:espaco`, `check:seo`,
 `check:produto`, `check:whatsapp`, `check:hospedagem`.
 
+### ✅ Etapa 50 — O CLS de 0,92 que ninguém via *(auditoria de performance)*
+
+Rodei o Lighthouse contra o que estava no ar. Acessibilidade 100, boas práticas 100,
+**performance 67** — e o motivo era um só: **CLS 0,92**, nove vezes o limite do Google,
+que é 0,1.
+
+*O SEO deu 69, mas isso é falso alarme:* o único item reprovado é "Page is blocked from
+indexing", que é o `noindex` intencional do preview. Vira 100 quando o domínio virar.
+
+**A causa.** Rastreando cada deslocamento com um `PerformanceObserver`: dezenove
+deslocamentos entre 819ms e 961ms — exatos os ~150ms da transição do cabeçalho. O
+`motion.header` animava `height` e o logotipo animava `font-size`, e as duas são
+propriedades de **layout**. Como o cabeçalho é fixo no topo, cada quadro dessas animações
+empurrava a página inteira para baixo.
+
+Sem `initial`, o framer trata a montagem como uma transição: sai do que o servidor pintou
+e ANIMA até o estado de repouso. Com `initial={false}`, ele entende que o DOM já está lá e
+só passa a animar a partir da próxima mudança — que é a rolagem. E deslocamento causado
+por rolagem **não conta** para o CLS, que é justamente o que permite o cabeçalho encolher
+sem penalidade.
+
+*Medido, antes e depois:* **0,92 → 0,0000**. E o comportamento ficou intacto — 104px → 80px
+de altura, logotipo de 60px → 45,6px, superfície de 0 → 1 ao rolar.
+
+**O defeito era do site inteiro, não da home:** medido em produção, 0,94 na home, 0,95 no
+hub de bolsas e 0,47 na página de peça.
+
+**Entrou `pnpm check:performance`**, porque isto regrediu em silêncio e nenhuma das outras
+verificações pegava — não quebra build, lint nem tipo, e olhando a tela a animação parece
+intencional.
+
+*Duas calibragens para a verificação não mentir:* o LCP não é cobrado no `pnpm dev`, que
+compila sob demanda (a home mediu 2920ms local contra **636ms** no ar); e o 308 do `www`
+não é cobrado local, porque sem `NEXT_PUBLIC_SITE_URL` o site declara `localhost` e a
+regra legitimamente não se aplica. **Verificação que acusa falso é verificação que as
+pessoas aprendem a ignorar.**
+
+Verificado: `build`, `lint`, `check:classes` (420), `check:espaco`, `check:seo`,
+`check:produto`, `check:hospedagem` (local e produção) e `check:performance`.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

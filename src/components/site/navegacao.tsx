@@ -244,6 +244,22 @@ export function Navegacao({
         // Antes de rolar o cabeçalho é alto e sem sombra, como parte da página.
         // Depois de 24px ele encolhe, ganha fundo com blur e uma borda de um
         // fio — o suficiente para se descolar do conteúdo sem virar caixa.
+        //
+        // **`initial={false}` não é detalhe: era metade do CLS da home.**
+        //
+        // Sem ele, o framer trata a montagem como uma transição — sai do que o
+        // servidor pintou e ANIMA até a altura de repouso. E `height` é
+        // propriedade de layout: como este cabeçalho é fixo no topo, cada
+        // quadro dessa animação empurra a página inteira para baixo. Medido no
+        // que estava no ar: dezenove deslocamentos entre 819ms e 961ms, exatos
+        // os ~150ms da transição, somando **0,88 de CLS** — o limite do Google
+        // é 0,1.
+        //
+        // Com `false`, o framer entende que o DOM já está no estado de
+        // `animate` e só passa a animar a partir da PRÓXIMA mudança, que é a
+        // rolagem. Aí o deslocamento é resposta a um gesto da pessoa, e é
+        // justamente isso que a métrica não conta.
+        initial={false}
         animate={{
           height: rolou ? "var(--spacing-cabecalho)" : "var(--spacing-cabecalho-lg)",
           boxShadow: rolou ? "var(--shadow-peca)" : "0 0 0 rgba(0,0,0,0)",
@@ -282,6 +298,10 @@ export function Navegacao({
                 O corpo animado vira a altura do logotipo (`h-[1em]`). */}
             <motion.span
               className="block text-primaria"
+              // Mesma razão do cabeçalho: `fontSize` é layout, e o logotipo
+              // mora dentro dele. Sem `initial={false}` a marca cresce durante
+              // a montagem e leva a página junto.
+              initial={false}
               animate={{
                 fontSize: rolou ? "var(--corpo-logo-rolado)" : "var(--corpo-logo)",
               }}
