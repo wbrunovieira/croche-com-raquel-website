@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { comoJpeg } from "@/lib/og/entregar";
 import { SIMBOLO_PATH, SIMBOLO_VIEWBOX } from "@/components/brand/simbolo";
 import { CORES, TAMANHO, fontesDaMarca } from "@/lib/og/fontes";
 import { buscarProdutoPorSlug } from "@/lib/queries/produtos";
@@ -18,7 +19,7 @@ import { formatarPreco, formatarPrazo } from "@/lib/formatar";
  */
 export const alt = "Peça de crochê feita à mão";
 export const size = TAMANHO;
-export const contentType = "image/png";
+export const contentType = "image/jpeg";
 
 export default async function Imagem({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -32,7 +33,8 @@ export default async function Imagem({ params }: { params: Promise<{ slug: strin
   const prazo = produto ? formatarPrazo(produto.prazoMinDias, produto.prazoMaxDias) : null;
   const foto = produto?.imagens[0]?.url ?? null;
 
-  return new ImageResponse(
+  return comoJpeg(
+    new ImageResponse(
     (
       <div style={{ width: "100%", height: "100%", display: "flex", background: CORES.fundo }}>
         <div
@@ -91,6 +93,7 @@ export default async function Imagem({ params }: { params: Promise<{ slug: strin
         ) : null}
       </div>
     ),
-    { ...size, fonts }
+      { ...size, fonts }
+    )
   );
 }

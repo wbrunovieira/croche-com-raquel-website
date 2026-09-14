@@ -110,9 +110,14 @@ try {
       // é buscada no host que estamos medindo, e não na URL declarada.
       const noHostMedido = og.replace(/^https?:\/\/[^/]+/, BASE);
       const r = await fetch(noHostMedido);
+      // Imagem, e não um formato específico. A checagem cravava `image/png`
+      // porque era o que o `ImageResponse` emitia — e passou a mentir no dia em
+      // que a arte virou JPEG para caber na prévia do WhatsApp. O que importa
+      // aqui é o buscador receber uma imagem; o peso e o conteúdo dela são
+      // assunto do `check:compartilhar`.
       ok(
         `${slug}: e ela responde como imagem`,
-        r.headers.get("content-type") === "image/png",
+        (r.headers.get("content-type") ?? "").startsWith("image/"),
         r.headers.get("content-type") ?? ""
       );
     }

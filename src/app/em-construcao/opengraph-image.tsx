@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { comoJpeg } from "@/lib/og/entregar";
 import { SIMBOLO_PATH, SIMBOLO_VIEWBOX } from "@/components/brand/simbolo";
 import { CORES, TAMANHO, fontesDaMarca } from "@/lib/og/fontes";
 import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
@@ -21,12 +22,13 @@ import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
  */
 export const alt = "Crochê com Raquel — bolsas e peças de crochê feitas à mão em Petrópolis";
 export const size = TAMANHO;
-export const contentType = "image/png";
+export const contentType = "image/jpeg";
 
 export default async function Imagem() {
   const [config, fonts] = await Promise.all([buscarConfiguracoes(), fontesDaMarca()]);
 
-  return new ImageResponse(
+  return comoJpeg(
+    new ImageResponse(
     (
       <div
         style={{
@@ -57,6 +59,7 @@ export default async function Imagem() {
         </div>
       </div>
     ),
-    { ...size, fonts }
+      { ...size, fonts }
+    )
   );
 }

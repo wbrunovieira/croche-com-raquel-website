@@ -2117,6 +2117,45 @@ trocar seis coisas (nome, fotos, descrição, material, categoria, e o alt que v
 fotos), e o painel só torna duas delas óbvias. Uma peça que nasce de outra herda tudo o que
 não for tocado — e o que fica herdado não avisa.
 
+### ✅ Etapa 54 — A garantia do compartilhamento *(instrução do Bruno)*
+
+*"Não devemos nos preocupar com o que está cadastrado, porque ela irá mudar conforme
+quiser. O nosso papel é certificar que sempre, para produto cadastrado, o nome, a descrição
+e a imagem sejam inclusos no SEO da página dele e no link do WhatsApp."*
+
+É a instrução certa, e muda o alvo: o conteúdo é dela e muda; **o que não pode mudar é o
+caminho até a prévia**.
+
+**O que faltava era o peso.** Depois da conversão das fotos, as dez peças já levavam nome,
+descrição e foto para a arte — mas ela pesava de **528 a 976 kB**. O `ImageResponse` do
+Next só emite PNG, e PNG é lossless: onde há foto ele guarda cada grão.
+
+A saída foi reencodar. A arte continua sendo desenhada igual; o PNG entra no `comoJpeg` e
+sai JPEG, no mesmo tamanho e com a mesma composição. **De 528–976 kB para 48–101 kB.**
+
+*Por que não resolver encolhendo a arte:* 1200×630 é o que o WhatsApp, o Instagram e o
+resto esperam, e encolher borraria a foto justamente onde ela aparece grande. O formato é
+o lugar certo de economizar, porque não custa nada visível.
+
+**E entrou `pnpm check:compartilhar`, que é a garantia em si.** Para **toda** peça do
+sitemap — não uma amostra, porque o defeito que originou isto aparecia em algumas e não em
+outras — ela exige: o título leva o nome, existe descrição, o `og:title` e o
+`og:description` acompanham, a arte é imagem de verdade, tem 1200×630, cabe no teto de
+peso, e **a foto da peça está dentro dela**.
+
+*A última é a que importa e a mais difícil de afirmar.* O peso seria um indício frágil —
+muda com formato e compressão. O sinal limpo é a **entropia**: arte com peça tem milhares
+de cores, arte só de marca e texto tem centenas. Medido: **0,6–0,8 sem foto contra 4,5–4,6
+com**. Provado quebrando de propósito — removi a foto da composição e as quatro primeiras
+peças acusaram na hora.
+
+*O teto de peso ficou em 200 kB, e não nos 300 que se cita:* a maior arte do catálogo tem
+101 kB, e um teto perto do real é o que faz uma regressão aparecer no dia em que acontece.
+
+**Corrigi uma checagem que passou a mentir:** a `check:seo` exigia `image/png` na arte,
+porque era o que o `ImageResponse` emitia. O que importa ali é o buscador receber uma
+imagem — o peso e o conteúdo são assunto da checagem nova.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a
