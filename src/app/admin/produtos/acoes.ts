@@ -1,6 +1,6 @@
 "use server";
 
-import { del, put } from "@vercel/blob";
+import { put } from "@vercel/blob";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/lib/db";
@@ -221,9 +221,23 @@ export async function apagarProduto(id: string) {
   });
   if (!produto) return;
 
-  // As fotos saem do armazenamento junto: sem isto elas ficariam pagando
-  // espaço para sempre, sem nada apontando para elas.
-  await Promise.allSettled(produto.images.map((i) => del(i.url)));
+  /**
+   * **As fotos NÃO saem do armazenamento.** Isto é decisão de recuperação, não
+   * de arrumação.
+   *
+   * Antes elas saíam junto, para não pagar espaço à toa. O problema é que essa
+   * é a única parte do apagar que não tem volta: o banco tem histórico na Neon,
+   * mas o Vercel Blob não tem versionamento — apagado é apagado. Com as fotos
+   * destruídas, restaurar o banco devolveria a peça apontando para arquivos que
+   * não existem mais, ou seja, uma peça sem foto.
+   *
+   * E o cenário provável não é invasão: é ela clicar em apagar na peça errada,
+   * depois de fotografar, recortar e cadastrar. As fotos são o trabalho; a linha
+   * do banco se digita de novo em dois minutos.
+   *
+   * O custo é arquivo órfão ocupando espaço — 310 kB cada, no acervo de hoje.
+   * É barato perto de perder a foto de uma peça que ela já vendeu.
+   */
   await db.product.delete({ where: { id } });
 
   revalidarProduto(produto.slug);
@@ -312,7 +326,9 @@ export async function apagarImagem(imageId: string) {
   });
   if (!imagem) return;
 
-  await Promise.allSettled([del(imagem.url)]);
+  // O arquivo fica no armazenamento — mesma razão de `apagarProduto`: o Blob
+  // não tem versionamento, e tirar a foto da peça é reversível enquanto o
+  // arquivo existir.
   await db.productImage.delete({ where: { id: imageId } });
   revalidarProduto(imagem.product.slug);
 }

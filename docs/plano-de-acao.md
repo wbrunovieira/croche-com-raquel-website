@@ -2156,6 +2156,55 @@ peças acusaram na hora.
 porque era o que o `ImageResponse` emitia. O que importa ali é o buscador receber uma
 imagem — o peso e o conteúdo são assunto da checagem nova.
 
+### ✅ Etapa 55 — Backup do que é dela *(pedido do Bruno)*
+
+*"Não podemos ter surpresa no futuro por erro dela, ou hacker, ou até o servidor cair, ela
+perder tudo que cadastrou."*
+
+**Investiguei antes de propor, e não havia backup nenhum** — nem script, nem tarefa
+agendada. Mas o achado grave foi outro, e é pior que a ausência de backup:
+
+**Ao apagar uma peça, o código apagava as fotos do armazenamento junto.** Isso é destruição
+imediata e definitiva: a Neon guarda histórico do banco, mas **o Vercel Blob não tem
+versionamento**. Restaurar o banco devolveria a peça apontando para arquivos que não
+existem mais — uma peça sem foto. *E o cenário provável dos três que ele citou não é o
+hacker: é ela clicar em apagar na peça errada*, depois de fotografar, recortar e cadastrar.
+
+**Correção 1: as fotos deixam de ser destruídas.** Apagar tira a linha; o arquivo fica. O
+custo é arquivo órfão ocupando espaço — 310 kB cada — e é barato perto de perder a foto de
+uma peça que ela já vendeu.
+
+**Correção 2: backup diário fora da Vercel e da Neon.** O acervo inteiro são 74 arquivos e
+22,4 MB, então qualquer estratégia caberia; o que decidiu foi *onde*. O repositório do site
+é **público** — o dump carrega as senhas do painel —, então o backup vai para um
+repositório **privado**, e é lá que moram os segredos. Essa separação é o que permite o
+código continuar aberto.
+
+*Por que JSON e não `pg_dump`:* o banco é PostgreSQL 18, e um dump só restaura num servidor
+que entenda aquela versão — dependência que envelhece junto com o provedor. O JSON restaura
+em qualquer Postgres e **pode ser lido por gente**, que é o que importa no dia em que
+alguém abrir a pasta sem saber o que procurar.
+
+*As fotos vêm inteiras, e não como lista de URLs:* endereço guardado não é backup se o que
+ele aponta sumiu.
+
+*O git guarda cada foto uma vez, por conteúdo*, então foto que não mudou não ocupa espaço
+novo a cada dia — por isso o backup é uma pasta que se sobrescreve, e o histórico quem
+guarda é o próprio git.
+
+**Duas travas que a experiência desta sessão pediu:**
+
+*O backup falha se o schema crescer.* A primeira versão listava `faq`, que não existe — o
+modelo chama `FaqItem` — e o script apenas avisava e seguia. **Backup que pula uma tabela
+em silêncio dá confiança falsa e só se descobre incompleto no dia em que precisa.** Agora
+ele confere contra o que o cliente Prisma conhece e falha. Provado removendo `testimonial`
+da lista.
+
+*E existe `scripts/restaurar.ts`, testado apagando de verdade.* Backup que ninguém sabe
+restaurar não é backup, e o dia de descobrir como não pode ser o dia em que o catálogo
+sumiu. Apaguei uma peça com fotos e grupos de opção, restaurei, e ela voltou inteira. O
+`--aplicar` faz `upsert` por id: repõe o que sumiu e deixa em paz o que foi criado depois.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a
