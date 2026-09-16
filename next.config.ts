@@ -53,8 +53,21 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        // As fotos das peças ficam no Vercel Blob. Sem liberar o domínio aqui,
-        // o next/image recusa a imagem e o card fica vazio.
+        // As fotos das peças moram no Cloudflare R2. Sem liberar o domínio
+        // aqui, o next/image recusa a imagem e o card fica vazio.
+        hostname: "*.r2.dev",
+      },
+      {
+        protocol: "https",
+        // E no domínio próprio do bucket, quando houver — é o endereço que
+        // cacheia na borda e não expõe o identificador da conta.
+        hostname: "fotos.crochecomraquel.com.br",
+      },
+      {
+        protocol: "https",
+        // O Vercel Blob fica liberado enquanto as fotos antigas não saírem de
+        // vez: a suspensão dura 30 dias e vence por volta de 16/10/2026, e até
+        // lá um endereço antigo que sobrou em cache ainda pode aparecer.
         hostname: "*.public.blob.vercel-storage.com",
       },
     ],

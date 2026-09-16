@@ -89,7 +89,7 @@ async function main() {
       // O caminho é reconstruído do nome: é o que devolve a foto à MESMA URL que
       // o banco guarda. Sem `addRandomSuffix`, a URL sai idêntica.
       const caminho = nome.replace(/__/g, "/");
-      await put(caminho, new Uint8Array(conteudo), {
+      await put(caminho, conteudo, {
         access: "public",
         addRandomSuffix: false,
         allowOverwrite: true,

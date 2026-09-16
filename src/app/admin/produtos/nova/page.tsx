@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { exigirSessao } from "@/lib/admin/sessao";
+import { AvisoDeArmazenamento } from "@/components/admin/aviso-de-armazenamento";
 import { FormularioDeNovaPeca } from "./formulario";
 
 export default async function NovaPeca() {
@@ -25,6 +26,8 @@ export default async function NovaPeca() {
           Tudo numa tela só. Se quiser, salve fora do ar e coloque no site
           quando a peça estiver pronta.
         </p>
+
+        <AvisoDeArmazenamento />
 
         <div className="mt-respiro">
           <FormularioDeNovaPeca

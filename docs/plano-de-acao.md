@@ -2205,6 +2205,61 @@ restaurar não é backup, e o dia de descobrir como não pode ser o dia em que o
 sumiu. Apaguei uma peça com fotos e grupos de opção, restaurei, e ela voltou inteira. O
 `--aplicar` faz `upsert` por id: repõe o que sumiu e deixa em paz o que foi criado depois.
 
+### 🟡 Etapa 56 — Saída do Vercel Blob para o Cloudflare R2 *(em andamento — falta a credencial)*
+
+**O que aconteceu.** Em 16/09/2026 a Vercel suspendeu os **sete** armazenamentos Blob do
+time: a cota do plano gratuito é de 2.000 operações avançadas por mês para a **conta
+inteira**, não por projeto. O site da Raquel ficou com todas as fotos fora do ar e ela
+parou de conseguir cadastrar.
+
+**E não foi este projeto que gastou.** Investigando, o consumo vinha de
+`darkfilm-website/revisao`: `force-dynamic` mais um `get` privado por evento, com 51
+eventos no armazenamento — **~52 operações por visita**, ou seja 38 visitas queimavam o mês.
+Este projeto só gravava no upload, nada por requisição: tinha 22,4 MB dos 23 MB da conta e
+era o que menos consumia. *A maior vítima e a menor causadora.*
+
+A sessão do darkfilm já migrou aquele painel para o R2 e mandou a receita. Dela vieram três
+achados que eu não teria descoberto sem pagar o preço:
+
+**1. No armazenamento suspenso, `list` funciona e `get` devolve 403.** Dá para ver que os
+arquivos existem e não dá para lê-los. Quem tentou puxar do Blob recebeu 51 erros seguidos.
+**Não era possível extrair as fotos da Raquel de lá.**
+
+**2. A suspensão dura 30 dias**, não até a virada do ciclo — a nossa vence por volta de
+16/10.
+
+**3. O R2 recusa PUT sem `content-length`** (`411 MissingContentLength`): o `fetch` do Node
+preenche sozinho, o do runtime do Next prefere `chunked` e falha. O mesmo código funciona no
+script e quebra na aplicação.
+
+**O que salvou este projeto foi o backup da etapa 55**, que rodou antes da suspensão: as 74
+fotos estão em disco, e o ensaio da migração confirma **73 de 73 com cópia** — nada se
+perde. *A rede montada para o desastre serviu para uma migração forçada, que é um caso mais
+chato e mais provável.*
+
+**O que já está feito:** o cliente R2 (`src/lib/r2.ts`), o painel gravando lá, o
+`next.config` liberando o host, e o script de migração que lê do backup.
+
+*A diferença em relação à receita do darkfilm:* lá o servidor lê JSON com requisição
+assinada; aqui o **navegador** busca a foto. Então o bucket serve por endereço público e a
+assinatura só entra na escrita — daí existirem duas funções e não uma.
+
+**O backup deixou de listar o armazenamento.** Ele agora baixa as fotos pelas URLs que o
+banco guarda: custo **zero** em operações (o `list` do Blob era operação avançada, e este
+backup gastava duas a cada seis horas em cima do teto que estourou), funciona em qualquer
+provedor, e copia o que o site realmente usa. *E foto que não baixa agora FALHA o backup* —
+backup que grava o banco e pula as fotos em silêncio é pior que backup que falha.
+
+**E o painel avisa antes, em português.** Ela digitava nome, descrição e categoria, anexava
+as fotos, e só no último clique recebia *"Vercel Blob: This store has been suspended"* — em
+inglês, técnico, com o trabalho perdido. **Falhar no fim é a pior hora de falhar**, e quem
+não está à vontade com o painel conclui que quebrou algo. Agora o aviso aparece no topo,
+diz que não é culpa dela e oferece a saída: cadastrar sem foto e anexar depois.
+
+**Falta:** um token de R2 com escopo restrito ao bucket. *O que o Bruno gerou para o
+darkfilm é de administrador* — cria e apaga bucket em toda a conta Cloudflare — e está numa
+variável de ambiente de aplicação web. Se vazar, apaga bucket de qualquer cliente.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

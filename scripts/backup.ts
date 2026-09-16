@@ -15,7 +15,10 @@
  * grande, e vale muito para este.
  *
  * **As fotos vêm inteiras**, e não como lista de URLs. URL guardada não é
- * backup: se o Blob some, a lista aponta para o nada.
+ * backup: se o armazenamento some, a lista aponta para o nada. Foi esse backup
+ * que permitiu migrar as 74 fotos para o R2 quando o Vercel Blob foi suspenso e
+ * passou a devolver 403 em toda leitura — a rede montada para o desastre serviu
+ * para a migração forçada.
  *
  *   npx tsx scripts/backup.ts            → escreve em ./backup/
  *   npx tsx scripts/backup.ts --destino /caminho
@@ -23,7 +26,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { config as carregarEnv } from "dotenv";
-import { list } from "@vercel/blob";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { urlComSslVerificado } from "../src/lib/db-url";
@@ -121,38 +123,69 @@ async function main() {
   );
 
   // ---- fotos ----
-  // O nome no disco é o caminho do Blob com as barras trocadas, para o arquivo
-  // dizer de que peça ele é sem precisar consultar o banco.
-  let cursor: string | undefined;
+  /**
+   * As fotos vêm pelas URLs que o BANCO guarda, e não de uma listagem do
+   * armazenamento. Três razões, e a primeira foi aprendida do jeito difícil:
+   *
+   * **1. Listar custa operação.** O `list()` do Vercel Blob é operação avançada,
+   * e o gratuito dá 2.000 por mês para a CONTA inteira. Este backup rodava de
+   * seis em seis horas gastando duas por execução — pouco, mas era gasto em cima
+   * do teto que estourou e suspendeu o armazenamento em 16/09/2026. Lendo a URL
+   * pública, o custo em operações é **zero**.
+   *
+   * **2. Funciona em qualquer armazenamento.** Era Vercel Blob, virou Cloudflare
+   * R2. Backup amarrado ao SDK de um provedor precisa ser reescrito a cada
+   * mudança — e é justamente na mudança que ele mais importa.
+   *
+   * **3. Copia o que o site realmente usa.** A listagem trazia órfãos também.
+   * Órfão é, por definição, o que nada aponta — e agora que apagar peça não
+   * apaga mais a foto, eles vão existir sempre.
+   */
+  const imagens = await db.productImage.findMany({
+    select: { url: true },
+    orderBy: { url: "asc" },
+  });
+
+  const mapa: Record<string, string> = {};
   let n = 0;
   let bytes = 0;
-  do {
-    const pagina = await list({ cursor, limit: 1000 });
-    for (const blob of pagina.blobs) {
-      const conteudo = Buffer.from(await (await fetch(blob.url)).arrayBuffer());
-      const nome = new URL(blob.url).pathname.replace(/^\//, "").replace(/\//g, "__");
-      await writeFile(join(DESTINO, "fotos", nome), conteudo);
-      n++;
-      bytes += conteudo.length;
-    }
-    cursor = pagina.cursor;
-  } while (cursor);
+  const falhas: string[] = [];
 
-  // O mapa de URL para arquivo: é o que permite recolocar cada foto no lugar
-  // certo se o Blob precisar ser refeito do zero.
-  const mapa = await (async () => {
-    const saida: Record<string, string> = {};
-    let c: string | undefined;
-    do {
-      const p = await list({ cursor: c, limit: 1000 });
-      for (const b of p.blobs) {
-        saida[b.url] = new URL(b.url).pathname.replace(/^\//, "").replace(/\//g, "__");
-      }
-      c = p.cursor;
-    } while (c);
-    return saida;
-  })();
+  for (const { url } of imagens) {
+    // O nome no disco é o caminho com as barras trocadas, para o arquivo dizer
+    // de que peça ele é sem precisar consultar o banco.
+    const nome = new URL(url).pathname.replace(/^\//, "").replace(/\//g, "__");
+    const r = await fetch(url);
+    if (!r.ok) {
+      falhas.push(`${r.status} ${url.slice(0, 70)}`);
+      continue;
+    }
+    const conteudo = Buffer.from(await r.arrayBuffer());
+    await writeFile(join(DESTINO, "fotos", nome), conteudo);
+    mapa[url] = nome;
+    n++;
+    bytes += conteudo.length;
+  }
+
   await writeFile(join(DESTINO, "fotos.json"), JSON.stringify(mapa, null, 2));
+
+  /**
+   * Foto que não baixa FALHA o backup, e isso é de propósito.
+   *
+   * Backup que grava o banco e pula as fotos em silêncio é o pior resultado
+   * possível: ele commita, o histórico parece saudável, e só no dia de restaurar
+   * se descobre que as imagens não estão lá. Se o armazenamento estiver fora do
+   * ar, melhor a execução falhar e alguém ver.
+   */
+  if (falhas.length > 0) {
+    console.log(`\n  ✗ ${falhas.length} foto(s) não baixaram:`);
+    for (const f of falhas.slice(0, 5)) console.log(`      ${f}`);
+    throw new Error(
+      `${falhas.length} de ${imagens.length} fotos não baixaram — backup incompleto, ` +
+        "e backup incompleto que passa é pior que backup que falha."
+    );
+  }
+
 
   console.log(`\n  ${n} fotos · ${(bytes / 1024 / 1024).toFixed(1)} MB`);
   console.log(`  backup de ${quando} em ${DESTINO}/`);

@@ -1,6 +1,6 @@
 "use server";
 
-import { put } from "@vercel/blob";
+import { r2Enviar } from "@/lib/r2";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/lib/db";
@@ -272,12 +272,22 @@ async function guardarFoto(
   posicao: number,
   extras: { alt?: string; escalaHumana?: boolean } = {}
 ) {
-  const enviado = await put(`produtos/${produto.slug}/${arquivo.name}`, arquivo, {
-    access: "public",
-    // Nome com sufixo aleatório: duas fotos com o mesmo nome não se
-    // sobrescrevem, e o cache do navegador não entrega a antiga.
-    addRandomSuffix: true,
-  });
+  /**
+   * O sufixo aleatório era do `put` do Vercel Blob; agora é nosso.
+   *
+   * Ele existe por dois motivos: duas fotos com o mesmo nome não se
+   * sobrescrevem, e — mais importante — a chave nova faz o cache da borda
+   * entregar a foto certa. É o que permite o `cache-control` de um ano em
+   * `r2Enviar`: foto nova é endereço novo, então nunca há o que invalidar.
+   */
+  const sufixo = Math.random().toString(36).slice(2, 12);
+  const nome = arquivo.name.replace(/(\.[^.]+)?$/, (ext) => `-${sufixo}${ext || ""}`);
+  const url = await r2Enviar(
+    `produtos/${produto.slug}/${nome}`,
+    await arquivo.arrayBuffer(),
+    arquivo.type || "image/jpeg"
+  );
+  const enviado = { url };
 
   await db.productImage.create({
     data: {
