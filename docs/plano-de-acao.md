@@ -2326,9 +2326,11 @@ otimiza imagem cuja origem é rota ISR do próprio deploy**. Confirmado num depl
 trocando só essa linha: com `force-static`, `w=64` voltava 640×800 com 103.877 B; sem ela,
 volta WebP de **1.714 B**.
 
-O cache não se perdeu na troca, mudou de lugar: era o cache de ISR, agora são os cabeçalhos
-(`s-maxage` na borda, `max-age` no navegador, `immutable` dispensando revalidação). Somado
-ao cache do próprio otimizador, a origem é consultada uma vez por tamanho.
+Marcar `force-dynamic` — a primeira tentativa — conserta o otimizador e estraga o cache: a
+Vercel passa a tratar a rota como não-cacheável e a borda dá `MISS` em toda chamada. Sem
+export nenhum, com a rota dinâmica só por ter parâmetro, dá as duas coisas. Medido no ar:
+WebP de 1,4 kB, e a rota indo de `MISS` para `HIT` na segunda chamada. O cache do próprio
+otimizador — que é quem o navegador consulta — também guarda.
 
 **E o `check:performance` ganhou a asserção que faltava:** pede a menor largura que o site
 usa e confere que o que volta é bem menor que o original. Passando direto, a razão é 1,00 —
