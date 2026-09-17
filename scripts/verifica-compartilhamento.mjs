@@ -41,6 +41,7 @@ const TETO_KB = 200;
 const ENTROPIA_COM_FOTO = 4;
 
 let falhas = 0;
+let comFoto = 0;
 const ok = (nome, condicao, detalhe = "") => {
   if (!condicao) falhas++;
   console.log(`${condicao ? "✓" : "✗"} ${nome}${detalhe ? ` — ${detalhe}` : ""}`);
@@ -70,8 +71,23 @@ for (const slug of slugs) {
   // O nome da peça é o `<h1>` — é a fonte da verdade na página, e é contra ele
   // que o resto tem de bater.
   const nome = pegar(html, /<h1[^>]*>([^<]+)/).trim();
-  // A peça tem foto? O Blob é a única origem de foto de peça.
-  const temFoto = /blob\.vercel-storage\.com/.test(html);
+  /**
+   * A peça tem foto?
+   *
+   * **Esta linha já apodreceu uma vez.** Ela procurava `blob.vercel-storage.com`
+   * — o endereço do armazenamento de então. Quando as fotos migraram para o R2,
+   * o padrão parou de casar, `temFoto` virou `false` em todas as peças e a
+   * asserção mais importante daqui — "a foto da peça está na arte" — **deixou de
+   * rodar sem dizer nada**. O teste seguia verde medindo peso e dimensão de uma
+   * arte que podia estar vazia.
+   *
+   * Agora ela procura `/fotos/`, que é rota DESTE site e não endereço de
+   * fornecedor. A rota existe justamente para sobreviver à próxima troca de
+   * armazenamento (ver `src/app/fotos/[...chave]/route.ts`), então o detector
+   * herda essa durabilidade. As duas formas aparecem no HTML: crua nos
+   * `preload`, e escapada dentro do `src` que o `next/image` monta.
+   */
+  const temFoto = /\/fotos\/|%2Ffotos%2F/.test(html);
 
   const prefixo = `${slug}:`;
   ok(`${prefixo} o título leva o nome da peça`, nome !== "" && titulo.includes(nome), titulo.slice(0, 60));
@@ -97,6 +113,7 @@ for (const slug of slugs) {
     const { width, height } = await sharp(bytes).metadata();
     ok(`${prefixo} a arte tem 1200×630`, width === 1200 && height === 630, `${width}×${height}`);
     if (temFoto) {
+      comFoto++;
       ok(
         `${prefixo} a foto da peça está na arte`,
         entropy >= ENTROPIA_COM_FOTO,
@@ -104,6 +121,23 @@ for (const slug of slugs) {
       );
     }
   }
+}
+
+/**
+ * **Nenhuma peça com foto reprova o teste inteiro.**
+ *
+ * É a trava contra o defeito que já aconteceu: o detector de foto ficar
+ * desatualizado, todas as asserções de foto serem puladas, e a verificação
+ * continuar verde. Um catálogo em que nenhuma peça tem foto ou é um catálogo
+ * quebrado ou é um detector quebrado — nos dois casos alguém precisa olhar.
+ */
+if (comFoto === 0) {
+  console.log(
+    "\n✗ nenhuma peça foi detectada com foto — ou o catálogo está sem fotos, " +
+      "ou o detector de foto parou de casar com o HTML (já aconteceu: ver o " +
+      "comentário de `temFoto`)."
+  );
+  falhas++;
 }
 
 console.log(falhas === 0 ? "\n✓ compartilhamento ok" : `\n✗ ${falhas} falha(s)`);

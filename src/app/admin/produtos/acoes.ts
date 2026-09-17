@@ -282,8 +282,10 @@ async function guardarFoto(
    */
   const sufixo = Math.random().toString(36).slice(2, 12);
   const nome = arquivo.name.replace(/(\.[^.]+)?$/, (ext) => `-${sufixo}${ext || ""}`);
+  // `croche/` porque o bucket é compartilhado com outros projetos do time — a
+  // rota que serve as fotos recusa qualquer chave fora deste prefixo.
   const url = await r2Enviar(
-    `produtos/${produto.slug}/${nome}`,
+    `croche/produtos/${produto.slug}/${nome}`,
     await arquivo.arrayBuffer(),
     arquivo.type || "image/jpeg"
   );

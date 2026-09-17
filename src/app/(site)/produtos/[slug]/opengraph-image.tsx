@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { comoJpeg } from "@/lib/og/entregar";
+import { fotoParaArte } from "@/lib/og/foto";
 import { SIMBOLO_PATH, SIMBOLO_VIEWBOX } from "@/components/brand/simbolo";
 import { CORES, TAMANHO, fontesDaMarca } from "@/lib/og/fontes";
 import { buscarProdutoPorSlug } from "@/lib/queries/produtos";
@@ -31,7 +32,7 @@ export default async function Imagem({ params }: { params: Promise<{ slug: strin
   const nome = produto?.nome ?? "Crochê com Raquel";
   const categoria = produto?.subcategoria?.nome ?? produto?.categoria.nome ?? "";
   const prazo = produto ? formatarPrazo(produto.prazoMinDias, produto.prazoMaxDias) : null;
-  const foto = produto?.imagens[0]?.url ?? null;
+  const foto = await fotoParaArte(produto?.imagens[0]?.url);
 
   return comoJpeg(
     new ImageResponse(

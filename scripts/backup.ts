@@ -29,6 +29,7 @@ import { config as carregarEnv } from "dotenv";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { urlComSslVerificado } from "../src/lib/db-url";
+import { r2Ler } from "../src/lib/r2";
 
 carregarEnv({ path: ".env.local", quiet: true });
 
@@ -141,10 +142,63 @@ async function main() {
    * Órfão é, por definição, o que nada aponta — e agora que apagar peça não
    * apaga mais a foto, eles vão existir sempre.
    */
-  const imagens = await db.productImage.findMany({
-    select: { url: true },
-    orderBy: { url: "asc" },
-  });
+  /**
+   * **Lê do R2 direto, e não pela rota `/fotos` do site.**
+   *
+   * Desde a migração as fotos ficam em caminho relativo, então "baixar a URL"
+   * exigiria montar o endereço do site e passar por ele. Isso amarraria o
+   * backup ao site estar NO AR — e o dia em que o site cai é exatamente o dia
+   * em que o backup precisa funcionar. Ler do armazenamento pula essa
+   * dependência.
+   *
+   * Custa uma leitura de classe B por foto (73 por execução, contra 10 milhões
+   * gratuitos no mês): o argumento de não gastar operação, que nos tirou do
+   * `list()` do Blob, continua valendo — só que aqui a conta não aperta.
+   *
+   * URL absoluta que sobrou de antes continua sendo buscada por HTTP.
+   */
+  async function baixar(url: string): Promise<Buffer | null> {
+    try {
+      if (url.startsWith("/fotos/")) {
+        const objeto = await r2Ler(url.replace(/^\/fotos\//, ""));
+        return objeto ? Buffer.from(objeto.corpo) : null;
+      }
+      const r = await fetch(url);
+      return r.ok ? Buffer.from(await r.arrayBuffer()) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * **As fotos são DESCOBERTAS no que acabou de ser copiado, e não pedidas a
+   * uma tabela escolhida a dedo.**
+   *
+   * Aqui era `db.productImage.findMany()`. Parecia certo — é onde moram as
+   * fotos das peças — e deixava uma de fora: o retrato da Raquel, que mora em
+   * `siteSettings.aboutImageUrl`. O backup rodava verde havia semanas sem nunca
+   * ter copiado aquele arquivo. Ele só não se perdeu porque uma versão bem
+   * antiga, que listava o armazenamento inteiro, tinha guardado uma cópia.
+   *
+   * Acrescentar `siteSettings` na lista consertaria o caso e deixaria a armadilha
+   * de pé para o próximo campo de imagem que alguém criar. Varrendo o `dados` já
+   * montado, qualquer campo de texto que PAREÇA foto entra no backup sozinho —
+   * inclusive os que ainda não existem.
+   */
+  const imagens = [
+    ...new Set(
+      Object.values(dados)
+        .flat()
+        .flatMap((linha) => Object.values((linha ?? {}) as Record<string, unknown>))
+        .filter(
+          (v): v is string =>
+            typeof v === "string" &&
+            (v.startsWith("/fotos/") || /^https?:\/\/\S+\.(jpe?g|png|webp|avif|gif)$/i.test(v))
+        )
+    ),
+  ]
+    .sort()
+    .map((url) => ({ url }));
 
   const mapa: Record<string, string> = {};
   let n = 0;
@@ -153,14 +207,20 @@ async function main() {
 
   for (const { url } of imagens) {
     // O nome no disco é o caminho com as barras trocadas, para o arquivo dizer
-    // de que peça ele é sem precisar consultar o banco.
-    const nome = new URL(url).pathname.replace(/^\//, "").replace(/\//g, "__");
-    const r = await fetch(url);
-    if (!r.ok) {
-      falhas.push(`${r.status} ${url.slice(0, 70)}`);
+    // de que peça ele é sem precisar consultar o banco. Os dois prefixos de
+    // roteamento (`/fotos/`, do site, e `croche/`, do bucket compartilhado)
+    // saem fora: eles não distinguem nada entre si e só alongariam o nome — e
+    // mantê-los fora preserva os nomes que os backups anteriores já usavam.
+    const caminho = url.startsWith("/fotos/")
+      ? url.replace(/^\/fotos\/croche\//, "").replace(/^\/fotos\//, "")
+      : new URL(url).pathname.replace(/^\//, "");
+    const nome = caminho.replace(/\//g, "__");
+
+    const conteudo = await baixar(url);
+    if (!conteudo) {
+      falhas.push(url.slice(0, 80));
       continue;
     }
-    const conteudo = Buffer.from(await r.arrayBuffer());
     await writeFile(join(DESTINO, "fotos", nome), conteudo);
     mapa[url] = nome;
     n++;

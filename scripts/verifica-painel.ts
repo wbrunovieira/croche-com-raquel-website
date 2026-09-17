@@ -1,6 +1,6 @@
 /**
  * Verificação do painel: cria uma usuária descartável, exercita o caminho
- * completo de cadastrar uma peça — incluindo envio de foto para o Blob — e
+ * completo de cadastrar uma peça — incluindo envio de foto ao armazenamento — e
  * limpa tudo no fim, inclusive se falhar no meio.
  *
  * Precisa do servidor de pé:  pnpm dev
@@ -131,7 +131,7 @@ async function main() {
         where: { productId: criada!.id },
         select: { url: true },
       });
-      conferir("envia a foto para o Blob", guardadas.length === 1, `${guardadas.length} foto(s)`);
+      conferir("envia a foto para o armazenamento", guardadas.length === 1, `${guardadas.length} foto(s)`);
 
       /**
        * E a foto guardada é PEQUENA.
@@ -147,7 +147,10 @@ async function main() {
        * redução, chega inteira e este número entrega.
        */
       if (guardadas[0]) {
-        const cabecalho = await fetch(guardadas[0].url, { method: "HEAD" });
+        // A URL guardada é relativa (`/fotos/…`): as fotos são servidas pelo
+        // próprio site desde a migração para o R2. `fetch` não aceita caminho
+        // sem origem, então ela se resolve contra a base do teste.
+        const cabecalho = await fetch(new URL(guardadas[0].url, BASE), { method: "HEAD" });
         const bytes = Number(cabecalho.headers.get("content-length") ?? 0);
         conferir(
           "e a foto foi reduzida antes de subir",

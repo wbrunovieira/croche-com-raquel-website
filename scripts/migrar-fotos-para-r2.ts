@@ -56,7 +56,7 @@ async function main() {
   if (APLICAR && !r2Configurado()) {
     throw new Error(
       "faltam as variáveis do R2 no .env.local: R2_ENDPOINT, R2_BUCKET, " +
-        "R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_URL_PUBLICA"
+        "R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY"
     );
   }
 
@@ -82,14 +82,16 @@ async function main() {
       continue;
     }
 
-    // A chave repete o caminho do Blob: `produtos/<slug>/<arquivo>`. Assim o
-    // endereço novo é reconhecível, e reexecutar sobrescreve em vez de duplicar.
-    const chave = new URL(img.url).pathname.replace(/^\//, "");
+    // A chave repete o caminho do Blob sob o prefixo do projeto:
+    // `croche/produtos/<slug>/<arquivo>`. O prefixo existe porque o bucket é
+    // compartilhado; repetir o resto do caminho torna o endereço reconhecível e
+    // faz uma reexecução sobrescrever em vez de duplicar.
+    const chave = `croche/${new URL(img.url).pathname.replace(/^\//, "")}`;
     console.log(`  ${img.product.name}`);
     // No ensaio o endereço público pode não existir ainda — ele depende da
     // credencial, e o ensaio serve exatamente para conferir a cobertura ANTES
     // de haver credencial. Então mostra a chave, que é o que importa aqui.
-    console.log(`      → ${r2Configurado() ? enderecoPublico(chave).slice(0, 78) : chave}`);
+    console.log(`      → ${enderecoPublico(chave)}`);
 
     if (!APLICAR) continue;
 

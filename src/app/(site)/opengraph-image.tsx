@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { comoJpeg } from "@/lib/og/entregar";
+import { fotoParaArte } from "@/lib/og/foto";
 import { SIMBOLO_PATH, SIMBOLO_VIEWBOX } from "@/components/brand/simbolo";
 import { CORES, TAMANHO, fontesDaMarca } from "@/lib/og/fontes";
 import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
@@ -27,10 +28,10 @@ export default async function Imagem() {
     fontesDaMarca(),
   ]);
 
-  const foto =
+  const foto = await fotoParaArte(
     destaques.find((p) => p.ehBolsa && p.capa)?.capa?.url ??
-    destaques.find((p) => p.capa)?.capa?.url ??
-    null;
+      destaques.find((p) => p.capa)?.capa?.url
+  );
 
   return comoJpeg(
     new ImageResponse(

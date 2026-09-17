@@ -16,7 +16,8 @@ import {
   listarSlugsDeProduto,
 } from "@/lib/queries/produtos";
 import { ehDemonstracao } from "@/lib/demonstracao";
-import { urlDoProduto } from "@/lib/site";
+import { urlDoProduto, urlDoSite } from "@/lib/site";
+import { urlAbsoluta } from "@/lib/r2";
 import {
   DadosEstruturados,
   produtoEstruturado,
@@ -78,7 +79,9 @@ export default async function PaginaDeProduto({ params }: PageProps<"/produtos/[
           descricao: produto.descricao,
           preco: produto.preco,
           material: produto.material,
-          imagens: produto.imagens.map((i) => i.url),
+          // Absoluto: o `image` do schema.org é buscado pelo Google a partir
+          // de fora, e caminho relativo ali é imagem que ele não acha.
+          imagens: produto.imagens.map((i) => urlAbsoluta(i.url, urlDoSite())),
           categoria: produto.categoria.nome,
         })}
       />

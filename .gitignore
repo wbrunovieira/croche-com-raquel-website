@@ -40,3 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 /src/generated
+
+# Saída padrão do `scripts/backup.ts` — 23 MB de fotos das peças dela. O backup
+# de verdade mora em outro repositório (croche-com-raquel-backups, privado);
+# aqui ele só aparece quando alguém roda o script sem `--destino`, e um
+# `git add -A` distraído mandaria o acervo inteiro para dentro do código.
+backup/

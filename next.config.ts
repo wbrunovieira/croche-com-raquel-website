@@ -49,29 +49,20 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: { bodySizeLimit: "8mb" },
   },
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        // As fotos das peças moram no Cloudflare R2. Sem liberar o domínio
-        // aqui, o next/image recusa a imagem e o card fica vazio.
-        hostname: "*.r2.dev",
-      },
-      {
-        protocol: "https",
-        // E no domínio próprio do bucket, quando houver — é o endereço que
-        // cacheia na borda e não expõe o identificador da conta.
-        hostname: "fotos.crochecomraquel.com.br",
-      },
-      {
-        protocol: "https",
-        // O Vercel Blob fica liberado enquanto as fotos antigas não saírem de
-        // vez: a suspensão dura 30 dias e vence por volta de 16/10/2026, e até
-        // lá um endereço antigo que sobrou em cache ainda pode aparecer.
-        hostname: "*.public.blob.vercel-storage.com",
-      },
-    ],
-  },
+  /**
+   * **Sem `remotePatterns`, e isso é resultado de decisão e não esquecimento.**
+   *
+   * As fotos das peças moram no Cloudflare R2, mas quem as entrega ao navegador
+   * é o próprio site, em `/fotos/<chave>` (ver `src/app/fotos/[...chave]/`).
+   * Para o `next/image` elas são imagens da MESMA ORIGEM — e origem própria
+   * não precisa de liberação.
+   *
+   * Aqui havia três domínios liberados: `*.r2.dev`, `fotos.crochecomraquel…` e
+   * o Vercel Blob. Os dois primeiros nunca chegaram a ser usados (o bucket é
+   * privado) e o terceiro está vazio desde a migração. Liberação de domínio é
+   * superfície de confiança: manter as três seria dizer ao otimizador que pode
+   * buscar e servir imagem de lugares que este site não usa mais.
+   */
 };
 
 export default nextConfig;

@@ -49,10 +49,11 @@ o projectId, os status IDs, a localização da API key e o CLI `pm.sh`.
 ## Verificações
 
 Antes de fechar uma etapa: `pnpm build`, `pnpm lint`, `pnpm check:espaco`,
-`pnpm check:whatsapp`. Os que precisam do `pnpm dev` de pé:
+`pnpm check:whatsapp` e `pnpm check:acervo` (as fotos dela estão todas lá e
+inteiras — compara o armazenamento com o backup, foto a foto). Os que precisam do `pnpm dev` de pé:
 `pnpm check:produto` (caminho de conversão), `pnpm check:login` (acesso ao painel),
 `pnpm check:painel` (cadastro de peça de ponta a ponta; aceita `FOTO_DE_TESTE=<caminho>`
-para exercitar também o envio ao Blob), `pnpm check:telas` (abre todas as telas do
+para exercitar também o envio ao armazenamento), `pnpm check:telas` (abre todas as telas do
 painel — duas ficaram quebradas em silêncio antes dele existir), `pnpm check:classes`
 (classe de projeto que não existe — `.secao--ampla` tem dois traços, e escrevê-la
 com um faz o padding sumir em silêncio: já aconteceu três vezes), `pnpm check:seo`

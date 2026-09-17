@@ -2205,7 +2205,7 @@ restaurar não é backup, e o dia de descobrir como não pode ser o dia em que o
 sumiu. Apaguei uma peça com fotos e grupos de opção, restaurei, e ela voltou inteira. O
 `--aplicar` faz `upsert` por id: repõe o que sumiu e deixa em paz o que foi criado depois.
 
-### 🟡 Etapa 56 — Saída do Vercel Blob para o Cloudflare R2 *(em andamento — falta a credencial)*
+### ✅ Etapa 56 — Saída do Vercel Blob para o Cloudflare R2 *(migração feita; falta publicar)*
 
 **O que aconteceu.** Em 16/09/2026 a Vercel suspendeu os **sete** armazenamentos Blob do
 time: a cota do plano gratuito é de 2.000 operações avançadas por mês para a **conta
@@ -2259,6 +2259,49 @@ diz que não é culpa dela e oferece a saída: cadastrar sem foto e anexar depoi
 **Falta:** um token de R2 com escopo restrito ao bucket. *O que o Bruno gerou para o
 darkfilm é de administrador* — cria e apaga bucket em toda a conta Cloudflare — e está numa
 variável de ambiente de aplicação web. Se vazar, apaga bucket de qualquer cliente.
+
+#### As 74 fotos migraram (17/09/2026)
+
+Estão no R2 sob o prefixo `croche/` — o bucket é compartilhado com o darkfilm, e a rota que
+serve as fotos recusa qualquer chave fora do prefixo. Nenhum endereço de Blob sobrou no
+banco. A conferência é foto a foto contra o backup: **74/74 leem inteiras e com o tamanho
+exato** (`pnpm check:acervo`, novo).
+
+**O site serve as fotos, o armazenamento não.** O caminho comum seria abrir o bucket num
+domínio público; o token que temos não alcança a API do R2 para isso, então elas passam por
+`/fotos/<chave>` (`src/app/fotos/[...chave]/route.ts`), que lê com requisição assinada. O que
+começou como contorno vale por si: o endereço fica na marca dela, o identificador da conta
+Cloudflare não aparece em nenhum `<img>`, e **a próxima troca de armazenamento não mexe em
+uma linha do banco** — foi guardar endereço de fornecedor que obrigou a reescrever 74 linhas
+agora. O preço é que as URLs viraram relativas, e quem precisa de endereço absoluto (dados
+estruturados, backup, arte de compartilhamento) passa a dizer isso explicitamente.
+
+**Três defeitos que a migração revelou**, todos da mesma família — algo amarrado ao nome do
+fornecedor:
+
+1. **O retrato da Raquel quase se perdeu.** `siteSettings.aboutImageUrl` não era coberto
+   pelo backup, que varria só `ProductImage`; ele rodava verde havia semanas sem nunca ter
+   copiado aquele arquivo, e só sobreviveu porque uma versão antiga listava o armazenamento
+   inteiro. Acrescentar `siteSettings` à lista consertaria o caso e deixaria a armadilha de
+   pé para o próximo campo de imagem. Agora **o backup descobre as fotos** varrendo o que
+   acabou de copiar: campo de texto que pareça foto entra sozinho, inclusive os que ainda não
+   existem.
+2. **A verificação de compartilhamento emudeceu.** O detector de "esta peça tem foto?"
+   procurava `blob.vercel-storage.com`. Depois da migração ele parou de casar, e as dez
+   asserções de *"a foto da peça está na arte"* — a razão de aquele teste existir — deixaram
+   de rodar **com o teste verde**. O detector agora procura `/fotos/`, que é rota nossa, e há
+   trava que reprova se nenhuma peça for detectada com foto.
+3. **A rota não declarava `content-length`.** Sem ele o `HEAD` não diz tamanho, e a asserção
+   do painel que confere se a foto foi reduzida antes de subir media zero e passava sempre.
+
+**E o envio repete quando a conexão cai.** A migração morreu na foto 34 de 73 com
+`UND_ERR_SOCKET: other side closed`. Três tentativas com espera crescente, só para erro de
+rede — resposta do servidor sobe na hora. Isso importa menos para o script e muito para ela,
+que sobe foto do 4G da serra: uma queda de dez segundos não pode virar cadastro perdido.
+
+**Falta publicar**, e depende do Bruno: gravar as quatro variáveis do R2 na Vercel e no
+repositório de backup (o workflow já foi ajustado). Sem elas, o deploy sobe com as fotos
+quebradas e o backup de 6 em 6 horas passa a falhar.
 
 ## Decisões em aberto
 
