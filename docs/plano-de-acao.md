@@ -2338,15 +2338,25 @@ foi assim que ela reprovou o que estava no ar (101,4 kB de 101,4 kB) e aprovou o
 Isso importa porque o painel guarda foto de até 2000px: sem a correção, cada card da home
 baixaria o arquivo inteiro no 4G dela assim que o acervo real entrasse.
 
-#### O primeiro a chegar deixou de pagar a conta
+#### As imagens são aquecidas depois de publicar — mas não era isso que fazia o LCP subir
 
 O cache do otimizador é por deploy: a versão redimensionada de cada foto só passa a existir
-depois que alguém a pede. Logo após publicar, a home media **3,9 a 4,7 s de LCP**; da segunda
-visita em diante, 0,5–0,7 s. Quem pagava era quem chegasse primeiro — e na home a foto do
-hero é justamente o elemento de LCP.
+depois que alguém a pede. Um robô agora chega primeiro — o workflow `aquecer.yml` dispara no
+aviso que a própria Vercel manda ao GitHub quando o deploy fica pronto, e deixa as imagens
+prontas para o primeiro visitante de verdade (medido no ar: 603 ms na primeira busca de uma
+foto contra 413 ms depois).
 
-Agora um robô chega primeiro: o workflow `aquecer.yml` dispara no aviso que a própria Vercel
-manda ao GitHub quando o deploy fica pronto.
+**Só que o problema que motivou isto era outro, e eu diagnostiquei errado.** A issue dizia
+que a foto do hero era o elemento de LCP da home e que aquecê-la resolveria os 3,9–4,7 s
+medidos logo após publicar. Medido depois, com o aquecimento já rodando: o LCP continuou
+alto, e o elemento de LCP da home **é um `<p>` de texto** — a frase da barra de aviso —, em
+todas as sondagens. Nenhuma foto. O aquecimento vale pelo que faz (imagens prontas, menos
+espera para quem chega), mas não é o conserto do LCP, e chamá-lo assim seria mentir no
+documento que serve de fonte da verdade.
+
+**O que ainda não se sabe:** por que aquele parágrafo pinta tarde. Ele fica dentro de um
+`AnimatePresence`, o que é a primeira pista a puxar. Fica registrado no board como
+investigação aberta, com as medições já feitas.
 
 **O aquecimento é uma visita, não uma lista de endereços.** A home traz 148 variantes
 distintas de `/_next/image` — todas as larguras de todos os `srcset`. Pedir as 148 aqueceria

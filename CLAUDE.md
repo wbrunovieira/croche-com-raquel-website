@@ -68,8 +68,9 @@ quebrar em silêncio.
 
 Depois de publicar, as imagens são **aquecidas sozinhas** (workflow `aquecer.yml`,
 disparado pelo aviso de deploy da Vercel): o cache do otimizador é por deploy, e
-sem isso o primeiro visitante paga a geração da foto do hero — 3,9 s contra 0,5 s.
-Para aquecer à mão: `URL_BASE=https://… pnpm aquecer`.
+sem isso o primeiro visitante paga a geração de cada foto. Para aquecer à mão:
+`URL_BASE=https://… pnpm aquecer`. Isso **não** conserta o LCP da home — o
+elemento de LCP ali é texto, não foto; ver a issue aberta.
 
 Depois de `pnpm db:migrate`, **reinicie o `pnpm dev`** — ele guarda o cliente Prisma
 antigo em memória e a rota quebra com "Unknown field".

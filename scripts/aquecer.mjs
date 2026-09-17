@@ -3,9 +3,15 @@
  *
  * **O problema.** O cache do otimizador de imagem é por deploy: a versão
  * redimensionada de cada foto só passa a existir depois que alguém a pede. Quem
- * chega primeiro paga a geração — e na home a foto do hero é justamente o
- * elemento de LCP. Medido em 17/09/2026, logo após publicar: **3,9 a 4,7 s** na
- * primeira visita, contra 0,5–0,7 s da segunda em diante.
+ * chega primeiro paga a geração — medido no ar, 603 ms na primeira busca de uma
+ * foto contra 413 ms depois.
+ *
+ * **O que este script NÃO resolve.** Ele nasceu para consertar o LCP alto da
+ * home logo após publicar, e não conserta: com o aquecimento rodando, o LCP
+ * continuou alto, e o elemento de LCP dali **é um `<p>` de texto**, não foto.
+ * O diagnóstico original estava errado. O aquecimento fica porque vale pelo que
+ * de fato faz — ninguém espera imagem ser gerada —, e a investigação do LCP
+ * segue aberta no board.
  *
  * **Por que um navegador, e não uma lista de endereços.** A home traz 148
  * variantes distintas de `/_next/image` — todas as larguras de todos os
