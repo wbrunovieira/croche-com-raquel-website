@@ -2354,9 +2354,39 @@ todas as sondagens. Nenhuma foto. O aquecimento vale pelo que faz (imagens pront
 espera para quem chega), mas não é o conserto do LCP, e chamá-lo assim seria mentir no
 documento que serve de fonte da verdade.
 
-**O que ainda não se sabe:** por que aquele parágrafo pinta tarde. Ele fica dentro de um
-`AnimatePresence`, o que é a primeira pista a puxar. Fica registrado no board como
-investigação aberta, com as medições já feitas.
+#### O parágrafo não pintava tarde — a página inteira pintava tarde
+
+A pista do `AnimatePresence` não era a certa: o servidor já manda a barra visível
+(`style="height:auto;opacity:1"`), então não havia nada escondido esperando o JS.
+
+A medição que resolveu foi separar **FCP de LCP**: os dois davam o **mesmo instante**. A
+página pinta uma vez só, e o `<p>` da barra de aviso é apenas o maior elemento presente nesse
+momento. Não era um elemento lento; era a primeira pintura inteira chegando tarde.
+
+E a causa disso apareceu comparando a home com a página de peça:
+
+| | home | página de peça |
+| --- | --- | --- |
+| cache | `MISS` · `no-store` | **`PRERENDER`** |
+| HTML | 337 kB | 213 kB |
+
+A home é **dinâmica** (`ƒ /` no build) porque lê `searchParams` — o filtro e a paginação do
+catálogo —, então cada visita paga uma renderização completa. Isso não vai mudar: filtro por
+endereço é o que permite a ela mandar `/?categoria=bolsas#catalogo` por WhatsApp.
+
+**O que mudou foi a ordem.** O catálogo é 230 kB dos 337 kB, consulta o banco por conta
+própria e fica abaixo da dobra — e o servidor esperava ele ficar pronto para mandar o
+primeiro byte de tudo. Agora ele espera dentro de um `Suspense`: a casca sai na hora e o
+catálogo chega em seguida. Local, o primeiro byte caiu para 0,72 s com o último em 1,37 s.
+
+Dois cuidados que a medição cobrou:
+
+- **O esqueleto tem a altura da seção real** (1810px, medida no ar). Trocar vazio por 1810px
+  empurraria a página de quem estivesse rolando — e esta home já teve CLS de 0,92.
+- **Ele carrega o `id="catalogo"` E a classe `scroll-mt-cabecalho-lg`.** Só o `id` não basta:
+  sem o recuo, `/#catalogo` aterrissava 104px acima e o título ficava atrás do cabeçalho
+  fixo. Comparar com o que estava no ar foi o que revelou — lá os três caminhos (filtro,
+  página 2 e âncora) param em 104px, e a primeira versão daqui parava em 0.
 
 **O aquecimento é uma visita, não uma lista de endereços.** A home traz 148 variantes
 distintas de `/_next/image` — todas as larguras de todos os `srcset`. Pedir as 148 aqueceria

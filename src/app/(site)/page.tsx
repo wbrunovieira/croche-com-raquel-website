@@ -8,6 +8,7 @@ import { Etiqueta } from "@/components/ui/etiqueta";
 import { Foto } from "@/components/ui/foto";
 import { GradeDeProdutos } from "@/components/produto/card-de-produto";
 import { Simbolo } from "@/components/brand/simbolo";
+import { Suspense } from "react";
 import { SecaoCatalogo } from "@/components/site/secoes/catalogo";
 import { SecaoQuemFaz } from "@/components/site/secoes/quem-faz";
 import { SecaoCuidados } from "@/components/site/secoes/cuidados";
@@ -300,7 +301,40 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         </section>
       ) : null}
 
-      <SecaoCatalogo categoria={categoriaAtual} pagina={paginaAtual} />
+      {/* O catálogo espera dentro de um `Suspense`, e isso é sobre a primeira
+          pintura da home.
+
+          Ele é o pedaço mais caro da página: **230 kB dos 337 kB** do HTML, com
+          consulta própria ao banco, e fica abaixo da dobra. Sem a fronteira, o
+          servidor só mandava o primeiro byte quando o catálogo inteiro estivesse
+          pronto — o cabeçalho, o hero e tudo que aparece primeiro ficavam
+          esperando aquilo que ninguém está vendo ainda.
+
+          A home continua dinâmica: ela lê `searchParams` por causa do filtro e
+          da paginação, e isso não muda. O que muda é a ORDEM — a casca sai na
+          hora e o catálogo chega em seguida, em vez de tudo sair junto no fim.
+
+          O esqueleto tem a altura medida da seção real (1810px no desktop) de
+          propósito: trocar um vazio por 1810px de conteúdo empurraria a página
+          para quem estivesse rolando, e esta home já teve CLS de 0,92.
+
+          E ele carrega o `id="catalogo"` **com a mesma classe de recuo**:
+          `/#catalogo` é endereço que a Raquel manda por WhatsApp, e quem abre
+          esse link precisa achar o alvo mesmo com o catálogo a caminho. Sem o
+          `scroll-mt-cabecalho-lg` aqui, a âncora aterrissava 104px acima e o
+          título da seção ficava escondido atrás do cabeçalho fixo — medido
+          contra o que está no ar, onde os três caminhos param em 104px. */}
+      <Suspense
+        fallback={
+          <div
+            id="catalogo"
+            className="chao-do-catalogo scroll-mt-cabecalho-lg min-h-[1810px]"
+            aria-hidden="true"
+          />
+        }
+      >
+        <SecaoCatalogo categoria={categoriaAtual} pagina={paginaAtual} />
+      </Suspense>
       <SecaoQuemFaz config={config} historia={historia} />
       <SecaoCuidados pagina={cuidados} />
       <SecaoPerguntas grupos={grupos} whatsappNumero={config.whatsappNumero} />
