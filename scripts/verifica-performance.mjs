@@ -96,6 +96,73 @@ try {
 
     await pagina.close();
   }
+  /**
+   * **As fotos das peças chegam redimensionadas?**
+   *
+   * Esta é a asserção que faltava em 17/09/2026. A rota `/fotos` era
+   * `force-static`, o que a torna ISR — e o otimizador de imagem da Vercel **não
+   * otimiza imagem cuja origem é rota ISR do próprio deploy**: devolvia o arquivo
+   * original, do tamanho que estivesse, em qualquer largura pedida. O mesmo
+   * código otimizava perfeitamente no build local, então **nada acusava fora do
+   * ar** — nem build, nem lint, nem o CLS e o LCP aqui em cima, porque as fotos
+   * de hoje são recortes de 640×800 e cabem no orçamento.
+   *
+   * O estrago só apareceria quando ela subisse foto de verdade: o painel guarda
+   * até 2000px de lado, e cada card da home baixaria o arquivo inteiro no 4G.
+   *
+   * A medição é direta: pedir a MENOR largura que o site usa e conferir que o que
+   * volta é bem menor que o original. Passar direto devolve exatamente o mesmo
+   * número de bytes, então a margem separa os dois casos sem ambiguidade.
+   */
+  const LARGURA_MINIATURA = 64;
+  /** Passando direto, a razão é 1,00. Redimensionando de verdade, fica abaixo de 0,1. */
+  const RAZAO_MAXIMA = 0.5;
+
+  {
+    const pagina = await navegador.newPage();
+    await pagina.goto(`${BASE}/`, { waitUntil: "networkidle" });
+    // A primeira foto de peça da home — pega o caminho como o site realmente o
+    // escreve, em vez de montar um endereço na mão que pode envelhecer.
+    const caminho = await pagina.evaluate(() => {
+      const img = [...document.querySelectorAll("img")]
+        .map((i) => i.currentSrc || i.src)
+        .find((u) => /%2Ffotos%2F|\/fotos\//.test(u));
+      if (!img) return null;
+      const url = new URL(img, location.href);
+      return url.searchParams.get("url") ?? url.pathname;
+    });
+    await pagina.close();
+
+    if (!caminho) {
+      // Endereço que serve a obra não tem peça nenhuma — é o caso do domínio
+      // raiz antes do lançamento, e de qualquer URL de deploy cru. Acusar ali
+      // seria apontar defeito onde só há configuração; ensinar a ignorar
+      // alarme custa mais caro que a asserção vale.
+      const ehObra = /— em breve/.test(await (await fetch(`${BASE}/`)).text());
+      if (ehObra) {
+        console.log(`○ ${BASE} está servindo a obra — nenhuma foto de peça para medir.`);
+      } else {
+        ok("achou uma foto de peça na home", false, "nenhuma imagem vinda de /fotos/");
+      }
+    } else {
+      const original = await fetch(new URL(caminho, BASE));
+      const bytesOriginal = (await original.arrayBuffer()).byteLength;
+
+      const otimizada = await fetch(
+        `${BASE}/_next/image?url=${encodeURIComponent(caminho)}&w=${LARGURA_MINIATURA}&q=75`,
+        { headers: { Accept: "image/webp,image/*" } }
+      );
+      const bytesOtimizada = (await otimizada.arrayBuffer()).byteLength;
+      const razao = bytesOtimizada / bytesOriginal;
+
+      ok(
+        `a foto chega redimensionada (w=${LARGURA_MINIATURA})`,
+        razao <= RAZAO_MAXIMA,
+        `${(bytesOtimizada / 1024).toFixed(1)} kB de ${(bytesOriginal / 1024).toFixed(1)} kB` +
+          (razao > RAZAO_MAXIMA ? " — está passando direto pelo otimizador" : "")
+      );
+    }
+  }
 } finally {
   await navegador.close();
 }

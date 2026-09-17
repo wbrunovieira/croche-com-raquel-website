@@ -22,11 +22,25 @@ import { r2Ler } from "@/lib/r2";
  * `next/image` guarda as versões otimizadas, então a origem é consultada uma vez
  * por tamanho, não por visita.
  *
- * `force-static` com revalidação longa: a chave carrega sufixo aleatório, então
- * foto nova é endereço novo e não há o que invalidar.
+ * **Esta rota NÃO pode ser `force-static`, e a razão é sutil.** Ela era, e fazia
+ * sentido: a chave carrega sufixo aleatório, então foto nova é endereço novo e
+ * não há o que invalidar. Só que `force-static` a transforma em rota ISR, e
+ * **o otimizador de imagem da Vercel não otimiza imagem cuja origem é rota ISR
+ * do próprio deploy** — ele devolve o arquivo original, do tamanho que estiver,
+ * em qualquer largura pedida. Medido em deploy de teste: com `force-static`,
+ * `w=64` voltava 640×800 com 103.877 B; sem ele, volta WebP de 1.714 B. O
+ * mesmo código sempre funcionou no build local, o que faz o defeito invisível
+ * fora do ar.
+ *
+ * Isso importa porque o painel guarda foto de até 2000px de lado. Com a rota
+ * estática, cada card da home baixaria o arquivo inteiro no 4G dela.
+ *
+ * **O cache não se perde nessa troca** — só muda de lugar. Antes era o cache de
+ * ISR; agora são os cabeçalhos: `s-maxage` manda na borda da Vercel, `max-age`
+ * no navegador, e `immutable` dispensa revalidação. Somado ao cache do próprio
+ * otimizador, a origem é consultada uma vez por tamanho, não por visita.
  */
-export const dynamic = "force-static";
-export const revalidate = 31536000;
+export const dynamic = "force-dynamic";
 
 export async function GET(
   _req: Request,
@@ -53,7 +67,10 @@ export async function GET(
       // zero e passava sempre. Também poupa o navegador de descobrir o tamanho
       // baixando.
       "content-length": String(arquivo.corpo.byteLength),
-      "cache-control": "public, max-age=31536000, immutable",
+      // `s-maxage` para a borda da Vercel, `max-age` para o navegador. Um ano
+      // nos dois: a chave tem sufixo aleatório, então foto nova é endereço
+      // novo e não existe versão velha para expirar.
+      "cache-control": "public, max-age=31536000, s-maxage=31536000, immutable",
     },
   });
 }

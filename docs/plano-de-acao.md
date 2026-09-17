@@ -2315,12 +2315,26 @@ detector de foto parou de casar"* — a trava nova apontando para o lugar errado
 ensina a ignorar alarme, então agora ela reconhece a obra, diz o que está acontecendo e
 aponta o endereço onde o site atende de verdade.
 
-**Um defeito ficou aberto:** na Vercel, o `/_next/image` **não otimiza** as fotos que vêm da
-rota `/fotos` — devolve o arquivo original em qualquer largura pedida. Não é o nosso código:
-o mesmo pedido no build de produção rodando local sai em webp de 1,7 kB, e no ar o
-otimizador funciona para outras fontes. Hoje passa despercebido porque as fotos são recortes
-de 640×800; quando ela subir foto de verdade (o painel guarda até 2000px), cada card vai
-baixar o arquivo inteiro no 4G. Está registrado no board com a medição e as hipóteses.
+#### O otimizador de imagem estava sendo pulado — e a causa era uma linha
+
+Na Vercel, o `/_next/image` devolvia as fotos da rota `/fotos` **sem otimizar**: o arquivo
+original, do tamanho que estivesse, em qualquer largura pedida. O mesmo código otimizava
+perfeitamente no build local, então nada acusava — nem build, nem lint, nem o CLS e o LCP.
+
+A causa: a rota era `force-static`, o que a torna **ISR**, e **o otimizador da Vercel não
+otimiza imagem cuja origem é rota ISR do próprio deploy**. Confirmado num deploy de teste,
+trocando só essa linha: com `force-static`, `w=64` voltava 640×800 com 103.877 B; sem ela,
+volta WebP de **1.714 B**.
+
+O cache não se perdeu na troca, mudou de lugar: era o cache de ISR, agora são os cabeçalhos
+(`s-maxage` na borda, `max-age` no navegador, `immutable` dispensando revalidação). Somado
+ao cache do próprio otimizador, a origem é consultada uma vez por tamanho.
+
+**E o `check:performance` ganhou a asserção que faltava:** pede a menor largura que o site
+usa e confere que o que volta é bem menor que o original. Passando direto, a razão é 1,00 —
+foi assim que ela reprovou o que estava no ar (101,4 kB de 101,4 kB) e aprovou o conserto.
+Isso importa porque o painel guarda foto de até 2000px: sem a correção, cada card da home
+baixaria o arquivo inteiro no 4G dela assim que o acervo real entrasse.
 
 ## Decisões em aberto
 
