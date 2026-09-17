@@ -50,6 +50,29 @@ const ok = (nome, condicao, detalhe = "") => {
 const texto = async (url) => (await fetch(url)).text();
 const pegar = (html, re) => (html.match(re) ?? [])[1] ?? "";
 
+/**
+ * **A obra atende no domínio raiz, e ali não há o que conferir.**
+ *
+ * Enquanto o lançamento não acontece, `crochecomraquel.com.br` serve a página
+ * de "em breve" em TODA rota — inclusive `/produtos/<slug>`, que responde 200
+ * com a obra em vez da peça. O sitemap, porém, lista as peças normalmente.
+ *
+ * Sem esta parada, a verificação percorria dezenas de páginas de obra, não
+ * achava foto em nenhuma e acusava *"o detector de foto parou de casar"* — um
+ * alarme falso apontando para o lugar errado. Alarme falso ensina a ignorar
+ * alarme, então aqui ela diz o que está acontecendo e sai sem fingir que
+ * conferiu algo.
+ */
+const inicial = await texto(`${BASE}/`);
+if (/— em breve/.test(inicial)) {
+  console.log(
+    `○ ${BASE} está servindo a página de obra — nenhuma peça para conferir.\n` +
+      "  Aponte para onde o site atende de verdade:\n" +
+      "  URL_BASE=https://preview.crochecomraquel.com.br pnpm check:compartilhar"
+  );
+  process.exit(0);
+}
+
 const mapa = await texto(`${BASE}/sitemap.xml`);
 const slugs = [...mapa.matchAll(/produtos\/([a-z0-9-]+)</g)].map((m) => m[1]);
 

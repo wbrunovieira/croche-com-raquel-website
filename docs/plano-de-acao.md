@@ -2205,7 +2205,7 @@ restaurar não é backup, e o dia de descobrir como não pode ser o dia em que o
 sumiu. Apaguei uma peça com fotos e grupos de opção, restaurei, e ela voltou inteira. O
 `--aplicar` faz `upsert` por id: repõe o que sumiu e deixa em paz o que foi criado depois.
 
-### ✅ Etapa 56 — Saída do Vercel Blob para o Cloudflare R2 *(migração feita; falta publicar)*
+### ✅ Etapa 56 — Saída do Vercel Blob para o Cloudflare R2 *(no ar)*
 
 **O que aconteceu.** Em 16/09/2026 a Vercel suspendeu os **sete** armazenamentos Blob do
 time: a cota do plano gratuito é de 2.000 operações avançadas por mês para a **conta
@@ -2299,9 +2299,28 @@ fornecedor:
 rede — resposta do servidor sobe na hora. Isso importa menos para o script e muito para ela,
 que sobe foto do 4G da serra: uma queda de dez segundos não pode virar cadastro perdido.
 
-**Falta publicar**, e depende do Bruno: gravar as quatro variáveis do R2 na Vercel e no
-repositório de backup (o workflow já foi ajustado). Sem elas, o deploy sobe com as fotos
-quebradas e o backup de 6 em 6 horas passa a falhar.
+**Publicado em 17/09/2026.** As quatro variáveis do R2 estão na Vercel (produção, preview e
+desenvolvimento) e as fotos servem nos dois domínios. Contra o que está no ar:
+`check:compartilhar` com 81 asserções, `check:seo`, `check:performance`, `check:hospedagem` e
+as 19 telas do painel — todos verdes.
+
+**Falta ainda:** gravar os mesmos quatro segredos no repositório de backup. O workflow de lá
+já foi ajustado, mas sem eles o backup de 6 em 6 horas passa a falhar (de propósito: backup
+sem foto não é backup). Os dois commits do repositório de backup também estão à espera de
+push.
+
+**A verificação de compartilhamento aprendeu sobre a obra.** Rodada contra o domínio raiz,
+ela percorria dezenas de páginas de "em breve", não achava foto em nenhuma e acusava *"o
+detector de foto parou de casar"* — a trava nova apontando para o lugar errado. Alarme falso
+ensina a ignorar alarme, então agora ela reconhece a obra, diz o que está acontecendo e
+aponta o endereço onde o site atende de verdade.
+
+**Um defeito ficou aberto:** na Vercel, o `/_next/image` **não otimiza** as fotos que vêm da
+rota `/fotos` — devolve o arquivo original em qualquer largura pedida. Não é o nosso código:
+o mesmo pedido no build de produção rodando local sai em webp de 1,7 kB, e no ar o
+otimizador funciona para outras fontes. Hoje passa despercebido porque as fotos são recortes
+de 640×800; quando ela subir foto de verdade (o painel guarda até 2000px), cada card vai
+baixar o arquivo inteiro no 4G. Está registrado no board com a medição e as hipóteses.
 
 ## Decisões em aberto
 
