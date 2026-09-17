@@ -171,6 +171,34 @@ async function main() {
   }
 
   /**
+   * **Isto é foto mesmo?**
+   *
+   * Entre 14 e 17/09/2026 o backup rodou quatro vezes por dia gravando, no
+   * lugar de cada uma das 74 fotos, um arquivo de 22 bytes com o texto `Your
+   * store is blocked` — o corpo de erro do Vercel Blob suspenso, que vinha com
+   * **HTTP 200**. O `r.ok` era verdadeiro, então nada reclamou: o acervo inteiro
+   * foi sobrescrito por mensagens de erro e commitado, e o histórico ficou com
+   * cara de saudável. O arquivo real só sobreviveu no R2 e num commit de antes.
+   *
+   * A lição é que status 200 não é promessa de conteúdo. Daqui em diante o que
+   * desce precisa COMEÇAR como imagem — os primeiros bytes de JPEG, PNG, GIF,
+   * WebP ou AVIF — e ter tamanho de foto. Um corpo de erro não passa por
+   * nenhuma das duas.
+   */
+  function ehImagem(bytes: Buffer): boolean {
+    // Menor que isto não é foto de peça; é recado de servidor.
+    if (bytes.length < 1024) return false;
+    const hex = bytes.subarray(0, 12).toString("hex");
+    return (
+      hex.startsWith("ffd8ff") || // JPEG
+      hex.startsWith("89504e47") || // PNG
+      hex.startsWith("47494638") || // GIF
+      (hex.startsWith("52494646") && hex.slice(16, 24) === "57454250") || // RIFF…WEBP
+      hex.slice(8, 24) === "6674797061766966" // ftypavif
+    );
+  }
+
+  /**
    * **As fotos são DESCOBERTAS no que acabou de ser copiado, e não pedidas a
    * uma tabela escolhida a dedo.**
    *
@@ -218,7 +246,16 @@ async function main() {
 
     const conteudo = await baixar(url);
     if (!conteudo) {
-      falhas.push(url.slice(0, 80));
+      falhas.push(`não baixou — ${url.slice(0, 70)}`);
+      continue;
+    }
+    if (!ehImagem(conteudo)) {
+      // Não grava. Sobrescrever a cópia boa por um corpo de erro é exatamente o
+      // que aconteceu em setembro de 2026, e é pior que não copiar nada: some a
+      // única via de volta.
+      falhas.push(
+        `veio ${conteudo.length} byte(s) que não são imagem — ${url.slice(0, 60)}`
+      );
       continue;
     }
     await writeFile(join(DESTINO, "fotos", nome), conteudo);
