@@ -1,0 +1,55 @@
+name: Aquecer as imagens depois de publicar
+
+# **Por que isto existe.** O cache do otimizador de imagem é por deploy: a versão
+# redimensionada de cada foto só passa a existir depois que alguém a pede. Quem
+# chega primeiro paga a geração — e na home a foto do hero é o elemento de LCP.
+# Medido em 17/09/2026, logo depois de publicar: 3,9 a 4,7 s na primeira visita,
+# contra 0,5–0,7 s da segunda em diante. Este job existe para que o primeiro a
+# chegar seja um robô, e não uma cliente dela.
+#
+# Dispara no aviso que a própria Vercel manda ao GitHub quando o deploy fica
+# pronto. O `environment_url` do evento é o endereço CRU do deploy, que tem
+# proteção e responderia com a tela de login — por isso o aquecimento mira os
+# domínios públicos. O que servir a obra o script pula sozinho.
+on:
+  deployment_status:
+
+permissions:
+  contents: read
+
+# Um de cada vez, e sem cancelar o que está correndo: dois aquecimentos juntos
+# só pagariam a mesma transformação duas vezes.
+concurrency:
+  group: aquecer
+  cancel-in-progress: false
+
+jobs:
+  aquecer:
+    if: github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      # `--ignore-scripts`: o `postinstall` roda `prisma generate`, que pede o
+      # endereço do banco. O aquecimento não toca no banco — ele só visita o
+      # site como um visitante visitaria.
+      - name: Instalar
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Navegador
+        run: npx playwright install --with-deps chromium
+
+      - name: Aquecer
+        run: |
+          for alvo in https://crochecomraquel.com.br https://preview.crochecomraquel.com.br; do
+            echo "── $alvo"
+            URL_BASE="$alvo" node scripts/aquecer.mjs
+          done

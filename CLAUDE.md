@@ -66,6 +66,11 @@ site). Os dois últimos aceitam `URL_BASE=https://…` e valem
 mais rodados **contra o que está no ar** — é lá que o roteamento por host pode
 quebrar em silêncio.
 
+Depois de publicar, as imagens são **aquecidas sozinhas** (workflow `aquecer.yml`,
+disparado pelo aviso de deploy da Vercel): o cache do otimizador é por deploy, e
+sem isso o primeiro visitante paga a geração da foto do hero — 3,9 s contra 0,5 s.
+Para aquecer à mão: `URL_BASE=https://… pnpm aquecer`.
+
 Depois de `pnpm db:migrate`, **reinicie o `pnpm dev`** — ele guarda o cliente Prisma
 antigo em memória e a rota quebra com "Unknown field".
 

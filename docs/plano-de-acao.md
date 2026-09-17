@@ -2338,6 +2338,29 @@ foi assim que ela reprovou o que estava no ar (101,4 kB de 101,4 kB) e aprovou o
 Isso importa porque o painel guarda foto de até 2000px: sem a correção, cada card da home
 baixaria o arquivo inteiro no 4G dela assim que o acervo real entrasse.
 
+#### O primeiro a chegar deixou de pagar a conta
+
+O cache do otimizador é por deploy: a versão redimensionada de cada foto só passa a existir
+depois que alguém a pede. Logo após publicar, a home media **3,9 a 4,7 s de LCP**; da segunda
+visita em diante, 0,5–0,7 s. Quem pagava era quem chegasse primeiro — e na home a foto do
+hero é justamente o elemento de LCP.
+
+Agora um robô chega primeiro: o workflow `aquecer.yml` dispara no aviso que a própria Vercel
+manda ao GitHub quando o deploy fica pronto.
+
+**O aquecimento é uma visita, não uma lista de endereços.** A home traz 148 variantes
+distintas de `/_next/image` — todas as larguras de todos os `srcset`. Pedir as 148 aqueceria
+muito mais do que qualquer visitante usa, e cada uma é uma transformação cobrada: foi cota
+estourada que tirou este site do ar em setembro. Um navegador real escolhe do `srcset` só a
+largura do próprio viewport, então visitar a página aquece exatamente o que um visitante
+pediria — **38 imagens em dois tamanhos de tela**, contra 148.
+
+Rola até o fim de propósito: o `next/image` só busca o que entra na tela, e a grade do
+catálogo fica bem abaixo da dobra. Aquecer o hero e deixar fria a grade que a pessoa vê três
+segundos depois resolveria a métrica e não a experiência.
+
+O domínio raiz é pulado sozinho enquanto servir a obra.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

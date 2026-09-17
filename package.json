@@ -26,7 +26,8 @@
     "check:classes": "node scripts/verifica-classes.mjs",
     "check:performance": "node scripts/verifica-performance.mjs",
     "check:compartilhar": "node scripts/verifica-compartilhamento.mjs",
-    "check:acervo": "tsx scripts/verifica-acervo.ts"
+    "check:acervo": "tsx scripts/verifica-acervo.ts",
+    "aquecer": "node scripts/aquecer.mjs"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.10.0",
