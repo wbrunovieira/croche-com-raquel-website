@@ -4,6 +4,7 @@ import { configuracaoBase } from "@/auth.config";
 import {
   CAMINHO_DA_OBRA,
   ehDominioDeProducao,
+  ehPreviewParaRedirecionar,
   ehWwwDoDominio,
   mostraSiteCompleto,
 } from "@/lib/hospedagem";
@@ -29,12 +30,12 @@ export default auth(function proxy(req) {
   const host = req.headers.get("host") ?? "";
   const { pathname } = req.nextUrl;
 
-  // `www` vai para o apex, e vai ANTES de tudo: assim a decisão de obra ou site
-  // é tomada uma vez só, no endereço definitivo, e não duas vezes em hosts que
-  // deveriam ser o mesmo lugar.
-  if (ehWwwDoDominio(host)) {
+  // `www` e, depois da estreia, `preview.` vão para o apex — e vão ANTES de
+  // tudo: assim a decisão de obra ou site é tomada uma vez só, no endereço
+  // definitivo, e não duas vezes em hosts que deveriam ser o mesmo lugar.
+  if (ehWwwDoDominio(host) || ehPreviewParaRedirecionar(host)) {
     const apex = req.nextUrl.clone();
-    apex.host = host.replace(/^www\./i, "");
+    apex.host = host.replace(/^(www|preview)\./i, "");
     // A porta é zerada à parte: o `NextURL` a guarda separada do host, então
     // trocar só o host deixava um `:3000` colado no destino. Em produção não há
     // porta para herdar, mas um redirecionamento que só está certo em produção é

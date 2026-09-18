@@ -2438,6 +2438,27 @@ Conferido antes do envio: as **14 URLs do sitemap respondem 200 e todas apontam 
 domínio raiz** — sitemap com URL de preview seria o erro clássico de quem lança e esquece a
 variável do endereço.
 
+#### O `preview.` passou a mandar para o domínio
+
+Depois da estreia ele perdeu a função — é o mesmo deploy do domínio, e a única diferença era
+o `noindex`. Agora responde **308 guardando o caminho**, como o `www` já fazia.
+
+**O motivo não é SEO.** O `noindex` e o `canonical` já impediam o preview de competir no
+buscador. O que estava em jogo é o que já circula: a Raquel passou semanas mandando
+`preview.crochecomraquel.com.br/produtos/…` por WhatsApp. Quem abrisse um daqueles veria uma
+página que funciona e é invisível para o Google — e, ao repassar, espalharia o endereço
+errado. Um 308 conserta todos de uma vez, sem ninguém reenviar nada.
+
+Guardar o caminho é o ponto: link de peça tem de chegar **na peça**. Mandar tudo para a raiz
+perderia justamente o que foi compartilhado.
+
+A condição é o próprio interruptor do lançamento: **antes da estreia o `preview.` não pode
+redirecionar**, porque é o único lugar onde o site existe — redirecionar levaria todo mundo
+para a obra.
+
+A verificação de hospedagem cobre os dois estados e troca também o host onde cobra o gate do
+painel: antes da estreia ele só existe no `preview.`; depois, vive no domínio.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

@@ -201,31 +201,55 @@ if (LOCAL && !passouNoWww) {
   );
 }
 
-// O preview vê o site completo...
-const preview = await pegar("/", PREVIEW);
-ok("o preview vê o site completo", preview.corpo.includes("carrega por anos"));
+/**
+ * **O `preview.` muda de papel na estreia.**
+ *
+ * Antes dela é o único lugar onde o site existe, e precisa servi-lo — fora do
+ * buscador, senão dois endereços com o mesmo site competem. Depois dela perde a
+ * função (é o mesmo deploy do domínio) e passa a redirecionar: a Raquel mandou
+ * links `preview.…/produtos/…` por WhatsApp durante semanas, e o 308 conserta
+ * todos de uma vez sem ninguém reenviar nada.
+ */
+if (!NO_AR) {
+  const preview = await pegar("/", PREVIEW);
+  ok("o preview vê o site completo", preview.corpo.includes("carrega por anos"));
+  ok(
+    "e sai com X-Robots-Tag noindex",
+    (preview.cabecalhos["x-robots-tag"] ?? "").includes("noindex"),
+    preview.cabecalhos["x-robots-tag"] ?? "ausente"
+  );
+} else {
+  // Com o caminho guardado: um link de peça tem de chegar NA PEÇA, e não na
+  // home. Redirecionar tudo para a raiz perderia justamente o que foi
+  // compartilhado.
+  const preview = await pegar("/produtos/bolsa-saco-cafe", PREVIEW);
+  const destino = preview.cabecalhos.location ?? "";
+  ok(
+    "o preview manda a visitante para o domínio, guardando o caminho",
+    [301, 308].includes(preview.status) &&
+      destino.includes(`${DOMINIO}/produtos/bolsa-saco-cafe`) &&
+      !destino.includes("preview."),
+    `${preview.status} → ${destino || "sem Location"}`
+  );
+}
 
-// ...mas fora do buscador. Sem isto, dois endereços com o mesmo site competem.
-ok(
-  "e sai com X-Robots-Tag noindex",
-  (preview.cabecalhos["x-robots-tag"] ?? "").includes("noindex"),
-  preview.cabecalhos["x-robots-tag"] ?? "ausente"
-);
-
-// O gate do admin é o que mais dói quebrar em silêncio: o proxy passa um
-// middleware próprio ao next-auth, e nesse caminho o callback `authorized`
-// é ignorado. Se alguém devolver o gate para lá, isto reprova.
-// Estes dois vão com o host do PREVIEW de propósito. Sem host eles herdavam o
-// da URL_BASE, o que passava no localhost (que vê o site inteiro) e reprovava
-// contra o ar: no domínio /admin cai na obra, e é isso que tem de acontecer. O
-// gate do painel só existe onde o site existe.
-const semSessao = await pegar("/admin/produtos", PREVIEW);
+/**
+ * O gate do admin é o que mais dói quebrar em silêncio: o proxy passa um
+ * middleware próprio ao next-auth, e nesse caminho o callback `authorized` é
+ * ignorado. Se alguém devolver o gate para lá, isto reprova.
+ *
+ * O host muda com o estado. Antes da estreia o painel só existe no `preview.`
+ * (no domínio, `/admin` cai na obra); depois, ele vive no domínio e o `preview.`
+ * só redireciona.
+ */
+const HOST_DO_PAINEL = NO_AR ? DOMINIO : PREVIEW;
+const semSessao = await pegar("/admin/produtos", HOST_DO_PAINEL);
 ok(
   "/admin sem sessão redireciona para a entrada",
   semSessao.status === 307 && (semSessao.cabecalhos.location ?? "").includes("/admin/entrar"),
   `status ${semSessao.status}`
 );
-const entrada = await pegar("/admin/entrar", PREVIEW);
+const entrada = await pegar("/admin/entrar", HOST_DO_PAINEL);
 ok("e a própria tela de entrada responde 200", entrada.status === 200, `status ${entrada.status}`);
 
 console.log(falhas === 0 ? "\n✓ hospedagem ok" : `\n✗ ${falhas} falha(s)`);

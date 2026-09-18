@@ -55,6 +55,33 @@ export function ehWwwDoDominio(host: string): boolean {
 }
 
 /**
+ * O `preview.` deve mandar a visitante para o domínio?
+ *
+ * **Só depois da estreia.** Antes dela, `preview.` é o ÚNICO lugar onde o site
+ * existe — redirecionar ali levaria todo mundo para a página de obra, que é o
+ * oposto do que ele serve. Por isso a condição é o próprio interruptor do
+ * lançamento.
+ *
+ * **E por que redirecionar, já que o `noindex` e o `canonical` já protegem o
+ * buscador.** O motivo não é SEO, é o que já está circulando: a Raquel passou
+ * semanas mandando `preview.crochecomraquel.com.br/produtos/...` por WhatsApp.
+ * Quem abre um daqueles hoje vê uma página que funciona e é invisível para o
+ * Google — e se repassar o link, a divulgação segue no endereço errado. Um 308
+ * conserta todos esses links de uma vez, sem ninguém reenviar nada.
+ *
+ * Depois da estreia o `preview.` também perdeu a função: ele e o domínio são o
+ * mesmo deploy, e a única diferença era o `noindex`. Ambiente de teste de
+ * verdade, se um dia fizer falta, é outro host apontando para outro deploy.
+ */
+export function ehPreviewParaRedirecionar(host: string): boolean {
+  if (process.env.SITE_NO_AR !== "true") return false;
+  const declarado = dominioDeclarado();
+  if (!declarado) return false;
+  const h = normalizar(host);
+  return h === `preview.${declarado}`;
+}
+
+/**
  * O host recebe o site completo, ou a página de obra?
  *
  * **Allowlist, não blocklist.** Um host novo — um domínio recém-apontado, um
