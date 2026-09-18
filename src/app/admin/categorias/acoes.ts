@@ -82,6 +82,27 @@ export async function salvarCategoria(
   }
   const v = lido.data;
 
+  /**
+   * **A capa precisa ser uma peça DESTA categoria.**
+   *
+   * O id vem do formulário e ia direto ao `update`. Duas consequências: id
+   * inexistente virava violação de chave estrangeira e tela de 500 em vez de
+   * aviso; e id de peça de OUTRA categoria era aceito, deixando a vitrine de
+   * "Mesa" ilustrada por uma bolsa. O segundo caso é o que apareceria de
+   * verdade, porque é o que uma aba antiga produz.
+   */
+  if (v.capaProdutoId) {
+    const daCategoria = await db.product.findFirst({
+      where: { id: v.capaProdutoId, categoryId: id },
+      select: { id: true },
+    });
+    if (!daCategoria) {
+      return {
+        erro: "Essa peça não está nesta categoria. Recarregue a página e escolha de novo.",
+      };
+    }
+  }
+
   await db.category.update({
     where: { id },
     data: {

@@ -99,6 +99,17 @@ export async function criarProduto(_anterior: unknown, dados: FormData) {
     return { erro: "Para a peça ficar ativa, escreva a descrição." };
   }
 
+  /**
+   * **A categoria é conferida antes**, e não é preciosismo: `categoryId` vem do
+   * formulário, o zod só exige que não esteja vazio, e um id inexistente virava
+   * violação de chave estrangeira do Postgres — ou seja, tela de 500 no lugar de
+   * uma frase. Acontece de verdade quando ela deixa a tela aberta e a categoria é
+   * apagada noutra aba.
+   */
+  if (!(await db.category.findUnique({ where: { id: categoryId }, select: { id: true } }))) {
+    return { erro: "Essa categoria não existe mais. Recarregue a página e escolha de novo." };
+  }
+
   const slug = await slugUnico(nome, async (candidato) =>
     Boolean(
       await db.product.findUnique({ where: { slug: candidato }, select: { id: true } })
@@ -127,8 +138,29 @@ export async function criarProduto(_anterior: unknown, dados: FormData) {
     },
   });
 
-  for (const [i, foto] of fotos.entries()) {
-    await guardarFoto(produto, foto, i);
+  /**
+   * **Se o envio falhar, a peça não fica pela metade.**
+   *
+   * O comentário lá em cima promete que validar antes evita "peça criada pela
+   * metade" — e isso só cobria validação. Se o R2 recusasse, ou a rede caísse
+   * depois das três tentativas do `r2Enviar`, na foto 3 de 5: o produto já
+   * existia, com duas fotos, e a exceção subia como erro não tratado. Ela veria
+   * tela de erro em vez da mensagem amigável; e se reenviasse o formulário,
+   * nascia uma peça duplicada com slug `-2`.
+   *
+   * Desfazer a criação é o certo aqui: a peça não existia antes, ninguém perde
+   * nada, e ela tenta de novo com o formulário ainda preenchido.
+   */
+  try {
+    for (const [i, foto] of fotos.entries()) {
+      await guardarFoto(produto, foto, i);
+    }
+  } catch (erro) {
+    console.error("falha ao enviar as fotos da peça nova:", erro);
+    await db.product.delete({ where: { id: produto.id } }).catch(() => {});
+    return {
+      erro: "Não consegui enviar as fotos. A peça não foi criada — tente de novo.",
+    };
   }
 
   // Se já nasceu no ar, o site precisa saber na hora.
@@ -356,10 +388,21 @@ export async function enviarImagem(
   });
   if (!produto) return { erro: "Peça não encontrada." };
 
-  await guardarFoto(produto, arquivo as File, produto._count.images, {
-    alt: String(dados.get("alt") ?? ""),
-    escalaHumana: dados.get("escalaHumana") === "on",
-  });
+  /**
+   * A assinatura promete `ResultadoDaAcao` — uma mensagem que a tela mostra — e
+   * o `guardarFoto` lança quando o R2 recusa. Sem este `catch`, o contrato
+   * amigável não valia: ela veria tela de erro no meio de acrescentar uma foto a
+   * uma peça que já existe.
+   */
+  try {
+    await guardarFoto(produto, arquivo as File, produto._count.images, {
+      alt: String(dados.get("alt") ?? ""),
+      escalaHumana: dados.get("escalaHumana") === "on",
+    });
+  } catch (erro) {
+    console.error("falha ao enviar foto:", erro);
+    return { erro: "Não consegui enviar a foto. Tente de novo." };
+  }
 
   revalidarProduto(produto.slug);
   return { ok: "Foto adicionada." };

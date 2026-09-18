@@ -18,11 +18,27 @@ function normalizar(host: string): string {
   return host.split(":")[0]!.trim().toLowerCase();
 }
 
-/** O domínio que o site declara como seu — a base de `urlDoSite()`. */
+/**
+ * O domínio que o site declara como seu — a base de `urlDoSite()`.
+ *
+ * **O `catch` grita, e isso importa mais do que parece.** Se
+ * `NEXT_PUBLIC_SITE_URL` vier malformada, isto devolve `null`,
+ * `ehDominioDeProducao` passa a ser falso para TODO host, e o proxy carimba
+ * `X-Robots-Tag: noindex` em todas as respostas de produção. O site fica no ar,
+ * bonito, funcionando — e invisível no Google, sem nada acusar. É o defeito mais
+ * caro e mais silencioso que este arquivo pode produzir; um `console.error` é o
+ * mínimo para que ele apareça no log da Vercel em vez de só no faturamento dela
+ * meses depois.
+ */
 function dominioDeclarado(): string | null {
   try {
     return normalizar(new URL(urlDoSite()).host);
-  } catch {
+  } catch (erro) {
+    console.error(
+      "NEXT_PUBLIC_SITE_URL malformada — o site vai sair com noindex em TODO host:",
+      urlDoSite(),
+      erro
+    );
     return null;
   }
 }

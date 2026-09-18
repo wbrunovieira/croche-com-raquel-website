@@ -50,8 +50,34 @@ export default auth(function proxy(req) {
   // então o filtro do `matcher`, que exclui por extensão, não a alcança. Sem
   // esta linha o WhatsApp pede a imagem e recebe o HTML da obra: nenhuma prévia,
   // exatamente o defeito que este trecho existe para consertar.
-  if (pathname.includes("opengraph-image") || pathname.includes("twitter-image")) {
-    return NextResponse.next();
+  /**
+   * **`includes` virou teste de SEGMENTO, e a liberação saiu de cima da guarda
+   * do painel.**
+   *
+   * O `includes` casava com qualquer caminho que contivesse o texto — inclusive
+   * `/admin/produtos/opengraph-image`, que a rota `[id]` aceita. Não havia
+   * exploração hoje porque cada página do painel chama `exigirSessao()` por
+   * conta própria (a defesa em profundidade funcionou), mas era um caminho que
+   * pulava o gate do proxy — e depender de duas camadas concordando é como se
+   * perde uma delas.
+   *
+   * O outro efeito era mais concreto: o `includes` fazia a arte de
+   * compartilhamento do preview sair SEM `X-Robots-Tag: noindex`, porque o
+   * `return` acontecia antes de o cabeçalho ser posto.
+   */
+  const ultimoSegmento = pathname.split("/").pop() ?? "";
+  const ehArteDeCompartilhar =
+    !pathname.startsWith("/admin") &&
+    (/^opengraph-image(-[\w-]+)?$/.test(ultimoSegmento) ||
+      /^twitter-image(-[\w-]+)?$/.test(ultimoSegmento));
+
+  if (ehArteDeCompartilhar) {
+    const arte = NextResponse.next();
+    // O preview não pode alimentar o buscador nem pela imagem.
+    if (!ehDominioDeProducao(host)) {
+      arte.headers.set("X-Robots-Tag", "noindex, nofollow");
+    }
+    return arte;
   }
 
   if (!mostraSiteCompleto(host)) {
