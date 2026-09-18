@@ -59,6 +59,23 @@ export async function GET(
   const { chave } = await params;
   const caminho = chave.join("/");
 
+  /**
+   * **Duas barreiras, e a segunda existe porque a primeira dependia de sorte.**
+   *
+   * `startsWith("croche/")` sozinho passaria para `croche/../outro/x.jpg`: o
+   * `fetch` normaliza o `..` e leria qualquer objeto do bucket compartilhado —
+   * sem autenticação nenhuma, porque esta rota é pública. Hoje isso não
+   * acontece porque o Next normaliza o caminho antes de rotear (testado: com
+   * `--path-as-is` a requisição nem chega aqui), ou seja, estávamos salvos por
+   * comportamento do framework e não pela guarda.
+   *
+   * Guarda que só funciona por causa de outra camada é guarda que some quando
+   * a outra camada mudar. Recusar segmento `.` ou `..` custa uma linha.
+   */
+  if (chave.some((s) => s === "." || s === ".." || s.includes("/"))) {
+    return new Response("Não encontrado", { status: 404 });
+  }
+
   // Só o que este site guarda. Sem isto, a rota viraria um leitor genérico do
   // bucket — que é compartilhado com outros projetos.
   if (!caminho.startsWith("croche/")) {
@@ -77,6 +94,16 @@ export async function GET(
       // zero e passava sempre. Também poupa o navegador de descobrir o tamanho
       // baixando.
       "content-length": String(arquivo.corpo.byteLength),
+      /**
+       * **`nosniff`, porque estes bytes são servidos na MESMA ORIGEM do cookie
+       * do painel.** O que valida o envio é `arquivo.type` — o tipo que o
+       * cliente declara, não o que os bytes são. Sem `nosniff`, um arquivo com
+       * HTML dentro rotulado `image/jpeg` poderia ser interpretado como página,
+       * e página nesta origem enxerga a sessão dela. Hoje só quem já tem o
+       * painel consegue subir, mas é exatamente o tipo de coisa que vira grave
+       * no dia em que houver uma segunda usuária.
+       */
+      "x-content-type-options": "nosniff",
       // `s-maxage` para a borda da Vercel, `max-age` para o navegador. Um ano
       // nos dois: a chave tem sufixo aleatório, então foto nova é endereço
       // novo e não existe versão velha para expirar.

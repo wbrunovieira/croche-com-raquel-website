@@ -174,11 +174,11 @@ export function Navegacao({
             className="trama luz-de-janela relative overflow-hidden bg-primaria text-sobre-primaria"
           >
             {/* Respiro assimétrico de propósito. A `corrente` do rodapé tem 12px e
-                mora absoluta DENTRO deste padding, então um `py-2.5` simétrico
+                mora absoluta DENTRO deste padding, então um `py-3` simétrico
                 deixava 14px de ar em cima e 2px embaixo — o botão encostava nos
                 festões. O que a pessoa enxerga como respiro é a distância até a
                 decoração, não até a borda da faixa. */}
-            <div className="container-site flex items-center gap-4 pt-2.5 pb-5">
+            <div className="container-site flex items-center gap-4 pt-3 pb-5">
               {/* A faixa INTEIRA é o link. O texto convidava — "é só contar o
                   que você tem em mente" — e não havia como contar: a pessoa
                   lia um convite e ficava sem porta. Agora ela leva para a
@@ -206,7 +206,7 @@ export function Navegacao({
                     para nada. O balão de fala também diz o que a seta não dizia
                     — a seta significa "vai para algum lugar", e o que se quer
                     prometer aqui é conversa: contar o que se tem em mente. */}
-                <span className="hidden shrink-0 items-center gap-1.5 rounded-fio border border-cru/25 bg-white/10 px-3 py-1.5 text-apoio font-medium transition-colors duration-[240ms] ease-fio group-hover:border-cru/45 group-hover:bg-white/20 sm:inline-flex">
+                <span className="hidden shrink-0 items-center gap-2 rounded-fio border border-cru/25 bg-white/10 px-3 py-2 text-apoio font-medium transition-colors duration-[240ms] ease-fio group-hover:border-cru/45 group-hover:bg-white/20 sm:inline-flex">
                   <MessageCircle className="size-4" aria-hidden="true" />
                   Me conte
                 </span>

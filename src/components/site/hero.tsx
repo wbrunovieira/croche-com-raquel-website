@@ -199,7 +199,7 @@ export function Hero({
                   e espalhar dentro dela só afastaria dois grupos que cabem juntos. */}
               {capas.length > 1 ? (
                 <div className="mt-3 flex items-center justify-between gap-4 sm:justify-end sm:gap-2">
-                  <ul className="flex items-center gap-1.5">
+                  <ul className="flex items-center gap-2">
                     {capas.map((c, i) => (
                       <li key={c.id}>
                         <button

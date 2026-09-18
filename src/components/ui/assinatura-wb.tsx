@@ -30,7 +30,7 @@ export function AssinaturaWB({ className = "" }: { className?: string }) {
         href="https://www.wbdigitalsolutions.com"
         target="_blank"
         rel="noopener noreferrer"
-        className="group inline-flex items-center gap-1.5 rounded-fio border border-current/25 px-2 py-1 transition-[background-color,border-color] duration-[240ms] ease-fio hover:border-current/50 hover:bg-white/10"
+        className="group inline-flex items-center gap-2 rounded-fio border border-current/25 px-2 py-1 transition-[background-color,border-color] duration-[240ms] ease-fio hover:border-current/50 hover:bg-white/10"
       >
         <Code2
           aria-hidden="true"

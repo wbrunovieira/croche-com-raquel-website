@@ -213,7 +213,7 @@ export function FormularioDeNovaPeca({
                     />
                   </div>
                   {i === 0 ? (
-                    <span className="absolute left-1 top-1 rounded-fio bg-tinta/80 px-1.5 py-0.5 text-legenda text-cru">
+                    <span className="absolute left-1 top-1 rounded-fio bg-tinta/80 px-2 py-0.5 text-legenda text-cru">
                       capa
                     </span>
                   ) : null}

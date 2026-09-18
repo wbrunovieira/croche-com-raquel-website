@@ -6,8 +6,14 @@
  * quem for restaurar talvez não seja quem escreveu isto.
  *
  * Ele repõe as linhas do banco na ordem certa (pai antes de filho) e, se
- * pedido, reenvia as fotos ao Blob nos MESMOS caminhos — é isso que faz as URLs
- * guardadas no banco voltarem a funcionar.
+ * pedido, reenvia as fotos ao armazenamento nas MESMAS chaves — é isso que faz
+ * as URLs guardadas no banco voltarem a funcionar.
+ *
+ * **Este arquivo esteve quebrado e ninguém percebeu.** Depois da migração para o
+ * R2 ele continuou chamando o `put` do Vercel Blob suspenso, e remontava a chave
+ * sem o prefixo `croche/` — mesmo trocando o SDK, a foto iria para um lugar que
+ * nenhuma URL do banco aponta. Descoberto em revisão, não em uso; se tivesse
+ * sido descoberto em uso, teria sido no pior dia possível.
  *
  *   npx tsx scripts/restaurar.ts backup/                    → mostra o que faria
  *   npx tsx scripts/restaurar.ts backup/ --aplicar          → repõe o banco
@@ -19,7 +25,8 @@
 import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { config as carregarEnv } from "dotenv";
-import { put } from "@vercel/blob";
+import { r2Enviar } from "../src/lib/r2";
+import { chaveDoArquivoDeBackup, ehImagem } from "./lib/imagem";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { urlComSslVerificado } from "../src/lib/db-url";
@@ -80,23 +87,50 @@ async function main() {
     const mapa = JSON.parse(await readFile(join(pasta, "fotos.json"), "utf8")) as Record<string, string>;
     const arquivos = new Set(await readdir(join(pasta, "fotos")));
     let n = 0;
+    const problemas: string[] = [];
     for (const [url, nome] of Object.entries(mapa)) {
       if (!arquivos.has(nome)) {
-        console.log(`  ⚠ faltou o arquivo de ${url}`);
+        problemas.push(`faltou o arquivo de ${url}`);
         continue;
       }
       const conteudo = await readFile(join(pasta, "fotos", nome));
-      // O caminho é reconstruído do nome: é o que devolve a foto à MESMA URL que
-      // o banco guarda. Sem `addRandomSuffix`, a URL sai idêntica.
-      const caminho = nome.replace(/__/g, "/");
-      await put(caminho, conteudo, {
-        access: "public",
-        addRandomSuffix: false,
-        allowOverwrite: true,
-      });
+
+      /**
+       * **Só sobe o que É imagem.** Um backup da janela de 14 a 17/09/2026
+       * guardou 22 bytes de "Your store is blocked" no lugar de cada foto;
+       * reenviá-los por cima das fotos boas transformaria um backup ruim em
+       * perda real — e o R2 não tem versionamento para desfazer.
+       */
+      if (!ehImagem(conteudo)) {
+        problemas.push(`${nome} tem ${conteudo.length} byte(s) que não são imagem`);
+        continue;
+      }
+
+      // A chave é reconstruída do nome: é o que devolve a foto à MESMA URL que o
+      // banco guarda.
+      await r2Enviar(
+        chaveDoArquivoDeBackup(nome),
+        conteudo.buffer.slice(
+          conteudo.byteOffset,
+          conteudo.byteOffset + conteudo.byteLength
+        ) as ArrayBuffer,
+        nome.endsWith(".png") ? "image/png" : "image/jpeg"
+      );
       n++;
     }
     console.log(`\n  ${n} foto(s) reenviada(s) ao armazenamento`);
+
+    /**
+     * **Restauração pela metade FALHA.** Antes, arquivo faltando só imprimia um
+     * aviso e o script terminava com código 0 — quem restaura no dia do desastre
+     * veria "pronto" com fotos faltando. O backup já aprendeu essa lição (foto
+     * que não baixa derruba a execução); ela não tinha atravessado para cá.
+     */
+    if (problemas.length > 0) {
+      console.error(`\n✗ ${problemas.length} foto(s) NÃO foram restauradas:`);
+      problemas.forEach((p) => console.error(`    ${p}`));
+      throw new Error("restauração incompleta — o banco foi reposto, as fotos não");
+    }
   }
 
   if (!APLICAR) console.log("\n(nada foi alterado — rode com --aplicar)");

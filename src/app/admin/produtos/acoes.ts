@@ -266,6 +266,14 @@ function problemaNaFoto(arquivo: unknown): string | null {
 }
 
 /** Sobe a foto ao Blob e liga à peça. Usado na criação e na edição. */
+/** A extensão sai do tipo declarado, nunca do nome do arquivo. */
+const EXTENSAO_POR_TIPO: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/avif": "avif",
+};
+
 async function guardarFoto(
   produto: { id: string; slug: string },
   arquivo: File,
@@ -281,7 +289,34 @@ async function guardarFoto(
    * `r2Enviar`: foto nova é endereço novo, então nunca há o que invalidar.
    */
   const sufixo = Math.random().toString(36).slice(2, 12);
-  const nome = arquivo.name.replace(/(\.[^.]+)?$/, (ext) => `-${sufixo}${ext || ""}`);
+
+  /**
+   * **O nome do arquivo é saneado, e isso não é preciosismo.**
+   *
+   * `arquivo.name` vem de quem posta. Ele era concatenado direto na chave, e a
+   * chave entra numa URL: o `fetch` faz `new URL()`, que **normaliza `..`**.
+   * Medido — `../../../outro-projeto/index.html` virava
+   * `/<bucket>/outro-projeto/index.html`, **fora do prefixo `croche/`**, num
+   * bucket compartilhado com outros projetos do time. Sobrescrever objeto de
+   * outro projeto é perda sem volta: o R2 não tem versionamento.
+   *
+   * Exigia sessão do painel, o que limitava o alcance — mas a barreira do
+   * prefixo era exatamente o que estava sendo contornado.
+   *
+   * `?` e `#` no nome eram o mesmo defeito, mais quieto: truncavam a chave e a
+   * foto era gravada em lugar diferente do que ficava no banco.
+   *
+   * A extensão vem do TIPO declarado e não do nome, porque é o tipo que decide
+   * como a foto será servida — e um nome pode dizer `.jpg` sobre bytes que não
+   * são.
+   */
+  const extensao = EXTENSAO_POR_TIPO[arquivo.type] ?? "jpg";
+  const base = arquivo.name
+    .replace(/\.[^.]+$/, "")
+    .replace(/[^A-Za-z0-9._-]/g, "-")
+    .replace(/^[.-]+/, "")
+    .slice(0, 60);
+  const nome = `${base || "foto"}-${sufixo}.${extensao}`;
   // `croche/` porque o bucket é compartilhado com outros projetos do time — a
   // rota que serve as fotos recusa qualquer chave fora deste prefixo.
   const url = await r2Enviar(
