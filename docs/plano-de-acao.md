@@ -2459,6 +2459,59 @@ para a obra.
 A verificação de hospedagem cobre os dois estados e troca também o host onde cobra o gate do
 painel: antes da estreia ele só existe no `preview.`; depois, vive no domínio.
 
+### ✅ Etapa 58 — Revisão de código: o que a revisão achou e o que mudou
+
+Três revisores leram a base em frentes separadas — interface, dados/servidor e ferramental.
+Os achados graves foram **verificados antes de qualquer conserto**, e dois dos três provaram
+defeito real que nenhuma verificação pegava.
+
+#### O que estava quebrado e ninguém sabia
+
+**O restaurador de backup não funcionava.** `scripts/restaurar.ts` ainda chamava o `put` do
+Vercel Blob suspenso e remontava a chave sem o prefixo `croche/`. Conferido contra as 74
+fotos: a reconstrução nova bate em **74/74**; a antiga batia em zero. É o script que existe
+para o pior dia, e foi descoberto em revisão — não em uso. Se tivesse sido em uso, teria sido
+no pior dia.
+
+**Travessia de caminho no upload.** O nome do arquivo entrava cru na chave do R2, e
+`new URL()` normaliza `..`: medido, `../../../outro/index.html` escapava do prefixo e ia
+parar na área de outro projeto do bucket compartilhado.
+
+**A sessão do painel não dava para revogar.** Trinta dias de JWT sem conferência: trocar a
+senha — a única reação possível a um vazamento — **não expulsava quem já tinha entrado**.
+Agora são sete dias com revogação pelo `updatedAt`, testado de ponta a ponta.
+
+**O anel de foco era ilegível no verde.** 2,13:1 contra os 3:1 da WCAG, em metade do site. A
+cor certa já existia nos tokens.
+
+#### Duas verificações passavam mentindo
+
+`check:espaco` era lista NEGRA de degraus proibidos, então fracionário não entrava nela:
+**sete violações na árvore** com a verificação dizendo "dentro da escala". Virou lista branca
+— a escala é fechada, então ela não envelhece.
+
+`check:seo` decidia o que cobrar **lendo o `robots.txt` que estava avaliando**. Se o domínio
+passasse a servir `Disallow: /`, o galho "fora do buscador" assumia e as seis asserções reais
+eram puladas: o pior defeito de SEO possível escondido pelo próprio detector. Agora quem
+decide é o host. E ele deixou de amostrar quatro peças — 40 asserções viraram 107.
+
+#### E dois erros meus, no meio do conserto
+
+Rodei o seed inteiro para publicar um texto, e ele **recriou três peças que a Raquel tinha
+apagado** e reverteu um nome que ela mudou. Depois rodei `importar-fotos` achando que era
+ensaio, e ele **enviou quatro fotos ligando-as a peças reais dela**. Os dois foram desfeitos e
+conferidos contra o backup (15 produtos, 73 fotos, zero divergências).
+
+O padrão era meu — rodar script sem olhar se tem ensaio —, e a correção foi estrutural: o
+seed exige bandeira explícita, o `importar-fotos` e o `renomear-categoria` ganharam
+`--aplicar`, e o script que **apagava foto** apontando para o Blob morto foi removido.
+
+#### O que eu recusei mexer
+
+Nomes de variáveis em português contra o que o `CLAUDE.md` pede. Dois revisores apontaram; a
+base é inteiramente consistente consigo mesma, e misturar agora seria pior. O certo é
+corrigir o documento, não o código.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a

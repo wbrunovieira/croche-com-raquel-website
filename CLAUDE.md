@@ -84,4 +84,13 @@ antigo em memória e a rota quebra com "Unknown field".
 ## Idioma
 
 Todo conteúdo visível, documentação e mensagem de commit em **português do Brasil**.
-Código (nomes de variáveis, funções, arquivos) em inglês.
+
+**O código também é em português** — nomes de variáveis, funções, arquivos e props
+(`montarLinkWhatsApp`, `semearCatalogo`, `Revelar`, `pecas`). Este parágrafo já
+disse "em inglês", e a base nunca foi assim: a revisão de 18/09/2026 apontou a
+divergência em toda parte. Misturar agora seria pior que a inconsistência com o
+documento, então quem mudou foi o documento.
+
+O que vem de fora fica como vem: modelos do Prisma (`ProductImage`, `SiteSettings`),
+convenções do Next (`page.tsx`, `layout.tsx`, `generateMetadata`) e nomes de
+biblioteca.
