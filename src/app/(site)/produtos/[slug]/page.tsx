@@ -71,7 +71,7 @@ export default async function PaginaDeProduto({ params }: PageProps<"/produtos/[
       : `/?categoria=${produto.categoria.slug}#catalogo`;
 
   return (
-    <main className="container-site secao">
+    <main id="topo" className="container-site secao">
       <DadosEstruturados
         dados={produtoEstruturado({
           nome: produto.nome,

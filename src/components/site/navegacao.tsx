@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   AnimatePresence,
   motion,
@@ -68,12 +68,6 @@ export function Navegacao({
     };
   }, [gaveta]);
 
-  useEffect(() => {
-    if (!gaveta) return;
-    const aoTeclar = (e: KeyboardEvent) => e.key === "Escape" && setGaveta(false);
-    document.addEventListener("keydown", aoTeclar);
-    return () => document.removeEventListener("keydown", aoTeclar);
-  }, [gaveta]);
 
   /**
    * Qual seção da home está sendo lida.
@@ -456,6 +450,70 @@ function Gaveta({
   instagramUrl: string | null;
   semMovimento: boolean;
 }) {
+  /**
+   * **A gaveta se declara `role="dialog" aria-modal="true"` — e isso é uma
+   * promessa que precisa ser cumprida.**
+   *
+   * Ela cumpria só metade: o Escape fechava, mas o foco nunca entrava, nunca
+   * ficava preso e nunca voltava. Quem abre o menu pelo teclado continuava
+   * tabulando a página ATRÁS da gaveta, invisível — o leitor de tela anunciando
+   * links que a pessoa não consegue ver. `aria-modal` diz ao leitor que o resto
+   * da página não existe enquanto isto está aberto; sem prender o foco, a
+   * declaração vira mentira.
+   *
+   * A `Galeria` já resolvia isso do jeito certo (`galeria.tsx:49`); aqui é o
+   * mesmo desenho.
+   */
+  const gatilho = useRef<HTMLElement | null>(null);
+  const caixa = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!aberta) return;
+
+    // Quem abriu, para devolver o foco no fim. Guardado agora e não no clique
+    // porque a gaveta também abre por outros caminhos.
+    gatilho.current = document.activeElement as HTMLElement | null;
+
+    const focaveis = () =>
+      Array.from(
+        caixa.current?.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        ) ?? []
+      ).filter((e) => e.offsetParent !== null);
+
+    // O primeiro é o "Fechar menu": quem abriu sem querer sai com um Enter.
+    focaveis()[0]?.focus();
+
+    const aoTeclar = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        aoFechar();
+        return;
+      }
+      if (e.key !== "Tab") return;
+
+      const alvos = focaveis();
+      if (alvos.length === 0) return;
+      const primeiro = alvos[0];
+      const ultimo = alvos[alvos.length - 1];
+
+      if (e.shiftKey && document.activeElement === primeiro) {
+        e.preventDefault();
+        ultimo.focus();
+      } else if (!e.shiftKey && document.activeElement === ultimo) {
+        e.preventDefault();
+        primeiro.focus();
+      }
+    };
+
+    document.addEventListener("keydown", aoTeclar);
+    return () => {
+      document.removeEventListener("keydown", aoTeclar);
+      // Devolve o foco a quem abriu. Sem isto o foco volta para o começo do
+      // documento, e quem estava no meio do menu recomeça a página inteira.
+      gatilho.current?.focus();
+    };
+  }, [aberta, aoFechar]);
+
   return (
     <AnimatePresence>
       {aberta ? (
@@ -471,6 +529,7 @@ function Gaveta({
           />
           <motion.div
             key="gaveta"
+            ref={caixa}
             role="dialog"
             aria-modal="true"
             aria-label="Menu"

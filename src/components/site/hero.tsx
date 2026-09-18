@@ -73,13 +73,29 @@ export function Hero({
     setAtual((i) => (i - 1 + Math.max(capas.length, 1)) % Math.max(capas.length, 1));
   }, [capas.length]);
 
+  /**
+   * **Quem tocou nos controles manda no rodízio** — WCAG 2.2.2.
+   *
+   * A pausa só existia em `hover` e `focus`, que são gestos de quem usa mouse ou
+   * teclado. No celular — de onde vem a maior parte do tráfego dela — não havia
+   * como parar: a foto trocava a cada cinco segundos enquanto a pessoa tentava
+   * olhar a peça, e mexer nas setas não desligava o relógio, só adiava a próxima
+   * troca.
+   *
+   * Agora um toque em ponto ou seta **desliga de vez**: quem assumiu a
+   * navegação está escolhendo o que ver, e continuar trocando por baixo é
+   * disputar com a visitante. Não volta a girar sozinho — voltar seria a mesma
+   * surpresa de novo, dois segundos depois.
+   */
+  const [assumido, setAssumido] = useState(false);
+
   useEffect(() => {
     // `semMovimento` desliga o rodízio inteiro — quem pediu menos movimento no
     // sistema não pediu uma foto trocando sozinha. O chevron continua valendo.
-    if (semMovimento || pausado || capas.length < 2) return;
+    if (semMovimento || pausado || assumido || capas.length < 2) return;
     const relogio = setInterval(avancar, 5000);
     return () => clearInterval(relogio);
-  }, [semMovimento, pausado, capas.length, avancar]);
+  }, [semMovimento, pausado, assumido, capas.length, avancar]);
 
   return (
     <section ref={secao} className="trama relative overflow-hidden bg-inv-fundo text-inv-conteudo">
@@ -204,7 +220,7 @@ export function Hero({
                       <li key={c.id}>
                         <button
                           type="button"
-                          onClick={() => setAtual(i)}
+                          onClick={() => { setAssumido(true); setAtual(i); }}
                           aria-label={`Ver foto ${i + 1} de ${capas.length}`}
                           aria-current={i === atual}
                           // A área de toque de 44px mora no botão; o ponto
@@ -237,7 +253,7 @@ export function Hero({
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={voltar}
+                      onClick={() => { setAssumido(true); voltar(); }}
                       aria-label="Foto anterior"
                       className="botao-de-icone--claro grid size-11 place-items-center transition-[background-color,border-color,box-shadow,transform] duration-[240ms] ease-fio"
                     >
@@ -245,7 +261,7 @@ export function Hero({
                     </button>
                     <button
                       type="button"
-                      onClick={avancar}
+                      onClick={() => { setAssumido(true); avancar(); }}
                       aria-label="Próxima foto"
                       className="botao-de-icone--claro grid size-11 place-items-center transition-[background-color,border-color,box-shadow,transform] duration-[240ms] ease-fio"
                     >

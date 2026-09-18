@@ -115,7 +115,7 @@ export default async function EstiloPage() {
   const destaques = await listarDestaques(4);
 
   return (
-    <main className="container-site pb-secao">
+    <main id="topo" className="container-site pb-secao">
       <header className="pt-pagina-topo">
         <Etiqueta>Identidade visual · Crochê com Raquel</Etiqueta>
         <h1 className="mt-2 font-display text-t1">Estufa da Serra</h1>

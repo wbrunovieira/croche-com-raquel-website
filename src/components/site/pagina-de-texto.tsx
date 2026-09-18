@@ -13,7 +13,7 @@ export function PaginaDeTexto({
   children?: React.ReactNode;
 }) {
   return (
-    <main className="container-site secao">
+    <main id="topo" className="container-site secao">
       {etiqueta ? <Etiqueta>{etiqueta}</Etiqueta> : null}
       <h1 className="mt-2 max-w-[20ch] font-display text-t1">{pagina.titulo}</h1>
       {pagina.chamada ? (

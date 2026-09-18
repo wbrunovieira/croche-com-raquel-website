@@ -26,6 +26,7 @@ import { classesDeBotao } from "@/components/ui/botao";
  */
 export function Compartilhar({ url, titulo }: { url: string; titulo: string }) {
   const [copiado, setCopiado] = useState<"link" | "instagram" | null>(null);
+  const [falhou, setFalhou] = useState(false);
 
   const noWhatsapp = `https://wa.me/?text=${encodeURIComponent(`${titulo}\n${url}`)}`;
 
@@ -36,7 +37,11 @@ export function Compartilhar({ url, titulo }: { url: string; titulo: string }) {
       setTimeout(() => setCopiado(null), 2500);
       return true;
     } catch {
+      // Sem área de transferência não há o que prometer: dizer à pessoa é melhor
+      // que um botão que parece ter funcionado.
       setCopiado(null);
+      setFalhou(true);
+      setTimeout(() => setFalhou(false), 4000);
       return false;
     }
   }
@@ -59,10 +64,16 @@ export function Compartilhar({ url, titulo }: { url: string; titulo: string }) {
         <button
           type="button"
           onClick={async () => {
-            await copiar("instagram");
-            // Abre depois de copiar: se a cópia falhar, ela não fica com uma
-            // aba do Instagram e nada na área de transferência.
-            window.open("https://instagram.com", "_blank", "noopener,noreferrer");
+            /**
+             * **A aba só abre se a cópia deu certo** — o comentário anterior
+             * prometia isso e o código não cumpria: `copiar()` devolve um
+             * booleano que era ignorado, então a aba abria sempre. Quem tivesse
+             * a área de transferência negada ficava com o Instagram aberto e
+             * nada para colar, sem aviso nenhum.
+             */
+            if (await copiar("instagram")) {
+              window.open("https://instagram.com", "_blank", "noopener,noreferrer");
+            }
           }}
           className={classesDeBotao("secundaria", "sm")}
         >
@@ -82,6 +93,13 @@ export function Compartilhar({ url, titulo }: { url: string; titulo: string }) {
 
       {/* Um aviso só, fora dos botões: dois `aria-live` na mesma região fazem o
           leitor de tela anunciar duas vezes. */}
+      {falhou ? (
+        <p role="alert" className="mt-3 text-legenda text-primaria">
+          Não consegui copiar o link daqui. Copie da barra de endereço do
+          navegador.
+        </p>
+      ) : null}
+
       <span role="status" aria-live="polite" className="sr-only">
         {copiado ? "Link copiado para a área de transferência." : ""}
       </span>

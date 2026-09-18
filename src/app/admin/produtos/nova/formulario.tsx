@@ -48,10 +48,30 @@ export function FormularioDeNovaPeca({
   const [aviso, setAviso] = useState<string | null>(null);
   const entrada = useRef<HTMLInputElement>(null);
 
-  // As URLs de objeto das miniaturas seguram os bytes da foto em memória até
-  // serem revogadas. Sem isto, escolher e trocar a seleção algumas vezes
-  // acumula dezenas de megabytes no navegador dela.
-  useEffect(() => () => fotos.forEach((f) => URL.revokeObjectURL(f.previa)), [fotos]);
+  /**
+   * As URLs de objeto das miniaturas seguram os bytes da foto em memória até
+   * serem revogadas. Sem isto, escolher e trocar a seleção algumas vezes acumula
+   * dezenas de megabytes no navegador dela.
+   *
+   * **Mas a revogação não pode acontecer a cada mudança da lista.** O cleanup de
+   * um efeito com `[fotos]` roda com a lista ANTERIOR: ao tirar a foto 1 de
+   * três, ele revogava A, B e C — e B e C continuavam montadas usando `previa`
+   * como `src`. Escapava porque o navegador já tinha os bytes pintados e o
+   * `key={foto.previa}` preservava o elemento; qualquer remontagem mostrava
+   * miniatura quebrada.
+   *
+   * O `ref` guarda a lista viva e o efeito revoga só na saída da tela, que é o
+   * único momento em que nenhuma delas está mais sendo exibida. Quem remove uma
+   * foto revoga aquela, e só aquela, em `remover()`.
+   */
+  const fotosVivas = useRef<FotoPreparada[]>([]);
+  // A sincronia vai num efeito, não no corpo: escrever em `ref.current` durante
+  // o render é o que o React 19 proíbe, e com razão — o valor escrito ali pode
+  // não sobreviver a um render descartado.
+  useEffect(() => {
+    fotosVivas.current = fotos;
+  }, [fotos]);
+  useEffect(() => () => fotosVivas.current.forEach((f) => URL.revokeObjectURL(f.previa)), []);
 
   /**
    * Reduz as fotos e devolve os arquivos reduzidos para o próprio `input`.
@@ -67,7 +87,6 @@ export function FormularioDeNovaPeca({
 
     setPreparando(true);
     setAviso(null);
-    fotos.forEach((f) => URL.revokeObjectURL(f.previa));
 
     try {
       const preparadas = await Promise.all(escolhidas.map(prepararFoto));

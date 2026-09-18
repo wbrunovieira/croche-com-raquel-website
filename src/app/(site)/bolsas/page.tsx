@@ -30,7 +30,7 @@ export default async function PaginaDeBolsas() {
   ]);
 
   return (
-    <main>
+    <main id="topo">
       <section className="trama bg-inv-fundo text-inv-conteudo">
         <div className="container-site secao">
           <Etiqueta tom="invertido">Carro-chefe</Etiqueta>

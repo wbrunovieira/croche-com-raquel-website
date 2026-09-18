@@ -238,6 +238,25 @@
     outline-offset: 2px;
     border-radius: 2px;
   }
+
+  /**
+   * **O anel de foco troca de cor nas superfícies verdes.**
+   *
+   * O `--color-foco` é o goiaba-tinta, que rende 5,64:1 sobre o creme — bom. Nas
+   * superfícies invertidas ele mede **2,13:1 sobre o verde-fundo** e 2,26:1
+   * sobre o verde-musgo, abaixo dos 3:1 que a WCAG 1.4.11 pede para indicador de
+   * foco. Isso atingia tudo que é verde: o hero, o rodapé, a gaveta do celular,
+   * a faixa de aviso, os cuidados e o cartão de perguntas — ou seja, quem navega
+   * por teclado perdia o foco de vista em metade do site.
+   *
+   * A cor certa já existia: o rosa-fio (`--color-inv-destaque`) rende **6,65:1**
+   * sobre o mesmo verde. Como `--color-foco` é variável e a regra acima a lê, a
+   * cascata resolve — todo focável dentro de `.trama` herda a troca, sem tocar
+   * em componente nenhum.
+   */
+  .trama {
+    --color-foco: var(--color-inv-destaque);
+  }
   ::selection { background: var(--color-goiaba-clara); color: var(--color-tinta); }
   .tabular { font-variant-numeric: tabular-nums; }
 }
