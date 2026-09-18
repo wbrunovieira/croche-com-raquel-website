@@ -235,8 +235,36 @@ const cssGerado =
         .join("\n")
     : "";
 
+/**
+ * **O build precisa ser mais novo que o código.**
+ *
+ * Sem esta conferência, um `.next` de ontem responde sobre o código de hoje —
+ * e responde das duas formas erradas: acusa classe nova que existe (aconteceu
+ * com `pt-3`, que só entrou no CSS depois do build seguinte) e aprova classe
+ * inventada que o build velho não conhecia. Verificação que depende de um
+ * artefato precisa saber se o artefato está velho; senão ela não está medindo o
+ * código, está medindo uma lembrança dele.
+ */
+const marcaDoBuild = existsSync(join(RAIZ, ".next/BUILD_ID"))
+  ? statSync(join(RAIZ, ".next/BUILD_ID")).mtimeMs
+  : 0;
+const maisNovoDoCodigo = Math.max(
+  0,
+  ...arquivos(join(RAIZ, "src"), ".tsx").map((f) => statSync(f).mtimeMs),
+  ...arquivos(join(RAIZ, "src"), ".css").map((f) => statSync(f).mtimeMs)
+);
+const buildVelho = marcaDoBuild > 0 && maisNovoDoCodigo > marcaDoBuild;
+
 if (!cssGerado) {
   console.log("○ sem CSS de produção em .next — a segunda passagem exige `pnpm build`");
+} else if (buildVelho) {
+  const atraso = Math.round((maisNovoDoCodigo - marcaDoBuild) / 1000);
+  console.log(
+    `✗ o build em .next é ${atraso}s mais VELHO que o código — rode \`pnpm build\` e repita.\n` +
+      "  Conferir classes contra um build rançoso acusa classe nova que existe e\n" +
+      "  aprova classe inventada que o build antigo não conhecia."
+  );
+  falhou = 1;
 } else {
   const geradas = classesGeradas(cssGerado);
   for (const [token, onde] of usadas) {

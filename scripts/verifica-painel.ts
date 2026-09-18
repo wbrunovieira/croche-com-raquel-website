@@ -8,7 +8,7 @@
  */
 import { chromium } from "playwright";
 import { config } from "dotenv";
-import { del } from "@vercel/blob";
+import { r2Apagar } from "../src/lib/r2";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { urlComSslVerificado } from "../src/lib/db-url";
@@ -50,7 +50,18 @@ async function limpar() {
     select: { id: true, images: { select: { url: true } } },
   });
   for (const p of pecas) {
-    await Promise.allSettled(p.images.map((i) => del(i.url)));
+    /**
+     * **A limpeza não limpava.** Era `del()` do Vercel Blob recebendo uma URL
+     * relativa (`/fotos/croche/…`), dentro de um `allSettled` — não apagava
+     * nada e não reclamava de nada. Cada execução desta verificação deixava um
+     * órfão no R2.
+     *
+     * Fora do `allSettled` de propósito: se a limpeza falhar, quero saber. Foi
+     * engolir a falha que fez isso durar.
+     */
+    for (const i of p.images) {
+      await r2Apagar(i.url.replace(/^\/fotos\//, ""));
+    }
   }
   await db.product.deleteMany({ where: { name: { startsWith: NOME_DA_PECA } } });
   await db.user.deleteMany({ where: { username: USUARIO } });
