@@ -2429,9 +2429,14 @@ E ganhou a asserção que só existe depois da estreia: **o domínio não pode s
 funcionando e invisível no Google. Ninguém percebe olhando a tela; percebe-se semanas
 depois, quando a busca pelo nome dela não traz o site.
 
-**Falta:** verificar o domínio no Search Console e enviar o sitemap. A verificação será por
-registro TXT — confirmado que o token da Cloudflare escreve DNS nesta zona, então é só o
-Bruno trazer o valor que o Google mostrar.
+**Search Console: domínio verificado no mesmo dia.** Propriedade de **Domínio** — cobre apex,
+`www.`, `preview.` e os dois protocolos de uma vez, em vez de três propriedades com dados
+divididos. O TXT foi criado pela própria integração do Google com a Cloudflare. **Esse
+registro não pode ser removido**, ou a propriedade perde a verificação.
+
+Conferido antes do envio: as **14 URLs do sitemap respondem 200 e todas apontam para o
+domínio raiz** — sitemap com URL de preview seria o erro clássico de quem lança e esquece a
+variável do endereço.
 
 ## Decisões em aberto
 
