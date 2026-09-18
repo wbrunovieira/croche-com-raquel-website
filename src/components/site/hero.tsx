@@ -220,22 +220,38 @@ export function Hero({
                       </li>
                     ))}
                   </ul>
-                  <button
-                    type="button"
-                    onClick={voltar}
-                    aria-label="Foto anterior"
-                    className="botao-de-icone--claro grid size-11 place-items-center transition-[background-color,border-color,box-shadow,transform] duration-[240ms] ease-fio"
-                  >
-                    <ChevronLeft className="size-5" aria-hidden="true" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={avancar}
-                    aria-label="Próxima foto"
-                    className="botao-de-icone--claro grid size-11 place-items-center transition-[background-color,border-color,box-shadow,transform] duration-[240ms] ease-fio"
-                  >
-                    <ChevronRight className="size-5" aria-hidden="true" />
-                  </button>
+                  {/* As duas setas são UM grupo, e o invólucro é o conserto.
+
+                      Sem ele, o `justify-between` do contêiner tinha TRÊS filhos
+                      — pontos, anterior, próxima — e espalhava os três pela
+                      largura. No celular isso abria 35px entre as duas setas
+                      (medido a 390px: a anterior terminava em 292 e a próxima
+                      começava em 327), e elas deixavam de parecer um par para
+                      parecer dois botões soltos. Voltar e avançar são a mesma
+                      função em dois sentidos; o olho lê isso pela proximidade.
+
+                      Com o invólucro o `justify-between` volta a ter dois
+                      filhos, que é o que a separação entre pontos e setas sempre
+                      quis dizer. No desktop nada muda: o `gap-2` de dentro é o
+                      mesmo que havia entre os três. */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={voltar}
+                      aria-label="Foto anterior"
+                      className="botao-de-icone--claro grid size-11 place-items-center transition-[background-color,border-color,box-shadow,transform] duration-[240ms] ease-fio"
+                    >
+                      <ChevronLeft className="size-5" aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={avancar}
+                      aria-label="Próxima foto"
+                      className="botao-de-icone--claro grid size-11 place-items-center transition-[background-color,border-color,box-shadow,transform] duration-[240ms] ease-fio"
+                    >
+                      <ChevronRight className="size-5" aria-hidden="true" />
+                    </button>
+                  </div>
                 </div>
               ) : null}
             </div>
