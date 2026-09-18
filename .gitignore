@@ -46,3 +46,8 @@ next-env.d.ts
 # aqui ele só aparece quando alguém roda o script sem `--destino`, e um
 # `git add -A` distraído mandaria o acervo inteiro para dentro do código.
 backup/
+
+# PNGs do logotipo: saem dos .svg com `node scripts/exportar-marca.mjs`.
+# Guardar imagem gerada ao lado da fonte é o caminho curto para as duas
+# divergirem — e são 1,4 MB que o repositório não precisa carregar.
+docs/marca/png/

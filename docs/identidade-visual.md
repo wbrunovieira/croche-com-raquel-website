@@ -333,11 +333,87 @@ alturas alternadas, imitando o acabamento de franja. Um único elemento de 24px.
 
 ### 4.6 Movimento
 
-Discreto e orquestrado num lugar só: a **entrada do hero**, em que o arco cresce em
-`clip-path` de baixo para cima (como a peça sendo tricotada) em 700ms com
-`--ease-fio: cubic-bezier(.22,1,.36,1)`. Fora dele: só hover de card (elevação 2px +
-`--shadow-peca`, 180ms) e transição de foco. Tudo dentro de
-`@media (prefers-reduced-motion: reduce) { * { animation: none; transition: none } }`.
+> Esta seção descreve o sistema **como ele está implementado**. A versão anterior falava de
+> um movimento "orquestrado num lugar só" — a entrada do hero — e ficou para trás quando as
+> etapas 17, 18 e 19 construíram o resto.
+
+#### A regra de ritmo: um ciclo periódico por vez, e ele é da marca
+
+Só **uma** coisa se move sozinha, o tempo todo, em cada tela: a **batida do coração do
+logotipo**. Todo o resto é disparado por evento — alguém rola, passa o mouse, toca, troca de
+foto.
+
+A razão é de atenção, não de gosto. Movimento contínuo é o único que a pessoa não escolheu
+ver: ele compete com a foto da peça, que é o que vende. Um ciclo a marca pode ter, porque ele
+*é* a marca; dois viram inquietação.
+
+E há um corolário geométrico que fecha a discussão antes de ela começar. A batida é
+`scale(1.045)` no pico sobre um grupo de **53×60px** — ou seja, **2,4px de crescimento, 1,2px
+para cada lado** (medido no ar). Uma segunda animação ociosa teria de ser *menor* que isso
+para não roubar atenção — e abaixo de 2px não se enxerga nada. Não existe faixa onde uma
+segunda valha a pena.
+
+**A batida:** `3s ease-in-out infinite`, com dois picos desiguais — `1.045` aos 6% e `1.028`
+aos 18% — porque coração batendo tem sístole e diástole, e dois picos iguais soam mecânicos.
+
+**Os três coraçõezinhos** somem e reaparecem de trás do novelo a cada **três** batidas. Três
+porque é o intervalo em que o olho já esqueceu o movimento anterior: a cada batida seria um
+segundo ciclo disfarçado, e violaria a regra acima.
+
+#### As entradas são CSS, e o motivo é o LCP
+
+Quem esconde o conteúdo antes de revelá-lo é o **CSS**, dentro de
+`@media (scripting: enabled)` — nunca o `initial` do `motion`.
+
+Isto não é preferência de ferramenta: **o `initial` do framer-motion vira `style` inline já
+no SSR**. Na versão anterior, 31 elementos da home — inclusive o `<h1>` do hero, que é o
+candidato a LCP — chegavam ao navegador com `opacity: 0` e só apareciam depois de baixar,
+parsear e hidratar o bundle. Num celular vindo do Instagram, é tela vazia por tempo que não
+precisa existir.
+
+O corolário vale para qualquer componente novo: **conteúdo não pode depender de script para
+existir**. Sem JavaScript, ou com JavaScript lento, o site continua legível.
+
+#### Os seis gestos de entrada (`Revelar`)
+
+O gesto diz que tipo de seção é aquela. Antes tudo entrava igual, e a página inteira parecia
+uma coisa só.
+
+| gesto | onde | o que faz |
+| --- | --- | --- |
+| `fio` | padrão | sobe 24px com fade |
+| `ponto` | cabeçalho de seção | a cascata acontece nos **filhos** (etiqueta, título, apoio), curta e precisa |
+| `grade` | catálogo | **só opacidade** |
+| `trama` / `trama-inversa` | seção verde | o fio atravessa na horizontal, de lados opostos nas duas metades |
+| `texto` | bloco de leitura | assenta devagar, quase sem deslocamento |
+
+**Cascata não se usa em grade grande.** No catálogo entra `grade`, só opacidade: nada se move
+na frente de quem está comparando peças. Vinte cards entrando em sequência viram espera, e
+quem compara precisa que os itens fiquem parados para comparar.
+
+A entrada acontece **uma vez** (`once`): reanimar a cada rolagem cansa e faz o site parecer
+inquieto.
+
+#### Uma fonte só para curva e duração
+
+`src/lib/movimento.ts` é a fonte da verdade, e espelha `--ease-fio` do `globals.css`.
+
+- **Curva:** `FIO = [0.22, 1, 0.36, 1]`
+- **Durações com nome de intenção, não de número:** `toque` 180ms, `curta` 200ms, `media`
+  300ms, `troca` 350ms, `entrada` 600ms
+
+O nome é o ponto: a decisão se toma dizendo *"isto é uma resposta ao toque"* ou *"isto é uma
+peça entrando em cena"*, não escolhendo um número. A curva já esteve copiada literal em oito
+lugares — duas fontes da verdade para uma decisão só, e bastava alguém ajustar um lado para o
+site passar a ter dois movimentos.
+
+#### Quem pede menos movimento
+
+O bloco global do CSS zera `animation` e `transition`. **Mas o `motion` anima por
+`requestAnimationFrame` e passa por fora dele**, então todo componente animado em JS lê
+`useReducedMotion()` numa variável `semMovimento` e a entrega a `transicao(duracao,
+semMovimento)`. Esquecer isso não quebra nada visível para quem não pediu — e ignora
+exatamente quem pediu.
 
 ---
 
