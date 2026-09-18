@@ -20,7 +20,12 @@ export default async function EditarProduto({ params }: PageProps<"/admin/produt
         images: { orderBy: { position: "asc" } },
       },
     }),
-    db.category.findMany({ orderBy: { position: "asc" } }),
+    db.category.findMany({
+      // Só o que o `<select>` usa. Sem `select`, isto puxava `longDescription`
+      // — texto longo — de cada categoria só para montar uma lista de nomes.
+      select: { id: true, name: true },
+      orderBy: { position: "asc" },
+    }),
   ]);
 
   if (!produto) notFound();

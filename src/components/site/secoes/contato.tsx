@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { linkDoWhatsapp, arrobaDoInstagram } from "@/lib/whatsapp";
 import { Clock, MapPin, Truck } from "lucide-react";
 import { Etiqueta } from "@/components/ui/etiqueta";
 import { Revelar } from "@/components/ui/revelar";
@@ -76,7 +77,7 @@ export function SecaoContato({ config }: { config: ConfiguracoesDoSite }) {
           <h3 className="font-display text-t3">Ou chame no WhatsApp</h3>
           <div className="mt-bloco">
           <a
-            href={`https://wa.me/${config.whatsappNumero}`}
+            href={linkDoWhatsapp(config.whatsappNumero)}
             target="_blank"
             rel="noopener noreferrer"
             /* Tamanho normal e `nowrap`: em `lg` dentro de um cartão de 20rem ele
@@ -98,7 +99,7 @@ export function SecaoContato({ config }: { config: ConfiguracoesDoSite }) {
                 className="inline-flex items-center gap-2 text-base text-destaque-texto underline underline-offset-4 hover:no-underline"
               >
                 <IconeInstagram className="size-5" />
-                @croche.comraquel
+                {arrobaDoInstagram(config.instagramUrl) ?? "Instagram"}
               </a>
             </p>
           ) : null}
@@ -175,7 +176,7 @@ export function SecaoContato({ config }: { config: ConfiguracoesDoSite }) {
         </p>
         <p className="mt-bloco">
           <a
-            href={`https://wa.me/${config.whatsappNumero}`}
+            href={linkDoWhatsapp(config.whatsappNumero)}
             target="_blank"
             rel="noopener noreferrer"
             className={`${classesDeBotao("secundaria", "sm")} group`}

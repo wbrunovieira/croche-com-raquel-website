@@ -129,7 +129,7 @@ export function SecaoQuemFaz({
                   desloca. Um bloco de texto que chega com energia atrapalha a
                   própria leitura. */}
               <Revelar entrada="texto" atraso={0.08} className="max-w-texto">
-                <TextoLongo texto={historia.corpo} />
+                <TextoLongo texto={historia.corpo} nivel={3} />
               </Revelar>
             </div>
           </div>

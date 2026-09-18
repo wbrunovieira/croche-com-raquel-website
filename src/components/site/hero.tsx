@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { linkDoWhatsapp } from "@/lib/whatsapp";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -135,7 +136,7 @@ export function Hero({
                 Ver as bolsas
               </Link>
               <a
-                href={`https://wa.me/${whatsappNumero}`}
+                href={linkDoWhatsapp(whatsappNumero)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="botao-contorno-claro inline-flex items-center gap-btn-icone rounded-fio px-btn-x py-btn-y font-medium transition-[background-color,border-color,box-shadow,transform] duration-[240ms] ease-fio active:translate-y-px"

@@ -187,7 +187,13 @@ export function FormularioDeNovaPeca({
           primeira é a capa — e a ordem você ajusta depois.
         </span>
 
-        <label className={`${classesDeBotao("secundaria", "sm")} mt-3 cursor-pointer`}>
+        {/* `focus-within` no label porque o input de arquivo é `sr-only`: o
+            `:focus-visible` global desenhava o anel no elemento invisível de
+            1px, então quem chega por teclado não via foco nenhum e o botão
+            parecia inalcançável. */}
+        <label
+          className={`${classesDeBotao("secundaria", "sm")} mt-3 cursor-pointer focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-foco`}
+        >
           <ImagePlus className="size-4" aria-hidden="true" />
           {fotos.length > 0 ? "Trocar as fotos" : "Escolher fotos"}
           <input

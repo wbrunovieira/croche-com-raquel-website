@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { linkDoWhatsapp, arrobaDoInstagram } from "@/lib/whatsapp";
 import { buscarConfiguracoes } from "@/lib/queries/configuracoes";
 import { IconeZap } from "@/components/ui/icone-zap";
 
@@ -19,6 +20,20 @@ export const metadata: Metadata = {
   description:
     "Bolsas, mesa posta e decoração em crochê e macramê, feitas à mão sob encomenda em Petrópolis/RJ. O site está a caminho — as encomendas, não: fale pelo WhatsApp.",
   alternates: { canonical: "/" },
+  /**
+   * **Um marcador para máquina.**
+   *
+   * Três verificações e o aquecedor precisavam responder "esta página é a obra?"
+   * e cada um fazia isso lendo TEXTO VISÍVEL — dois procuravam `— em breve`, um
+   * procurava `O site está sendo feito`. Ou seja, uma revisão de copy silenciava
+   * uns e não outros, e o silêncio de uma verificação é indistinguível dela
+   * passando.
+   *
+   * Isto é a mesma armadilha que já mordeu o detector de foto do
+   * `check:compartilhar`, que estava amarrado ao nome do fornecedor de
+   * armazenamento. Marcador explícito não muda quando a frase muda.
+   */
+  other: { "estado-do-site": "obra" },
 };
 
 export default async function PaginaEmConstrucao() {
@@ -47,7 +62,7 @@ export default async function PaginaEmConstrucao() {
 
         <div className="mt-bloco flex flex-wrap items-center gap-x-8 gap-y-4 text-leitura">
           <a
-            href={`https://wa.me/${config.whatsappNumero}`}
+            href={linkDoWhatsapp(config.whatsappNumero)}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-btn-icone underline underline-offset-4 hover:no-underline"
@@ -62,7 +77,7 @@ export default async function PaginaEmConstrucao() {
               rel="noopener noreferrer"
               className="underline underline-offset-4 text-inv-suave hover:no-underline"
             >
-              @croche.comraquel
+              {arrobaDoInstagram(config.instagramUrl) ?? "Instagram"}
             </a>
           ) : null}
         </div>

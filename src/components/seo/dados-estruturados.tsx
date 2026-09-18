@@ -1,4 +1,5 @@
 import { urlDoSite } from "@/lib/site";
+import { somenteDigitos } from "@/lib/whatsapp";
 
 /**
  * JSON-LD.
@@ -38,7 +39,9 @@ export function negocioLocal(config: {
     description:
       "Peças de crochê e macramê feitas à mão, sob encomenda: bolsas, mesa posta, decoração e enxoval.",
     url: base,
-    telephone: `+${config.whatsappNumero}`,
+    // Pelo mesmo motivo dos links: o número vem do banco, e um dia pode vir
+    // formatado. `+5524…` com parênteses no meio não é telefone para o Google.
+    telephone: `+${somenteDigitos(config.whatsappNumero)}`,
     email: config.email ?? undefined,
     image: `${base}/icon.svg`,
     address: {

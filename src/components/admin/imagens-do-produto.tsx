@@ -106,7 +106,10 @@ export function ImagensDoProduto({
 
         <div className="flex flex-wrap items-end gap-4">
           <div>
-            <label htmlFor="arquivo" className={`${classesDeBotao("secundaria")} cursor-pointer`}>
+            <label
+              htmlFor="arquivo"
+              className={`${classesDeBotao("secundaria")} cursor-pointer focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-foco`}
+            >
               <Upload className="size-5" aria-hidden="true" />
               {nomeDoArquivo ?? "Escolher foto"}
             </label>
@@ -146,7 +149,13 @@ export function ImagensDoProduto({
           </div>
           <p className="text-legenda text-conteudo-suave">
             JPG, PNG, WebP ou AVIF. A foto é reduzida aqui antes de subir.{" "}
-            {preparando ? "Preparando…" : enviando ? "Enviando…" : ""}
+            {/* Região viva separada: o estado precisa ser ANUNCIADO quando
+                muda, e o texto fixo ao lado não deve ser relido junto. Sem
+                isto, quem usa leitor de tela clica em enviar e não recebe
+                sinal nenhum de que algo está acontecendo. */}
+            <span role="status">
+              {preparando ? "Preparando…" : enviando ? "Enviando…" : ""}
+            </span>
           </p>
         </div>
       </form>

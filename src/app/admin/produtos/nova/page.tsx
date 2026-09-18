@@ -6,7 +6,12 @@ import { FormularioDeNovaPeca } from "./formulario";
 
 export default async function NovaPeca() {
   await exigirSessao();
-  const categorias = await db.category.findMany({ orderBy: { position: "asc" } });
+  const categorias = await db.category.findMany({
+    // Só o que o `<select>` usa. Sem `select`, isto puxava `longDescription`
+    // — texto longo — de cada categoria só para montar uma lista de nomes.
+    select: { id: true, name: true },
+    orderBy: { position: "asc" },
+  });
 
   return (
     <main className="container-site secao">

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { linkDoWhatsapp, arrobaDoInstagram } from "@/lib/whatsapp";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -344,7 +345,7 @@ export function Navegacao({
             ) : null}
 
             <a
-              href={`https://wa.me/${whatsappNumero}`}
+              href={linkDoWhatsapp(whatsappNumero)}
               target="_blank"
               rel="noopener noreferrer"
               className="botao-primario hidden items-center gap-btn-icone whitespace-nowrap rounded-fio px-btn-x py-btn-y text-apoio font-medium text-sobre-primaria transition-[background-color,box-shadow,transform] duration-[240ms] ease-fio active:translate-y-px sm:inline-flex"
@@ -576,7 +577,7 @@ function Gaveta({
 
             <div className="space-y-4 p-painel">
               <a
-                href={`https://wa.me/${whatsappNumero}`}
+                href={linkDoWhatsapp(whatsappNumero)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex w-full items-center justify-center gap-btn-icone rounded-fio bg-cru px-btn-x py-btn-y font-medium transition-transform duration-[240ms] ease-fio active:translate-y-px text-verde-cristal"
@@ -592,7 +593,7 @@ function Gaveta({
                   className="flex items-center justify-center gap-2 text-apoio text-inv-suave"
                 >
                   <IconeInstagram className="size-4" />
-                  @croche.comraquel
+                  {arrobaDoInstagram(instagramUrl) ?? "Instagram"}
                 </a>
               ) : null}
             </div>

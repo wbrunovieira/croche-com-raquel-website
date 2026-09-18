@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { linkDoWhatsapp } from "@/lib/whatsapp";
 import { Logo } from "@/components/brand/logo";
 import { IconeInstagram } from "@/components/ui/icone-instagram";
 import { IconeZap } from "@/components/ui/icone-zap";
@@ -50,7 +51,7 @@ export async function Rodape() {
             </p>
             <div className="mt-bloco flex flex-wrap gap-4">
               <a
-                href={`https://wa.me/${config.whatsappNumero}`}
+                href={linkDoWhatsapp(config.whatsappNumero)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-apoio text-inv-suave transition-colors hover:text-inv-conteudo"

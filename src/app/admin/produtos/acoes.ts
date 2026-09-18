@@ -56,7 +56,7 @@ export type ResultadoDaAcao = { erro?: string; ok?: string };
  * sensação de que a peça ficou pela metade. O Bruno cortou, e está certo.
  *
  * A ordem interna continua sendo criar-depois-subir, porque a foto vai para
- * `produtos/<slug>/` no Blob e o caminho precisa do slug. Do ponto de vista
+ * `croche/produtos/<slug>/` no R2 e a chave precisa do slug. Do ponto de vista
  * dela é um botão só.
  */
 export async function criarProduto(_anterior: unknown, dados: FormData) {
@@ -259,7 +259,7 @@ export async function apagarProduto(id: string) {
    *
    * Antes elas saíam junto, para não pagar espaço à toa. O problema é que essa
    * é a única parte do apagar que não tem volta: o banco tem histórico na Neon,
-   * mas o Vercel Blob não tem versionamento — apagado é apagado. Com as fotos
+   * mas o R2 não tem versionamento — apagado é apagado. Com as fotos
    * destruídas, restaurar o banco devolveria a peça apontando para arquivos que
    * não existem mais, ou seja, uma peça sem foto.
    *
@@ -297,7 +297,7 @@ function problemaNaFoto(arquivo: unknown): string | null {
   return null;
 }
 
-/** Sobe a foto ao Blob e liga à peça. Usado na criação e na edição. */
+/** Sobe a foto ao R2 e liga à peça. Usado na criação e na edição. */
 /** A extensão sai do tipo declarado, nunca do nome do arquivo. */
 const EXTENSAO_POR_TIPO: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -416,7 +416,7 @@ export async function apagarImagem(imageId: string) {
   });
   if (!imagem) return;
 
-  // O arquivo fica no armazenamento — mesma razão de `apagarProduto`: o Blob
+  // O arquivo fica no armazenamento — mesma razão de `apagarProduto`: o R2
   // não tem versionamento, e tirar a foto da peça é reversível enquanto o
   // arquivo existir.
   await db.productImage.delete({ where: { id: imageId } });

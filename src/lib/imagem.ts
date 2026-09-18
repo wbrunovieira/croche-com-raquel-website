@@ -6,7 +6,7 @@
  * qualquer foto real no painel estourava um 500 — e estourava ANTES da
  * validação rodar, então ela via "This page couldn't load" em vez da mensagem
  * amigável. Subir o teto do servidor resolveria o erro e criaria três
- * problemas: envio lento no 4G da serra, armazenamento caro no Blob, e o site
+ * problemas: envio lento no 4G da serra, armazenamento caro, e o site
  * servindo um PNG de 2,6 MB para quem só quer ver uma bolsa.
  *
  * Reduzindo aqui, a foto sai daqui já em tamanho de web — e a mesma passagem

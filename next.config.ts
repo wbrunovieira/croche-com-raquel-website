@@ -43,7 +43,7 @@ const nextConfig: NextConfig = {
    * e dez delas passam do 1 MB que o Next aceita de fábrica.
    *
    * Subir só este número teria sido a correção preguiçosa: resolveria o 500 e
-   * deixaria a Raquel esperando 6 MB subirem pelo 4G da serra, pagando Blob
+   * deixaria a Raquel esperando 6 MB subirem pelo 4G da serra, pagando armazenamento
    * caro e servindo um PNG gigante para quem só quer ver uma bolsa.
    */
   experimental: {

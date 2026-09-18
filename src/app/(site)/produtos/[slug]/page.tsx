@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SLUG_BOLSAS } from "@/lib/queries/tipos";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Chip } from "@/components/ui/chip";
@@ -66,7 +67,7 @@ export default async function PaginaDeProduto({ params }: PageProps<"/produtos/[
   const prazo = formatarPrazo(produto.prazoMinDias, produto.prazoMaxDias);
   const url = urlDoProduto(produto.slug);
   const linkDaCategoria =
-    produto.categoria.slug === "bolsas"
+    produto.categoria.slug === SLUG_BOLSAS
       ? "/bolsas"
       : `/?categoria=${produto.categoria.slug}#catalogo`;
 

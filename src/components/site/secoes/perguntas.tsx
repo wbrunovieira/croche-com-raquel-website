@@ -1,4 +1,5 @@
 import { ChevronDown } from "lucide-react";
+import { linkDoWhatsapp } from "@/lib/whatsapp";
 import { Etiqueta } from "@/components/ui/etiqueta";
 import { Revelar } from "@/components/ui/revelar";
 import { IconeZap } from "@/components/ui/icone-zap";
@@ -108,7 +109,7 @@ export function SecaoPerguntas({
               que depois.
             </p>
             <a
-              href={`https://wa.me/${whatsappNumero}`}
+              href={linkDoWhatsapp(whatsappNumero)}
               target="_blank"
               rel="noopener noreferrer"
               className="botao-claro mt-bloco inline-flex items-center gap-btn-icone rounded-fio px-btn-x py-btn-y font-medium text-verde-cristal transition-[background-color,border-color,box-shadow,transform] duration-[240ms] ease-fio active:translate-y-px"

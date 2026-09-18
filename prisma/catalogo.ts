@@ -2,13 +2,13 @@
  * Catálogo inicial da Raquel.
  *
  * Mora fora do `seed.ts` porque duas coisas precisam dele: o seed, que grava
- * os dados, e o `scripts/importar-fotos.ts`, que sobe as fotos ao Blob. Se
+ * os dados, e o `scripts/importar-fotos.ts`, que sobe as fotos ao R2. Se
  * cada um tivesse a sua cópia da lista, uma hora as duas discordariam.
  */
 
 export type Opcao = { grupo: string; obrigatorio: boolean; valores: string[] };
 
-/// Foto da peça em `prisma/fotos/`. O arquivo entra no Blob por
+/// Foto da peça em `prisma/fotos/`. O arquivo entra no R2 por
 /// `pnpm fotos:importar` — o seed não sobe binário, só grava dados.
 export type Foto = { arquivo: string; alt: string; escalaHumana?: boolean };
 

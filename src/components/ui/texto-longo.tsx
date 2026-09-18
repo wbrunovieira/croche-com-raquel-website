@@ -69,19 +69,34 @@ export function agruparPorSubtitulo(texto: string): TrechoDeTexto[] {
   return trechos;
 }
 
-export function TextoLongo({ texto }: { texto: string }) {
+/**
+ * O `nivel` existe porque o mesmo texto entra em dois contextos diferentes.
+ *
+ * Numa página inteira (`/politicas/...`) o corpo é o conteúdo principal e seus
+ * `## ` são `<h2>` legítimos. Dentro de uma SEÇÃO da home, porém, já existe um
+ * `<h2>` acima — "Como começou", "Cuidados com as peças" —, e emitir outros
+ * `<h2>` irmãos ali achata a hierarquia: para o leitor de tela, o subtítulo do
+ * texto passa a ter o mesmo peso do título da seção, e a estrutura da página
+ * deixa de descrever o que está dentro de quê.
+ *
+ * O ramo de fichas de `cuidados.tsx` já acertava isso usando `h3`, e o
+ * comentário de lá descreve exatamente este problema — faltava o outro ramo
+ * poder fazer o mesmo.
+ */
+export function TextoLongo({ texto, nivel = 2 }: { texto: string; nivel?: 2 | 3 }) {
   const blocos = blocosDoTexto(texto);
+  const Titulo = nivel === 3 ? "h3" : "h2";
 
   return (
     <div className="max-w-texto">
       {blocos.map((bloco, i) =>
         bloco.startsWith("## ") ? (
-          <h2
+          <Titulo
             key={i}
             className={`font-display text-t3 ${i === 0 ? "" : "mt-respiro"}`}
           >
             {comNegrito(bloco.slice(3))}
-          </h2>
+          </Titulo>
         ) : (
           <p key={i} className="mt-4 text-leitura">
             {comNegrito(bloco)}

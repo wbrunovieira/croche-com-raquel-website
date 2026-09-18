@@ -146,4 +146,7 @@ async function main() {
   await db.$disconnect();
 }
 
-main();
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

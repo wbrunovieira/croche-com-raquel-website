@@ -15,7 +15,7 @@ import { r2Ler } from "@/lib/r2";
  * 2. **O identificador da conta Cloudflare não vaza** em cada `<img>` do site.
  * 3. **Se o armazenamento mudar de novo, o endereço não muda.** Foi a segunda
  *    mudança em um mês; guardar no banco um endereço de provedor foi justamente
- *    o que obrigou a reescrever 73 linhas quando o Vercel Blob caiu.
+ *    o que obrigou a reescrever 74 linhas quando o Vercel Blob caiu.
  *
  * **O custo é baixo e previsível.** Leitura no R2 é operação Classe B, com 10
  * milhões gratuitas por mês — contra as 2.000 que estouraram na Vercel. E o

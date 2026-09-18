@@ -28,6 +28,7 @@
  *   URL_BASE=https://… pnpm aquecer    → aquece o que está no ar
  */
 import { chromium } from "playwright";
+import { ehObra } from "./lib/estado-do-site.mjs";
 
 const BASE = (process.env.URL_BASE ?? "http://localhost:3000").replace(/\/+$/, "");
 
@@ -52,7 +53,7 @@ try {
    * os dois domínios sem ninguém ter de lembrar qual é qual.
    */
   const inicial = await (await fetch(`${BASE}/`)).text();
-  if (/— em breve/.test(inicial)) {
+  if (ehObra(inicial)) {
     console.log(`○ ${BASE} está servindo a obra — nada para aquecer.`);
     await navegador.close();
     process.exit(0);

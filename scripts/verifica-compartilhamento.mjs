@@ -17,6 +17,7 @@
  *   URL_BASE=https://preview.crochecomraquel.com.br pnpm check:compartilhar
  */
 import sharp from "sharp";
+import { ehObra } from "./lib/estado-do-site.mjs";
 
 const BASE = process.env.URL_BASE ?? "http://localhost:3000";
 
@@ -64,7 +65,7 @@ const pegar = (html, re) => (html.match(re) ?? [])[1] ?? "";
  * conferiu algo.
  */
 const inicial = await texto(`${BASE}/`);
-if (/— em breve/.test(inicial)) {
+if (ehObra(inicial)) {
   console.log(
     `○ ${BASE} está servindo a página de obra — nenhuma peça para conferir.\n` +
       "  Aponte para onde o site atende de verdade:\n" +

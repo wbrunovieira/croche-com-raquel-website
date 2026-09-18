@@ -3,6 +3,17 @@ import type { ComponentProps } from "react";
 const CAMPO =
   "w-full rounded-fio border border-borda-forte bg-superficie px-campo-x text-base disabled:opacity-60";
 
+/**
+ * O `id` da dica, derivado do campo — é o que o `aria-describedby` aponta.
+ *
+ * **A dica era invisível para leitor de tela.** Ela é um `<p>` irmão do
+ * `<label>`, sem ligação nenhuma com o input: focar o campo anunciava o rótulo e
+ * nada mais. E a dica mais importante do painel é justamente a do preço —
+ * *"Deixe em branco para a peça aparecer como sob consulta"* —, que explica um
+ * comportamento que ninguém adivinha.
+ */
+const idDaDica = (id: string) => `${id}-dica`;
+
 export function Rotulo({
   htmlFor,
   children,
@@ -17,7 +28,11 @@ export function Rotulo({
       <label htmlFor={htmlFor} className="block text-apoio font-medium">
         {children}
       </label>
-      {dica ? <p className="mt-1 text-legenda text-conteudo-suave">{dica}</p> : null}
+      {dica ? (
+        <p id={idDaDica(htmlFor)} className="mt-1 text-legenda text-conteudo-suave">
+          {dica}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -34,7 +49,10 @@ export function Campo({
       <Rotulo htmlFor={id} dica={dica}>
         {rotulo}
       </Rotulo>
-      <input id={id} name={id} className={`${CAMPO} mt-2 h-controle ${className}`} {...props} />
+      <input
+        id={id}
+        name={id}
+        aria-describedby={dica ? idDaDica(id) : undefined} className={`${CAMPO} mt-2 h-controle ${className}`} {...props} />
     </div>
   );
 }
@@ -55,6 +73,7 @@ export function AreaDeTexto({
       <textarea
         id={id}
         name={id}
+        aria-describedby={dica ? idDaDica(id) : undefined}
         rows={rows}
         className={`${CAMPO} mt-2 py-campo-y ${className}`}
         {...props}
@@ -75,7 +94,10 @@ export function Selecao({
       <Rotulo htmlFor={id} dica={dica}>
         {rotulo}
       </Rotulo>
-      <select id={id} name={id} className={`${CAMPO} mt-2 h-controle`} {...props}>
+      <select
+        id={id}
+        name={id}
+        aria-describedby={dica ? idDaDica(id) : undefined} className={`${CAMPO} mt-2 h-controle`} {...props}>
         {children}
       </select>
     </div>

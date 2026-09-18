@@ -40,12 +40,39 @@ try {
   // robots e sitemap
   const robots = await (await fetch(`${BASE}/robots.txt`)).text();
 
-  // O check roda tanto contra o localhost/domínio quanto contra o preview, e as
-  // regras corretas são opostas nos dois. Sem distinguir, ele acusa seis falhas
-  // no preview — e check que grita lobo passa a ser ignorado.
-  const foraDoBuscador = /Disallow: \/$/m.test(robots) && !robots.includes("Allow: /");
-  if (foraDoBuscador) {
-    ok("host fora do buscador: robots bloqueia tudo", robots.includes("Disallow: /"));
+  /**
+   * **Quem decide o ramo é o HOST, não o `robots.txt`.**
+   *
+   * O check roda contra o localhost, contra o domínio e contra o preview, e as
+   * regras certas são opostas: o preview PRECISA estar fora do buscador, o
+   * domínio NÃO pode estar. Distinguir é certo — o que estava errado era
+   * distinguir lendo o próprio `robots.txt` que está sendo avaliado.
+   *
+   * O defeito: se o domínio público passasse a servir `Disallow: /` por engano,
+   * `foraDoBuscador` virava `true`, as seis asserções reais eram puladas, e o
+   * check passava confirmando que o bloqueio existe. Ou seja, **o pior defeito
+   * de SEO possível — site no ar e invisível — ficava escondido pelo detector
+   * automático de estado**. Detector que lê a coisa avaliada não é detector, é
+   * espelho.
+   *
+   * Agora: se o host é o domínio de produção, ele é cobrado como domínio, e um
+   * `Disallow: /` ali REPROVA, que é o que se quer saber.
+   */
+  const DOMINIO_PUBLICO = "crochecomraquel.com.br";
+  const hostDoBase = new URL(BASE).hostname;
+  const ehDominioPublico = hostDoBase === DOMINIO_PUBLICO || hostDoBase === `www.${DOMINIO_PUBLICO}`;
+  const ehPreviewOuDeploy = hostDoBase.startsWith("preview.") || hostDoBase.endsWith(".vercel.app");
+
+  if (ehPreviewOuDeploy) {
+    ok("host de preview fica fora do buscador", /Disallow: \/$/m.test(robots), robots.split("\n")[1] ?? "");
+  } else if (ehDominioPublico) {
+    ok(
+      "o domínio NÃO está bloqueado para o buscador",
+      !(/Disallow: \/$/m.test(robots) && !robots.includes("Allow: /")),
+      "um `Disallow: /` aqui deixa o site no ar e invisível no Google"
+    );
+    ok("robots.txt bloqueia o painel", robots.includes("Disallow: /admin"));
+    ok("e aponta o sitemap", robots.includes("/sitemap.xml"));
   } else {
     ok("robots.txt bloqueia o painel", robots.includes("Disallow: /admin"));
     ok("e aponta o sitemap", robots.includes("/sitemap.xml"), robots.includes("/sitemap.xml") ? "" : "obra ligada? o domínio só aponta o sitemap depois do lançamento");
@@ -75,7 +102,16 @@ try {
   ok("o sitemap traz peças", slugsDeProduto.length > 0, `${slugsDeProduto.length} peças`);
 
   let comOferta = 0;
-  for (const slug of slugsDeProduto.slice(0, 4)) {
+  /**
+   * **Todas as peças, não uma amostra de quatro.**
+   *
+   * O `check:compartilhar` percorre todas justamente porque o defeito aparecia
+   * em algumas e não em outras. Aqui vale o mesmo, e por um motivo concreto:
+   * preço é opcional por produto, então a regra de oferta com valor e a de "sob
+   * consulta" só são exercitadas se a amostra pegar uma de cada — e quatro
+   * primeiras do sitemap não garantem isso.
+   */
+  for (const slug of slugsDeProduto) {
     await p.goto(`${BASE}/produtos/${slug}`, { waitUntil: "networkidle" });
     const dados = await jsonLd(p);
     const produto = dados.find((d) => d["@type"] === "Product");

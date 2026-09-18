@@ -19,6 +19,7 @@
  */
 import { request as requisicaoHttp } from "node:http";
 import { request as requisicaoHttps } from "node:https";
+import { ehObra } from "./lib/estado-do-site.mjs";
 
 const BASE = process.env.URL_BASE ?? "http://localhost:3000";
 /**
@@ -84,14 +85,14 @@ const PREVIEW = `preview.${DOMINIO}`;
  * sempre.
  */
 const raiz = await pegar("/", DOMINIO);
-const NO_AR = !raiz.corpo.includes("O site está sendo feito");
+const NO_AR = !ehObra(raiz.corpo);
 console.log(NO_AR ? "· o domínio serve o SITE\n" : "· o domínio serve a OBRA\n");
 
 if (!NO_AR) {
   // A obra mostra a obra em toda rota — não só na raiz.
   for (const rota of ["/", "/bolsas", "/produtos/bolsa-saco-cafe"]) {
     const { corpo } = await pegar(rota, DOMINIO);
-    ok(`${rota} no domínio cai na página de obra`, corpo.includes("O site está sendo feito"));
+    ok(`${rota} no domínio cai na página de obra`, ehObra(corpo));
   }
 
   /**
@@ -113,7 +114,7 @@ if (!NO_AR) {
     const { status, corpo } = await pegar(rota, DOMINIO);
     ok(
       `${rota} no domínio serve a página de verdade`,
-      status === 200 && !corpo.includes("O site está sendo feito"),
+      status === 200 && !ehObra(corpo),
       `status ${status}`
     );
   }
@@ -153,7 +154,7 @@ const admin = await pegar("/admin", DOMINIO);
 const painelFechado = NO_AR
   ? [301, 302, 307, 308].includes(admin.status) &&
     (admin.cabecalhos.location ?? "").includes("/admin/entrar")
-  : admin.status === 200 && admin.corpo.includes("O site está sendo feito");
+  : admin.status === 200 && ehObra(admin.corpo);
 ok(
   "/admin no domínio não entrega o painel sem sessão",
   painelFechado,

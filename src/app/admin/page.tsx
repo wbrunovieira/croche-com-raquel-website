@@ -21,7 +21,7 @@ export default async function PaginaDoAdmin() {
   return (
     <main className="container-site secao">
       <Etiqueta>Painel</Etiqueta>
-      <h1 className="mt-2 font-display text-t1">Oi, {usuario.name?.split(" ")[0]}</h1>
+      <h1 className="mt-2 font-display text-t1">Oi{usuario.name ? `, ${usuario.name.split(" ")[0]}` : ""}</h1>
 
       {semFoto > 0 ? (
         <div className="mt-bloco flex max-w-texto items-start gap-3 rounded-card border border-borda bg-goiaba-clara p-painel">

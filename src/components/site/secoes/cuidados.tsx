@@ -101,7 +101,7 @@ export function SecaoCuidados({ pagina }: { pagina: PaginaInstitucional | null }
           </Revelar>
         ) : (
           <Revelar entrada="texto" className="mx-auto mt-respiro max-w-texto">
-            <TextoLongo texto={pagina.corpo} />
+            <TextoLongo texto={pagina.corpo} nivel={3} />
           </Revelar>
         )}
       </div>

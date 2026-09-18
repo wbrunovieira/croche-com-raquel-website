@@ -4,6 +4,7 @@ import { PrismaClient } from "../src/generated/prisma/client";
 import { urlComSslVerificado } from "../src/lib/db-url";
 import { PAGINAS, PERGUNTAS } from "./conteudo";
 import { DEMONSTRACOES_ANTIGAS, PRODUTOS } from "./catalogo";
+import { ehDemonstracao } from "../src/lib/demonstracao";
 
 carregarEnv({ path: ".env.local", quiet: true });
 
@@ -14,7 +15,7 @@ const db = new PrismaClient({
 
 // Seed idempotente: roda quantas vezes for preciso sem duplicar nada.
 // Os produtos são as peças reais da Raquel, lidas das fotos do Instagram. As
-// fotos em si sobem ao Blob por `pnpm fotos:importar`, que roda depois deste.
+// fotos em si sobem ao R2 por `pnpm fotos:importar --aplicar`, que roda depois deste.
 
 const TEXTO_LONGO_BOLSAS = `## Bolsa de crochê feita à mão, sob encomenda
 
@@ -280,10 +281,52 @@ async function semearCatalogo() {
     }
   }
 
-  // As peças de exemplo saem depois de os produtos reais entrarem, para o site
-  // nunca ficar sem catálogo entre um passo e outro.
-  const removidas = await db.product.deleteMany({
+  /**
+   * As peças de exemplo saem depois de os produtos reais entrarem, para o site
+   * nunca ficar sem catálogo entre um passo e outro.
+   *
+   * **O filtro é a FOTO, e não o slug — o projeto já aprendeu isso uma vez.**
+   * `src/lib/demonstracao.ts` documenta, com nomes e números, por que marcar
+   * demonstração pelo slug falhou: o slug é gerado na criação e NÃO muda quando
+   * a peça é renomeada, então três exemplos que a Raquel transformou em peças
+   * reais continuaram com slug de exemplo. Aqui a consequência de repetir o erro
+   * seria pior que esconder do Google: este `deleteMany` APAGA. Bastava ela
+   * batizar uma peça de um nome cujo slug caísse na lista — e
+   * `corrigir-slugs-de-exemplo.ts` gera slug a partir do nome — para um
+   * `--catalogo` apagar trabalho dela.
+   *
+   * Filtrando pela foto de exemplo, a regra se desfaz sozinha no momento em que
+   * deixa de ser verdade: peça cuja foto ela trocou não é mais demonstração.
+   */
+  const candidatas = await db.product.findMany({
     where: { slug: { in: DEMONSTRACOES_ANTIGAS } },
+    select: { id: true, slug: true, images: { select: { url: true }, orderBy: { position: "asc" }, take: 1 } },
+  });
+  /**
+   * **Exige a foto de exemplo PRESENTE.** `ehDemonstracao` devolve `true` também
+   * para peça sem foto — o que está certo para a regra de SEO que a originou
+   * (peça sem foto não deve ser indexada), e é perigoso para apagar: uma peça
+   * nova que ela deixou em rascunho, sem foto ainda, cairia junto. Aqui a
+   * pergunta precisa ser mais estreita: só some o que TEM a foto de exemplo.
+   *
+   * Vale registrar que esta lista é histórica — são oito slugs de uma versão
+   * anterior do catálogo, e **nenhum existe no banco hoje** (conferido). Ou
+   * seja, este trecho é rede de segurança para ambiente novo, e o risco que ele
+   * carregava era maior que o serviço que presta: `manta-petropolis` está na
+   * lista, e é exatamente o slug que "Manta Petrópolis" geraria.
+   */
+  const temFotoDeExemplo = (c: (typeof candidatas)[number]) =>
+    Boolean(c.images[0]) && ehDemonstracao(c.images[0]!.url);
+  const aindaDemonstracao = candidatas.filter(temFotoDeExemplo);
+  const poupadas = candidatas.filter((c) => !temFotoDeExemplo(c));
+  if (poupadas.length > 0) {
+    console.log(
+      `Poupadas ${poupadas.length} peça(s) com slug de exemplo que já têm foto real: ` +
+        poupadas.map((p) => p.slug).join(", ")
+    );
+  }
+  const removidas = await db.product.deleteMany({
+    where: { id: { in: aindaDemonstracao.map((p) => p.id) } },
   });
   if (removidas.count > 0) {
     console.log(`Removidas ${removidas.count} peças de demonstração.`);
@@ -302,7 +345,7 @@ async function semearConteudo() {
   // tivesse mudado na tela; sem a tela, isso significaria que ninguém consegue
   // mudar nada — editar este arquivo não teria efeito sobre a linha existente.
   //
-  // A foto do "quem faz" fica de fora de propósito: ela vem do Blob, pelo
+  // A foto do "quem faz" fica de fora de propósito: ela vem do R2, pelo
   // `pnpm fotos:importar`, e não daqui.
   const configuracoes = {
     whatsappNumber: "5524992087591",

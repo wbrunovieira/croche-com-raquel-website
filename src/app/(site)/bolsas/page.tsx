@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { SLUG_BOLSAS } from "@/lib/queries/tipos";
+import { linkDoWhatsapp } from "@/lib/whatsapp";
 import { Etiqueta } from "@/components/ui/etiqueta";
 import { Revelar } from "@/components/ui/revelar";
 import { TextoLongo } from "@/components/ui/texto-longo";
@@ -25,7 +27,7 @@ export const metadata: Metadata = {
 export default async function PaginaDeBolsas() {
   const [categoria, produtos, config] = await Promise.all([
     buscarCategoriaPorSlug("bolsas"),
-    listarProdutos({ categoria: "bolsas" }),
+    listarProdutos({ categoria: SLUG_BOLSAS }),
     buscarConfiguracoes(),
   ]);
 
@@ -73,7 +75,7 @@ export default async function PaginaDeBolsas() {
             <Revelar decorativo className="corrente mt-respiro" />
             <div className="mt-bloco">
               <a
-                href={`https://wa.me/${config.whatsappNumero}`}
+                href={linkDoWhatsapp(config.whatsappNumero)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-btn-icone rounded-fio bg-primaria px-btn-x py-btn-y font-medium text-sobre-primaria transition-[background-color,transform] duration-150 ease-fio active:translate-y-px hover:bg-primaria-hover"

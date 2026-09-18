@@ -19,6 +19,29 @@ const db = new PrismaClient({
 
 const preco = (v: unknown) => (v === null ? "sob consulta" : `R$ ${String(v)}`);
 
+/**
+ * Detalha a primeira peça publicada, e não um slug cravado.
+ *
+ * Era `detalhar("bolsa-serra")`, e `bolsa-serra` está na lista de demonstrações
+ * antigas — o seed a apagou, e `findUniqueOrThrow` passou a estourar DEPOIS de
+ * imprimir o resumo inteiro. Ou seja, o comando terminava em erro sempre, e a
+ * parte útil dele já tinha saído: ninguém percebia com pressa.
+ *
+ * Cravar slug de peça neste projeto é sempre provisório — o catálogo é dela.
+ */
+async function detalharAPrimeira() {
+  const primeira = await db.product.findFirst({
+    where: { status: "PUBLISHED" },
+    orderBy: [{ position: "asc" }, { name: "asc" }],
+    select: { slug: true },
+  });
+  if (!primeira) {
+    console.log("\n(nenhuma peça publicada para detalhar)");
+    return;
+  }
+  return detalhar(primeira.slug);
+}
+
 async function detalhar(slug: string) {
   const p = await db.product.findUniqueOrThrow({
     where: { slug },
@@ -95,7 +118,7 @@ async function main() {
   console.log(`\nPREÇO       ${comPreco} com valor  ·  ${semPreco} sob consulta`);
   console.log(`DESTAQUES   ${destaques.map((d) => d.name).join(" · ")}`);
 
-  await detalhar("bolsa-serra");
+  await detalharAPrimeira();
 }
 
 main()

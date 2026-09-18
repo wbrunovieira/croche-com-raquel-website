@@ -158,16 +158,28 @@ async function main() {
    * URL absoluta que sobrou de antes continua sendo buscada por HTTP.
    */
   async function baixar(url: string): Promise<Buffer | null> {
-    try {
-      if (url.startsWith("/fotos/")) {
-        const objeto = await r2Ler(url.replace(/^\/fotos\//, ""));
-        return objeto ? Buffer.from(objeto.corpo) : null;
+    /**
+     * **Três tentativas, como no envio.** O `r2Enviar` já repetia em queda de
+     * rede e explicava por quê; aqui não repetia nenhuma, então um
+     * `UND_ERR_SOCKET` numa foto derrubava o backup inteiro. Falhar alto está
+     * certo — falhar à toa não, porque verificação que falha à toa é
+     * verificação que se aprende a ignorar, e este roda de seis em seis horas.
+     */
+    for (let tentativa = 1; tentativa <= 3; tentativa++) {
+      try {
+        if (url.startsWith("/fotos/")) {
+          const objeto = await r2Ler(url.replace(/^\/fotos\//, ""));
+          return objeto ? Buffer.from(objeto.corpo) : null;
+        }
+        const r = await fetch(url);
+        // Resposta do servidor não se repete: 403 é 403 nas três vezes.
+        return r.ok ? Buffer.from(await r.arrayBuffer()) : null;
+      } catch {
+        if (tentativa === 3) return null;
+        await new Promise((seguir) => setTimeout(seguir, tentativa * 1500));
       }
-      const r = await fetch(url);
-      return r.ok ? Buffer.from(await r.arrayBuffer()) : null;
-    } catch {
-      return null;
     }
+    return null;
   }
 
   /**
@@ -264,7 +276,7 @@ async function main() {
     bytes += conteudo.length;
   }
 
-  await writeFile(join(DESTINO, "fotos.json"), JSON.stringify(mapa, null, 2));
+
 
   /**
    * Foto que não baixa FALHA o backup, e isso é de propósito.
@@ -274,6 +286,14 @@ async function main() {
    * se descobre que as imagens não estão lá. Se o armazenamento estiver fora do
    * ar, melhor a execução falhar e alguém ver.
    */
+  /**
+   * O mapa é gravado DEPOIS da checagem de falhas.
+   *
+   * Antes ele era escrito antes do `throw`: a execução falhava (certo) e deixava
+   * em disco um `fotos.json` listando só as fotos que baixaram. O `restaurar.ts`
+   * e o `migrar-fotos-para-r2.ts` consomem esse arquivo como se fosse a verdade
+   * — então o backup falhava alto E envenenava o insumo do restaurador.
+   */
   if (falhas.length > 0) {
     console.log(`\n  ✗ ${falhas.length} foto(s) não baixaram:`);
     for (const f of falhas.slice(0, 5)) console.log(`      ${f}`);
@@ -282,6 +302,8 @@ async function main() {
         "e backup incompleto que passa é pior que backup que falha."
     );
   }
+
+  await writeFile(join(DESTINO, "fotos.json"), JSON.stringify(mapa, null, 2));
 
 
   console.log(`\n  ${n} fotos · ${(bytes / 1024 / 1024).toFixed(1)} MB`);

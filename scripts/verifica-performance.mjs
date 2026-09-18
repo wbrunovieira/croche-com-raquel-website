@@ -18,6 +18,7 @@
  *   URL_BASE=https://preview.crochecomraquel.com.br pnpm check:performance
  */
 import { chromium } from "playwright";
+import { ehObra } from "./lib/estado-do-site.mjs";
 
 const BASE = process.env.URL_BASE ?? "http://localhost:3000";
 
@@ -138,8 +139,8 @@ try {
       // raiz antes do lançamento, e de qualquer URL de deploy cru. Acusar ali
       // seria apontar defeito onde só há configuração; ensinar a ignorar
       // alarme custa mais caro que a asserção vale.
-      const ehObra = /— em breve/.test(await (await fetch(`${BASE}/`)).text());
-      if (ehObra) {
+      const naObra = ehObra(await (await fetch(`${BASE}/`)).text());
+      if (naObra) {
         console.log(`○ ${BASE} está servindo a obra — nenhuma foto de peça para medir.`);
       } else {
         ok("achou uma foto de peça na home", false, "nenhuma imagem vinda de /fotos/");
