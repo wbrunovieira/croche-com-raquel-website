@@ -1,10 +1,15 @@
 /**
  * Verificação do roteamento por host.
  *
- * Enquanto o catálogo não estreia, o domínio mostra a página de obra e só o
- * `preview.` (e o localhost) veem o site completo. Duas coisas podem quebrar
- * em silêncio e só aparecer depois do deploy: o site inacabado vazar no
- * domínio, e o preview competir com o domínio no buscador.
+ * Antes da estreia, o domínio mostra a página de obra e só o `preview.` (e o
+ * localhost) veem o site completo; depois, o domínio serve o site. Esta
+ * verificação **descobre em qual dos dois estados as coisas estão** e cobra o
+ * conjunto certo — ver o comentário no meio do arquivo.
+ *
+ * Três coisas podem quebrar em silêncio e só aparecer depois do deploy: o site
+ * inacabado vazar no domínio antes da hora, o preview competir com o domínio no
+ * buscador, e — depois do lançamento — um `noindex` esquecido deixar o site no
+ * ar e invisível no Google.
  *
  * Precisa do servidor de pé:  pnpm dev
  * Depois:                     pnpm check:hospedagem
@@ -67,33 +72,92 @@ function pegar(caminho, host) {
 const DOMINIO = "crochecomraquel.com.br";
 const PREVIEW = `preview.${DOMINIO}`;
 
-// O domínio mostra a obra, e mostra em toda rota — não só na raiz.
-for (const rota of ["/", "/bolsas", "/produtos/bolsa-saco-cafe"]) {
-  const { corpo } = await pegar(rota, DOMINIO);
-  ok(`${rota} no domínio cai na página de obra`, corpo.includes("O site está sendo feito"));
+/**
+ * **A verificação descobre o estado em vez de presumir.**
+ *
+ * Antes do lançamento o domínio mostra a obra; depois, mostra o site. Fixar uma
+ * das duas expectativas faria esta verificação reprovar no dia da estreia
+ * justamente quando alguém mais precisa dela — e verificação que acusa falso é
+ * verificação que se aprende a ignorar. Então ela olha o que o domínio serve e
+ * cobra o conjunto certo para aquele estado. As regras que valem NOS DOIS
+ * estados (painel fechado, `www` no apex, preview fora do buscador) são cobradas
+ * sempre.
+ */
+const raiz = await pegar("/", DOMINIO);
+const NO_AR = !raiz.corpo.includes("O site está sendo feito");
+console.log(NO_AR ? "· o domínio serve o SITE\n" : "· o domínio serve a OBRA\n");
+
+if (!NO_AR) {
+  // A obra mostra a obra em toda rota — não só na raiz.
+  for (const rota of ["/", "/bolsas", "/produtos/bolsa-saco-cafe"]) {
+    const { corpo } = await pegar(rota, DOMINIO);
+    ok(`${rota} no domínio cai na página de obra`, corpo.includes("O site está sendo feito"));
+  }
+
+  /**
+   * A obra não pode ser indexada enquanto existir.
+   *
+   * O `X-Robots-Tag` de `noindex` só vale para quem NÃO é o domínio — e a obra é
+   * servida justamente no domínio. Sem uma regra própria, o Google guarda
+   * "Crochê com Raquel — em breve" como a descrição do site, e esse trecho
+   * sobrevive semanas ao lançamento.
+   */
+  ok(
+    "a obra sai com noindex",
+    (raiz.cabecalhos["x-robots-tag"] ?? "").includes("noindex"),
+    raiz.cabecalhos["x-robots-tag"] ?? "ausente"
+  );
+} else {
+  // O domínio serve as páginas de verdade, e não sobrou obra em rota nenhuma.
+  for (const rota of ["/", "/bolsas", "/produtos/bolsa-saco-cafe"]) {
+    const { status, corpo } = await pegar(rota, DOMINIO);
+    ok(
+      `${rota} no domínio serve a página de verdade`,
+      status === 200 && !corpo.includes("O site está sendo feito"),
+      `status ${status}`
+    );
+  }
+
+  /**
+   * **Depois do lançamento, o domínio NÃO pode sair com `noindex`.**
+   *
+   * É o defeito mais caro possível aqui e o mais silencioso: o site fica no ar,
+   * bonito, funcionando — e invisível no Google. Ninguém percebe olhando a tela;
+   * percebe-se semanas depois, quando a busca pelo nome dela não traz o site.
+   * Um `noindex` esquecido do tempo da obra faz exatamente isso.
+   */
+  ok(
+    "o domínio está liberado para o buscador",
+    !(raiz.cabecalhos["x-robots-tag"] ?? "").includes("noindex"),
+    raiz.cabecalhos["x-robots-tag"] ?? "sem X-Robots-Tag (é o esperado)"
+  );
+
+  // E o robots.txt do domínio aponta o sitemap — é assim que o buscador acha o
+  // catálogo inteiro sem depender de link.
+  const robots = await pegar("/robots.txt", DOMINIO);
+  ok(
+    "o robots.txt do domínio aponta o sitemap",
+    /Sitemap:\s*https?:\/\//i.test(robots.corpo),
+    robots.corpo.split("\n").find((l) => /sitemap/i.test(l)) ?? "sem linha Sitemap"
+  );
 }
 
-// E o painel não fica exposto por ali.
-const admin = await pegar("/admin", DOMINIO);
-ok(
-  "/admin no domínio cai na obra, e não no painel",
-  admin.status === 200 && admin.corpo.includes("O site está sendo feito"),
-  `status ${admin.status}`
-);
-
 /**
- * A obra não pode ser indexada enquanto existir.
+ * **O painel nunca fica aberto, nos dois estados.**
  *
- * O `X-Robots-Tag` de `noindex` só vale para quem NÃO é o domínio — e a obra é
- * servida justamente no domínio. Sem uma regra própria, o Google guarda
- * "Crochê com Raquel — em breve" como a descrição do site, e esse trecho
- * sobrevive semanas ao lançamento.
+ * Antes do lançamento ele cai na obra; depois, redireciona para a tela de
+ * entrada. O que não pode, em nenhum dos dois, é `/admin` responder com o painel
+ * para quem não tem sessão.
  */
-const obra = await pegar("/", DOMINIO);
+const admin = await pegar("/admin", DOMINIO);
+const painelFechado = NO_AR
+  ? [301, 302, 307, 308].includes(admin.status) &&
+    (admin.cabecalhos.location ?? "").includes("/admin/entrar")
+  : admin.status === 200 && admin.corpo.includes("O site está sendo feito");
 ok(
-  "a obra sai com noindex",
-  (obra.cabecalhos["x-robots-tag"] ?? "").includes("noindex"),
-  obra.cabecalhos["x-robots-tag"] ?? "ausente"
+  "/admin no domínio não entrega o painel sem sessão",
+  painelFechado,
+  `status ${admin.status}${admin.cabecalhos.location ? ` → ${admin.cabecalhos.location}` : ""}`
 );
 
 /**
