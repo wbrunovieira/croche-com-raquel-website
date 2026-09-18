@@ -152,33 +152,30 @@ const COLECOES = [
 ];
 
 
-async function main() {
-  // O painel deixou de editar configurações, então **o seed passou a ser o
-  // dono delas**. Antes era `update: {}`, para não sobrescrever o que a Raquel
-  // tivesse mudado na tela; sem a tela, isso significaria que ninguém consegue
-  // mudar nada — editar este arquivo não teria efeito sobre a linha existente.
-  //
-  // A foto do "quem faz" fica de fora de propósito: ela vem do Blob, pelo
-  // `pnpm fotos:importar`, e não daqui.
-  const configuracoes = {
-    whatsappNumber: "5524992087591",
-    whatsappTemplate:
-      "Oi Raquel! Vi no site e me interessei 💛\n\n*{produto}* ({codigo})\n{opcoes}\nQuantidade: {quantidade}\n\n{link}",
-    instagramUrl: "https://www.instagram.com/croche.comraquel/",
-    city: "Petrópolis, RJ",
-    heroTitle: "Bolsas que você carrega por anos",
-    heroSubtitle:
-      "Peças de crochê feitas à mão, sob encomenda, na cor e no tamanho que você escolher.",
-    announcementText:
-      "Não achou? A Raquel faz sob medida — é só contar o que você tem em mente",
-    announcementActive: true,
-  };
-  await db.siteSettings.upsert({
-    where: { id: "singleton" },
-    update: configuracoes,
-    create: { id: "singleton", ...configuracoes },
-  });
-
+/**
+ * **O seed é dividido em dois, e a divisão custou uma restauração.**
+ *
+ * Em 18/09/2026 rodei o seed inteiro só para atualizar o texto da política de
+ * trocas. Ele recriou três peças de exemplo que a Raquel tinha APAGADO e
+ * desfez um nome que ela tinha mudado no painel ("Sousplat de Folhas" virou
+ * "Sousplat", e o seed devolveu o nome antigo). Nada se perdeu porque o backup
+ * de seis em seis horas tinha o estado dela — mas foi sorte de haver backup, não
+ * cuidado de quem rodou.
+ *
+ * A raiz é que catálogo e conteúdo editorial têm DONOS DIFERENTES:
+ *
+ * - **O catálogo é dela.** Ela cria, edita e apaga peça pelo painel. Este
+ *   arquivo só deveria tocá-lo ao montar um ambiente do zero.
+ * - **Páginas e FAQ são nossos.** Saíram do painel de propósito, e
+ *   `conteudo.ts` é a fonte da verdade — editar aqui é o único caminho.
+ *
+ * Por isso rodar sem argumento não faz nada: escolher é obrigatório.
+ *
+ *   npx tsx prisma/seed.ts --conteudo   → configurações, páginas e FAQ (seguro)
+ *   npx tsx prisma/seed.ts --catalogo   → categorias e produtos de exemplo
+ *   npx tsx prisma/seed.ts --tudo       → os dois, para ambiente do zero
+ */
+async function semearCatalogo() {
   for (const c of CATEGORIAS) {
     const dados = { ...c, longDescription: c.longDescription ?? null };
     await db.category.upsert({ where: { slug: c.slug }, update: dados, create: dados });
@@ -292,6 +289,40 @@ async function main() {
     console.log(`Removidas ${removidas.count} peças de demonstração.`);
   }
 
+  console.log(`Catálogo: ${await db.category.count()} categorias, ${await db.product.count()} produtos.`);
+}
+
+/**
+ * Configurações, páginas e FAQ. Não toca em produto nenhum — é o caminho para
+ * corrigir um texto sem passar perto do trabalho dela.
+ */
+async function semearConteudo() {
+  // O painel deixou de editar configurações, então **o seed passou a ser o
+  // dono delas**. Antes era `update: {}`, para não sobrescrever o que a Raquel
+  // tivesse mudado na tela; sem a tela, isso significaria que ninguém consegue
+  // mudar nada — editar este arquivo não teria efeito sobre a linha existente.
+  //
+  // A foto do "quem faz" fica de fora de propósito: ela vem do Blob, pelo
+  // `pnpm fotos:importar`, e não daqui.
+  const configuracoes = {
+    whatsappNumber: "5524992087591",
+    whatsappTemplate:
+      "Oi Raquel! Vi no site e me interessei 💛\n\n*{produto}* ({codigo})\n{opcoes}\nQuantidade: {quantidade}\n\n{link}",
+    instagramUrl: "https://www.instagram.com/croche.comraquel/",
+    city: "Petrópolis, RJ",
+    heroTitle: "Bolsas que você carrega por anos",
+    heroSubtitle:
+      "Peças de crochê feitas à mão, sob encomenda, na cor e no tamanho que você escolher.",
+    announcementText:
+      "Não achou? A Raquel faz sob medida — é só contar o que você tem em mente",
+    announcementActive: true,
+  };
+  await db.siteSettings.upsert({
+    where: { id: "singleton" },
+    update: configuracoes,
+    create: { id: "singleton", ...configuracoes },
+  });
+
   for (const pagina of PAGINAS) {
     const dados = {
       title: pagina.title,
@@ -337,15 +368,26 @@ async function main() {
     console.log(`Removidas ${orfas.count} pergunta(s) que saíram de conteudo.ts.`);
   }
 
-  const [cat, sub, prod, grp, val] = await Promise.all([
-    db.category.count(), db.subcategory.count(), db.product.count(),
-    db.optionGroup.count(), db.optionValue.count(),
-  ]);
-  const [pag, faq] = await Promise.all([db.page.count(), db.faqItem.count()]);
-  console.log(
-    `Seed: ${cat} categorias, ${sub} subcategorias de bolsa, ${prod} produtos, ` +
-    `${grp} grupos de opção com ${val} valores, ${pag} páginas e ${faq} perguntas.`
-  );
+  console.log(`Conteúdo: ${await db.page.count()} páginas e ${await db.faqItem.count()} perguntas.`);
+}
+const bandeiras = process.argv.slice(2);
+const tudo = bandeiras.includes("--tudo");
+const querConteudo = tudo || bandeiras.includes("--conteudo");
+const querCatalogo = tudo || bandeiras.includes("--catalogo");
+
+async function main() {
+  if (!querConteudo && !querCatalogo) {
+    console.log(
+      "Escolha o que semear — rodar tudo por engano já reverteu o trabalho dela uma vez.\n\n" +
+        "  --conteudo   configurações, páginas e FAQ · seguro, não toca em produto\n" +
+        "  --catalogo   categorias e peças de exemplo · SOBRESCREVE o catálogo\n" +
+        "  --tudo       os dois, para montar um ambiente do zero\n"
+    );
+    process.exitCode = 1;
+    return;
+  }
+  if (querConteudo) await semearConteudo();
+  if (querCatalogo) await semearCatalogo();
 }
 
 main()

@@ -74,8 +74,14 @@ Um ponto soltou, a alça folgou, a peça precisa de um ajuste? Me chame no Whats
     title: "Trocas e devoluções",
     lead: "Peça sob encomenda tem algumas particularidades. Está tudo escrito aqui, sem letra miúda.",
     seoDescription:
-      "Política de trocas e devoluções da Crochê com Raquel: prazo de sete dias para arrependimento, noventa para defeito, o que vale em peça sob medida e como pedir ajuste.",
-    content: `## Peça com defeito
+      "Política de trocas e devoluções da Crochê com Raquel: sete dias para arrependimento, noventa para defeito, o que é variação do feito à mão e o que é defeito, e o que acontece se o prazo atrasar.",
+    content: `## Como eu resolvo, antes de tudo
+
+Na dúvida, resolvo a seu favor. Sou uma pessoa só fazendo peça a peça, e cliente insatisfeita me custa mais do que refazer uma bolsa. O que está escrito abaixo é o mínimo que você tem por direito — quase sempre eu faço mais.
+
+Tudo se resolve **pelo WhatsApp**, que é onde a gente já se fala. Não precisa de formulário, número de pedido nem e-mail.
+
+## Peça com defeito
 
 Se a peça chegar com defeito de fabricação, eu conserto ou refaço, sem custo — e o frete da ida e da volta é por minha conta. Me mande uma foto pelo WhatsApp assim que notar.
 
@@ -83,21 +89,41 @@ Pelo Código de Defesa do Consumidor você tem **noventa dias** para reclamar de
 
 Tenho **trinta dias** para resolver. Se eu não resolver nesse prazo, a escolha é sua: outra peça, o dinheiro de volta ou um abatimento no preço.
 
+## O que é feito à mão, e o que é defeito
+
+Cada peça é feita à mão, uma de cada vez. Duas bolsas do mesmo modelo nunca ficam idênticas: o ponto tem pequenas diferenças, o tamanho varia um pouco, e o tom do fio muda de um lote para outro. A cor na sua tela também não é exatamente a cor do fio — tela de celular puxa mais quente ou mais fria.
+
+**Isso é o artesanal, e eu conto antes justamente para você não se surpreender.**
+
+Agora, isso não é desculpa para peça malfeita. **Defeito é defeito**: ponto solto, fio arrebentado, alça mal presa, costura abrindo, medida muito fora do combinado, cor completamente diferente da que a gente acertou. Nesses casos vale tudo que está na seção acima, e eu resolvo.
+
+Se ficar em dúvida se é uma coisa ou outra, me mande a foto. Quem decide não sou só eu.
+
 ## Arrependimento
 
 Compra feita à distância dá direito a desistir em até **sete dias corridos** depois de receber a peça, pelo Código de Defesa do Consumidor. A peça precisa voltar sem uso e nas mesmas condições, e o frete da devolução é por minha conta.
+
+O dinheiro volta em até **dez dias** depois que a peça chegar de volta, pelo mesmo caminho em que você pagou.
 
 ## Peça personalizada
 
 Peça feita com nome, monograma ou medida específica é feita só para você — ela não serve para mais ninguém. Por isso confirmo cor, medida e personalização com você no WhatsApp **antes** de começar: é ali que a gente acerta tudo, e é ali que dá para mudar de ideia sem custo nenhum.
 
-Se ainda assim você quiser desistir dentro dos sete dias, me chame. A gente conversa e resolve.
+**Os sete dias valem para ela também.** Peça sob medida dá mais trabalho e não tem outra dona, mas o seu direito é o mesmo — e eu prefiro devolver o dinheiro a ficar com uma cliente contrariada.
 
-Defeito é outra coisa: defeito eu resolvo sempre, personalizada ou não.
+Defeito, então, eu resolvo sempre: personalizada ou não.
+
+## Se eu atrasar
+
+Combino um prazo antes de começar e aviso se algo mudar. Se eu passar do prazo combinado, você escolhe: esperar o tempo novo que eu disser, aceitar outra peça equivalente, ou cancelar e receber o dinheiro de volta, corrigido.
 
 ## Ajustes
 
-Alça curta demais, alça comprida demais, um acabamento que não ficou como você imaginou? Fale comigo. Ajuste eu faço.`,
+Alça curta demais, alça comprida demais, um acabamento que não ficou como você imaginou? Fale comigo. Ajuste eu faço, e na maioria das vezes só custa o frete.
+
+## Uma última coisa
+
+Nada aqui tira direito seu. Se algum trecho deste texto conflitar com o Código de Defesa do Consumidor, vale o Código.`,
   },
   {
     slug: "privacidade",

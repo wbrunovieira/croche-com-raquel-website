@@ -72,6 +72,12 @@ sem isso o primeiro visitante paga a geração de cada foto. Para aquecer à mã
 `URL_BASE=https://… pnpm aquecer`. Isso **não** conserta o LCP da home — o
 elemento de LCP ali é texto, não foto; ver a issue aberta.
 
+**O seed é dividido, e a divisão custou uma restauração.** Rodar `prisma/seed.ts`
+sem argumento não faz nada, de propósito: o catálogo é DELA (ela cria, edita e
+apaga peça pelo painel) e páginas/FAQ são nossos (`prisma/conteudo.ts` é a fonte
+da verdade). Use `--conteudo` para corrigir texto — ele não toca em produto
+nenhum. `--catalogo` sobrescreve o catálogo e só serve para ambiente do zero.
+
 Depois de `pnpm db:migrate`, **reinicie o `pnpm dev`** — ele guarda o cliente Prisma
 antigo em memória e a rota quebra com "Unknown field".
 
