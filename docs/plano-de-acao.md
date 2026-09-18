@@ -2401,6 +2401,38 @@ segundos depois resolveria a métrica e não a experiência.
 
 O domínio raiz é pulado sozinho enquanto servir a obra.
 
+### ✅ Etapa 57 — O site no ar no domínio (18/09/2026)
+
+`SITE_NO_AR=true` em produção: a obra saiu e `crochecomraquel.com.br` passou a servir o
+site. Foi o que a etapa 41 preparou — uma variável, nenhuma mudança de código no dia.
+
+O que mudou junto, sozinho, por já estar escrito assim:
+
+| | antes | depois |
+| --- | --- | --- |
+| `/`, `/bolsas`, peça | página de obra | páginas de verdade |
+| `X-Robots-Tag` do domínio | `noindex, nofollow` | ausente — indexável |
+| `robots.txt` | sem `Sitemap:` | aponta o sitemap |
+| `/admin` sem sessão | caía na obra | 307 para a tela de entrada |
+
+Medido no domínio depois da virada: LCP 712 ms, CLS 0,0000, 81 asserções de
+compartilhamento, SEO e hospedagem verdes.
+
+**A verificação de hospedagem passou a descobrir o estado em vez de presumir.** Ela fixava
+"o domínio mostra a obra" e reprovaria justamente no dia da estreia — quando alguém mais
+precisa dela. Agora olha o que o domínio serve e cobra o conjunto certo, mantendo em ambos
+os estados o que não pode mudar: painel fechado sem sessão, `www` no apex, preview fora do
+buscador.
+
+E ganhou a asserção que só existe depois da estreia: **o domínio não pode sair com
+`noindex`**. É o defeito mais caro e mais silencioso possível aqui — o site no ar, bonito,
+funcionando e invisível no Google. Ninguém percebe olhando a tela; percebe-se semanas
+depois, quando a busca pelo nome dela não traz o site.
+
+**Falta:** verificar o domínio no Search Console e enviar o sitemap. A verificação será por
+registro TXT — confirmado que o token da Cloudflare escreve DNS nesta zona, então é só o
+Bruno trazer o valor que o Google mostrar.
+
 ## Decisões em aberto
 
 - **Fotos:** existem duas com escala humana (a saco terracota sendo usada e a
